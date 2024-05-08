@@ -1,0 +1,33 @@
+package utils
+
+import (
+	"database/sql"
+
+	_ "github.com/mattn/go-sqlite3"
+)
+
+func GetTblRuleData(dbPath string, ruleCnnm string) ([][]string, error) {
+	db, err := sql.Open("sqlite3", dbPath)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	query := "SELECT rule_desc, check_desc FROM tbl_rule WHERE rule_cnnm = ?"
+	rows, err := db.Query(query, ruleCnnm)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result [][]string
+	for rows.Next() {
+		var ruleDesc, checkDesc string
+		err = rows.Scan(&ruleDesc, &checkDesc)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, []string{ruleDesc, checkDesc})
+	}
+	return result, nil
+}

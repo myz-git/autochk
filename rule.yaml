@@ -1,0 +1,105 @@
+osrule: 
+  osparameter: 
+    l_nproc_ne: 16384
+    l_nofile_ne: 65536
+    l_randomize_va_space: 0
+    l_panic_on_oops: 1
+    l_min_free_kbytes: 102400
+    s_disable_ism_large_pages: [0xF4,0x74]
+  ulimit: 
+    open_files_ne: 65536
+    max_user_rocesses_ne: 16384
+  filesystem: 
+    disk_ge1: 80%
+    disk_ge2: 90%
+    inode_ge1: 80%
+    inode_ge2: 90%
+  cpustat: 
+    idle_le1: 20
+    idle_le2: 10
+    swap_ge1: 100
+    swap_ge2: 1000
+  memstat: 
+    available_le1:  2048
+    available_le2:  512
+  iostat:
+    diskutil_ge1: 80
+    diskutil_ge2: 95
+  thpstat:
+    anpages_gt: 8192
+  numa:
+    flg1: "No NUMA"
+    flg2: "NUMA turned off"
+
+dbrule:
+  dbtbsusage:
+    tbsutil_ge1: 80
+    tbsutil_ge2: 90
+    freesize_le1: 8
+    freesize_le2: 4
+  dbdatafile:
+    status: AVAILABLE
+  dbcontrolfile:
+    cnt_le1: 2
+  dbredocheck:
+    rdf_size_lt1: 200
+    rdf_status_list: [INACTIVE,ACTIVE,CURRENT]
+  dbredoswitch:
+    sw_cnt_ge1: 12
+  dbresource:
+    res_use_ge1: 90
+  loadprofile:
+    redosize_ge1: 30
+    logons_ge1: 30
+  instefficiency:
+    buffer_hit: 90
+    library_hit: 90
+    soft_parse: 90
+  dbtopevent:
+  dbtopsql:
+  dblsnrinfo:
+    log_size: 2147483648
+  dbtableparallel:
+    result: "no rows selected"
+  dbindexparallel:
+    result: "no rows selected"
+  dbinvalidindex:
+    result: "no rows selected"
+  dbsequence:
+    result: "no rows selected"
+  dbrecoverydest:
+    result: "no rows selected"
+  dbflashrecoveryuseage:
+    useage1: 80
+    useage2: 90
+  dberrlog:
+    resultB: "no rows selected"
+  dbproductuserfailedlogin:
+    result: "no rows selected"
+  dbrmancheck:
+    resultB: "WARNINGS"
+    resultR: "ERROR"
+  dbdbapriv:
+    resultG: "no rows selected"
+  dbsysdba:
+    resultB: "no rows selected"
+  dbauditsegment:
+    resultG: "no rows selected"
+  dbauditcont:
+    resultG: 10000
+  db_nosys_in_system:
+    resultB: "no rows selected"
+  dbvirscheck:
+    resultR: "no rows selected"
+  dbscnhealthcheck:
+    resulta: "Result: A"
+    resultb: "Result: B"
+    resultc: "Result: C"
+  dbdglagcheck:
+    resultB: 1
+  dbdgerrcheck:
+    resultG: ""
+  dbcrscheck:
+    resultG: ""
+  dbasmusage:
+    resultG: ""

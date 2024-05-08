@@ -1,0 +1,6 @@
+local/
+*.log
+*.docx
+*.xlsx
+*.xml
+~
