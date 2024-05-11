@@ -6,6 +6,8 @@ import (
 
 	// "hlchk/utils"
 	"github.com/xuri/excelize/v2"
+	// "github.com/myz-git/excelize"
+	// "github.com/qax-os/excelize"
 )
 
 func Xlsx(infstp *structs.InfoSht, osshtp *structs.OsSht, dbshtp *structs.DbSht, xlsnm string, colcnt int, sglf bool) {
