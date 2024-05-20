@@ -15,7 +15,7 @@ func Todocx(infstp *structs.InfoSht, osshtp *structs.OsSht, dbshtp *structs.DbSh
 	startTime := time.Now()
 
 	// 设置模板文件路径为当前目录下的 chk197S.docx
-	templatePath := "chk197S.docx"
+	templatePath := "chk198S.docx"
 
 	// 确保输出目录存在
 	outputDir := "report"
