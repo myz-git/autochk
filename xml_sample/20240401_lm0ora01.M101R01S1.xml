@@ -1,0 +1,2036 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EACHK>
+<TAG0>
+<VER>chk197</VER>
+<HOSTNAME>lm0ora01</HOSTNAME>
+<OS>Linux</OS>
+<RELVER> Linux.Red Hat Enterprise Linux Server release 6.9 (Santiago) </RELVER>
+<CORES> Intel(R) Xeon(R) Gold 6130 CPU @ 2.10GHz 128 </CORES>
+<CPUCOUNT>128</CPUCOUNT>
+<CPUMHZ> 2095.083</CPUMHZ>
+<MEMTOTAL> 1058617980 kB</MEMTOTAL>
+<SWAPTOTAL> 33554428 kB</SWAPTOTAL>
+<OSPARAMETER>
+*************system parameter*************
+kernel.shmmax = 966367641600
+kernel.shmall = 4294967296
+kernel.shmmni = 4096 
+kernel.sem=250 64000 100 256
+fs.file-max = 6815744 
+net.ipv4.ip_local_port_range = 9000 65500 
+net.core.rmem_max = 4194304 
+net.core.wmem_max=1048586
+net.core.rmem_default = 262144 
+net.core.wmem_default = 262144 
+kernel.panic_on_oops = 1
+*************limit *************
+oracle  soft    nproc           2047
+oracle  hard    nproc           16384
+oracle  soft    nofile          1024
+oracle  hard    nofile          65536
+oracle  soft    stack           10240
+oracle  hard    stack           32768
+grid    soft    nproc           2047
+grid    hard    nproc           16384
+grid    soft    nofile          1024
+grid    hard    nofile          65536
+grid    soft    stack           10240
+grid    hard    stack           32768
+*       soft    memlock         unlimited
+*       hard    memlock         unlimited
+root    soft    stack           10240
+root    hard    stack           32768</OSPARAMETER>
+<ULIMIT>
+core file size          (blocks, -c) 0
+data seg size           (kbytes, -d) unlimited
+scheduling priority             (-e) 0
+file size               (blocks, -f) unlimited
+pending signals                 (-i) 4134297
+max locked memory       (kbytes, -l) unlimited
+max memory size         (kbytes, -m) unlimited
+open files                      (-n) 65536
+pipe size            (512 bytes, -p) 8
+POSIX message queues     (bytes, -q) 819200
+real-time priority              (-r) 0
+stack size              (kbytes, -s) 10240
+cpu time               (seconds, -t) unlimited
+max user processes              (-u) 16384
+virtual memory          (kbytes, -v) unlimited
+file locks                      (-x) unlimited
+</ULIMIT>
+<IPADDR>
+addr:10.100.11.88
+addr:10.100.11.90
+addr:10.100.11.98
+addr:10.100.11.94
+addr:172.16.11.8
+addr:169.254.14.169
+addr:10.100.20.88
+</IPADDR>
+<DBMAA> RAC </DBMAA>
+<OSLOG><![CDATA[
+]]></OSLOG>
+<FILESYSTEM>
+Filesystem           Type   Size  Used Avail Use% Mounted on
+/dev/mapper/system-LogVol_root
+                     ext4    77G  4.7G   68G   7% /
+tmpfs                tmpfs  505G  1.4G  504G   1% /dev/shm
+/dev/mapper/mpathap2 ext4   190M   87M   93M  49% /boot
+/dev/mapper/mpathap1 vfat   200M  264K  200M   1% /boot/efi
+/dev/mapper/system-LogVol_ghome
+                     ext4    50G   20G   27G  43% /ghome
+/dev/mapper/system-LogVol_soft
+                     ext4    50G   15G   33G  31% /soft
+/dev/mapper/system-LogVol_tmp
+                     ext4    20G   79M   19G   1% /tmp
+/dev/mapper/system-LogVol_uhome
+                     ext4    50G   12G   36G  25% /uhome
+/dev/mapper/system-LogVol_usr
+                     ext4   9.8G  2.9G  6.4G  32% /usr
+/dev/mapper/system-LogVol_var
+                     ext4   9.8G  2.0G  7.3G  21% /var
+</FILESYSTEM>
+<INODEUSAGE>
+Filesystem           Inodes IUsed IFree IUse% Mounted on
+/dev/mapper/system-LogVol_root
+                       4.9M   15K  4.9M    1% /
+tmpfs                  127M  6.8K  127M    1% /dev/shm
+/dev/mapper/mpathap2    50K    23   50K    1% /boot
+/dev/mapper/mpathap1      0     0     0     - /boot/efi
+/dev/mapper/system-LogVol_ghome
+                       3.2M  537K  2.7M   17% /ghome
+/dev/mapper/system-LogVol_soft
+                       3.2M   15K  3.2M    1% /soft
+/dev/mapper/system-LogVol_tmp
+                       1.3M   193  1.3M    1% /tmp
+/dev/mapper/system-LogVol_uhome
+                       3.2M   78K  3.1M    3% /uhome
+/dev/mapper/system-LogVol_usr
+                       640K  111K  530K   18% /usr
+/dev/mapper/system-LogVol_var
+                       640K  5.1K  635K    1% /var
+</INODEUSAGE>
+<CPUSTAT>
+procs -----------memory---------- ---swap-- -----io---- --system-- -----cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+11  0      0 748453   1355 292843    0    0  2056    35    0    0  5  1 93  0  0	
+ 3  1      0 748457   1355 292843    0    0 13955   641 31672 35705  4  0 96  0  0	
+ 4  1      0 748458   1355 292843    0    0 18983  1075 34620 39975  3  0 96  0  0	
+ 5  1      0 748459   1355 292843    0    0 19763  1762 39249 44685  3  0 96  0  0	
+ 3  0      0 748467   1355 292843    0    0 17587   789 32458 37866  2  0 97  0  0	
+</CPUSTAT>
+<MEMSTAT>
+free -m
+             total       used       free     shared    buffers     cached
+Mem:       1033806     320012     713793     247605       1292     279277
+-/+ buffers/cache:      39443     994363
+Swap:        32767          0      32767
+</MEMSTAT>
+<IOSTAT>
+sar -d 3 2
+Linux 2.6.32-696.el6.x86_64 (lm0ora01) 	04/01/2024 	_x86_64_	(128 CPU)
+
+10:34:29 AM       DEV       tps  rd_sec/s  wr_sec/s  avgrq-sz  avgqu-sz     await     svctm     %util
+10:34:32 AM  dev65-32      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM  dev8-160      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM  dev65-48      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM  dev8-176      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM   dev8-32    154.64   2446.74     41.24     16.09      0.04      0.26      0.26      4.09
+10:34:32 AM  dev8-192      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM   dev8-48    139.18   2177.32    137.46     16.63      0.04      0.29      0.29      4.09
+10:34:32 AM  dev8-208      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM  dev65-64      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM    dev8-0      3.09      0.00     24.74      8.00      0.00      0.67      0.67      0.21
+10:34:32 AM  dev8-224      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM   dev65-0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM  dev8-112      1.72      1.03      3.09      2.40      0.00      0.60      0.60      0.10
+10:34:32 AM   dev8-64    173.54   2754.64     57.73     16.21      0.05      0.28      0.27      4.71
+10:34:32 AM  dev8-240      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM   dev8-80      7.56     21.99    159.11     23.95      0.01      1.00      1.00      0.76
+10:34:32 AM  dev65-96      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM   dev8-96      1.72      1.03      3.09      2.40      0.00      0.40      0.40      0.07
+10:34:32 AM dev65-144      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev65-112      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev65-128      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM  dev8-144      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM  dev8-128      1.72      1.03      0.69      1.00      0.00      0.60      0.60      0.10
+10:34:32 AM  dev65-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev65-176      2.75      0.00     52.23     19.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev65-160      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM   dev8-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev65-224    139.18   2199.31     27.49     16.00      0.04      0.31      0.31      4.26
+10:34:32 AM dev65-192      0.34      0.00      2.75      8.00      0.00      1.00      1.00      0.03
+10:34:32 AM dev65-240    173.20   2738.14     60.48     16.16      0.05      0.29      0.28      4.81
+10:34:32 AM dev65-208    154.98   2567.70     27.49     16.75      0.05      0.29      0.29      4.50
+10:34:32 AM  dev65-80      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM   dev66-0      7.56      0.00    199.31     26.36      0.01      1.27      1.27      0.96
+10:34:32 AM  dev66-16      1.72      1.03      0.69      1.00      0.00      0.20      0.20      0.03
+10:34:32 AM  dev66-32      1.72      1.03      0.69      1.00      0.00      0.60      0.60      0.10
+10:34:32 AM  dev66-48      1.72      1.03      3.09      2.40      0.00      1.00      1.00      0.17
+10:34:32 AM  dev253-0      5.84      0.00     76.98     13.18      0.00      0.59      0.59      0.34
+10:34:32 AM  dev253-1    309.62   5014.43     68.73     16.42      0.09      0.29      0.28      8.76
+10:34:32 AM  dev253-2      0.34      0.00      2.75      8.00      0.00      1.00      1.00      0.03
+10:34:32 AM  dev253-3    278.35   4376.63    164.95     16.32      0.09      0.31      0.31      8.59
+10:34:32 AM  dev253-4    346.74   5492.78    118.21     16.18      0.10      0.29      0.27      9.48
+10:34:32 AM  dev253-5      3.44      2.06      3.78      1.70      0.00      0.30      0.30      0.10
+10:34:32 AM  dev253-6      3.44      2.06      3.78      1.70      0.00      0.80      0.80      0.27
+10:34:32 AM  dev253-7      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM  dev253-8      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM  dev253-9      9.62      0.00     76.98      8.00      0.00      0.36      0.36      0.34
+10:34:32 AM dev253-10      3.44      2.06      3.78      1.70      0.00      0.60      0.60      0.21
+10:34:32 AM dev253-11     15.12     21.99    358.42     25.16      0.02      1.23      1.23      1.86
+10:34:32 AM dev253-12      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev253-13      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev253-14      5.50      0.00     43.99      8.00      0.00      0.06      0.06      0.03
+10:34:32 AM dev253-15      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev253-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev253-17      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev253-18      4.12      0.00     32.99      8.00      0.00      0.75      0.75      0.31
+10:34:32 AM dev253-19      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM  dev66-80    224.74   3535.40     82.47     16.10      0.07      0.33      0.32      7.25
+10:34:32 AM  dev66-96      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev66-112      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev66-128    224.74   3535.40     65.98     16.02      0.05      0.24      0.23      5.22
+10:34:32 AM dev253-20    449.48   7070.79    148.45     16.06      0.13      0.29      0.27     12.34
+10:34:32 AM dev66-144    148.80   2358.76     21.99     16.00      0.05      0.32      0.31      4.67
+10:34:32 AM dev66-160      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev66-176      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev66-192    148.45   2386.25      0.00     16.07      0.04      0.28      0.27      4.05
+10:34:32 AM dev253-21    297.25   4745.02     21.99     16.04      0.09      0.30      0.29      8.76
+10:34:32 AM dev66-208    206.19   3315.46     27.49     16.21      0.05      0.26      0.26      5.26
+10:34:32 AM dev66-224      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev66-240      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM   dev67-0    206.19   3276.98     54.98     16.16      0.05      0.24      0.23      4.81
+10:34:32 AM dev253-22    412.37   6592.44     82.47     16.19      0.10      0.25      0.25     10.21
+10:34:32 AM  dev67-16      2.75     54.98      1.03     20.38      0.00      0.25      0.25      0.07
+10:34:32 AM  dev67-32      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM  dev67-48      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM  dev67-64      2.41     32.99     12.03     18.71      0.00      0.57      0.57      0.14
+10:34:32 AM dev253-23      5.15     87.97     13.06     19.60      0.00      0.40      0.27      0.14
+10:34:32 AM  dev67-80    196.56   3013.06    132.65     16.00      0.06      0.31      0.31      6.01
+10:34:32 AM  dev67-96      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev67-112      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev67-128    196.22   3051.55    294.50     17.05      0.07      0.33      0.32      6.36
+10:34:32 AM dev253-24    392.78   6064.60    427.15     16.53      0.13      0.33      0.31     12.13
+10:34:32 AM dev67-144      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev67-160      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev67-176      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev67-192      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev253-25      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:32 AM dev252-214017      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+
+10:34:32 AM       DEV       tps  rd_sec/s  wr_sec/s  avgrq-sz  avgqu-sz     await     svctm     %util
+10:34:35 AM  dev65-32      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM  dev8-160      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM  dev65-48      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM  dev8-176      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM   dev8-32    114.38   5249.32    444.18     49.78      0.12      1.01      0.82      9.38
+10:34:35 AM  dev8-192      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM   dev8-48     72.60   5961.64     71.23     83.09      0.10      1.42      1.10      7.98
+10:34:35 AM  dev8-208      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM  dev65-64      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM    dev8-0      1.03      0.00    180.82    176.00      0.01      6.00      3.33      0.34
+10:34:35 AM  dev8-224      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM   dev65-0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM  dev8-112      1.71      1.03      3.08      2.40      0.00      1.60      1.60      0.27
+10:34:35 AM   dev8-64    101.37   5627.40     36.64     55.88      0.10      1.00      0.81      8.18
+10:34:35 AM  dev8-240      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM   dev8-80      2.05     10.96     17.12     13.67      0.00      2.00      2.00      0.41
+10:34:35 AM  dev65-96      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM   dev8-96      1.71      1.03      3.08      2.40      0.00      0.20      0.20      0.03
+10:34:35 AM dev65-144      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev65-112      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev65-128      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM  dev8-144      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM  dev8-128      1.71      1.03      0.68      1.00      0.00      1.80      1.80      0.31
+10:34:35 AM  dev65-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev65-176      1.37      0.00    383.56    280.00      0.01      5.25      2.50      0.34
+10:34:35 AM dev65-160      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM   dev8-16      0.34      0.00      2.74      8.00      0.00      1.00      1.00      0.03
+10:34:35 AM dev65-224     72.26   6010.96     43.84     83.79      0.10      1.34      1.00      7.23
+10:34:35 AM dev65-192      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev65-240    101.71   5712.33     22.95     56.39      0.07      0.71      0.55      5.55
+10:34:35 AM dev65-208    114.38   5205.48    100.34     46.39      0.09      0.77      0.63      7.19
+10:34:35 AM  dev65-80      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM   dev66-0      2.05     10.96     14.73     12.50      0.00      0.67      0.67      0.14
+10:34:35 AM  dev66-16      1.71      1.03      0.68      1.00      0.00      1.20      1.20      0.21
+10:34:35 AM  dev66-32      1.71      1.03      0.68      1.00      0.00      1.00      1.00      0.17
+10:34:35 AM  dev66-48      1.71      1.03      3.08      2.40      0.00      0.00      0.00      0.00
+10:34:35 AM  dev253-0      2.40      0.00    564.38    235.43      0.02      6.86      1.71      0.41
+10:34:35 AM  dev253-1    228.77  10454.79    544.52     48.08      0.21      0.91      0.62     14.21
+10:34:35 AM  dev253-2      0.34      0.00      2.74      8.00      0.00      1.00      1.00      0.03
+10:34:35 AM  dev253-3    145.21  12147.95    115.07     84.45      0.21      1.41      0.83     11.99
+10:34:35 AM  dev253-4    203.08  11339.73     59.59     56.13      0.18      0.87      0.59     12.02
+10:34:35 AM  dev253-5      3.42      2.05      3.77      1.70      0.00      0.80      0.70      0.24
+10:34:35 AM  dev253-6      3.42      2.05      3.77      1.70      0.00      0.90      0.90      0.31
+10:34:35 AM  dev253-7      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM  dev253-8      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM  dev253-9     70.55      0.00    564.38      8.00      0.64      9.01      0.06      0.41
+10:34:35 AM dev253-10      3.42      2.05      3.77      1.70      0.00      1.30      1.30      0.45
+10:34:35 AM dev253-11      4.11     21.92     31.85     13.08      0.01      1.33      1.33      0.55
+10:34:35 AM dev253-12      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev253-13      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev253-14      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev253-15      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev253-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev253-17      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev253-18      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev253-19     70.55      0.00    564.38      8.00      0.64      9.01      0.06      0.41
+10:34:35 AM  dev66-80    103.42   5380.82     49.32     52.50      0.10      0.95      0.72      7.40
+10:34:35 AM  dev66-96      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev66-112      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev66-128    103.42   5315.07     54.79     51.92      0.10      0.93      0.69      7.16
+10:34:35 AM dev253-20    206.85  10695.89    104.11     52.21      0.20      0.96      0.58     12.09
+10:34:35 AM dev66-144     92.12   7068.49     49.32     77.26      0.12      1.27      1.02      9.42
+10:34:35 AM dev66-160      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev66-176      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev66-192     92.47   7320.55     49.32     79.70      0.10      1.04      0.77      7.12
+10:34:35 AM dev253-21    184.59  14389.04     98.63     78.49      0.22      1.18      0.73     13.53
+10:34:35 AM dev66-208    101.71   4750.68     43.84     47.14      0.10      0.97      0.71      7.23
+10:34:35 AM dev66-224      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev66-240      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM   dev67-0    101.71   4619.18     60.27     46.01      0.09      0.91      0.61      6.23
+10:34:35 AM dev253-22    203.42   9369.86    104.11     46.57      0.19      0.96      0.55     11.16
+10:34:35 AM  dev67-16      6.16     32.88    275.34     50.00      0.01      1.44      1.44      0.89
+10:34:35 AM  dev67-32      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM  dev67-48      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM  dev67-64      6.51     32.88    143.15     27.05      0.01      1.84      1.84      1.20
+10:34:35 AM dev253-23     12.67     65.75    418.49     38.22      0.02      1.65      1.27      1.61
+10:34:35 AM  dev67-80    108.56   6416.44     64.04     59.69      0.13      1.16      0.93     10.07
+10:34:35 AM  dev67-96      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev67-112      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev67-128    108.22   6235.62     58.22     58.16      0.10      0.91      0.69      7.43
+10:34:35 AM dev253-24    216.78  12652.05    122.26     58.93      0.23      1.04      0.64     13.87
+10:34:35 AM dev67-144      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev67-160      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev67-176      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev67-192      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev253-25      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+10:34:35 AM dev252-214017      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+
+Average:          DEV       tps  rd_sec/s  wr_sec/s  avgrq-sz  avgqu-sz     await     svctm     %util
+Average:     dev65-32      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:     dev8-160      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:     dev65-48      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:     dev8-176      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:      dev8-32    134.48   3850.43    243.05     30.44      0.08      0.58      0.50      6.74
+Average:     dev8-192      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:      dev8-48    105.83   4072.73    104.29     39.47      0.07      0.68      0.57      6.04
+Average:     dev8-208      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:     dev65-64      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:       dev8-0      2.06      0.00    102.92     50.00      0.00      2.00      1.33      0.27
+Average:     dev8-224      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:      dev65-0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:     dev8-112      1.72      1.03      3.09      2.40      0.00      1.10      1.10      0.19
+Average:      dev8-64    137.39   4193.48     47.17     30.87      0.07      0.55      0.47      6.45
+Average:     dev8-240      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:      dev8-80      4.80     16.47     87.99     21.75      0.01      1.21      1.21      0.58
+Average:     dev65-96      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:      dev8-96      1.72      1.03      3.09      2.40      0.00      0.30      0.30      0.05
+Average:    dev65-144      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev65-112      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev65-128      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:     dev8-144      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:     dev8-128      1.72      1.03      0.69      1.00      0.00      1.20      1.20      0.21
+Average:     dev65-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev65-176      2.06      0.00    218.18    106.00      0.00      1.75      0.83      0.17
+Average:    dev65-160      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:      dev8-16      0.17      0.00      1.37      8.00      0.00      1.00      1.00      0.02
+Average:    dev65-224    105.66   4108.40     35.68     39.22      0.07      0.66      0.54      5.75
+Average:    dev65-192      0.17      0.00      1.37      8.00      0.00      1.00      1.00      0.02
+Average:    dev65-240    137.39   4227.79     41.68     31.07      0.06      0.44      0.38      5.18
+Average:    dev65-208    134.65   3888.85     63.98     29.36      0.07      0.49      0.43      5.85
+Average:     dev65-80      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:      dev66-0      4.80      5.49    106.86     23.39      0.01      1.14      1.14      0.55
+Average:     dev66-16      1.72      1.03      0.69      1.00      0.00      0.70      0.70      0.12
+Average:     dev66-32      1.72      1.03      0.69      1.00      0.00      0.80      0.80      0.14
+Average:     dev66-48      1.72      1.03      3.09      2.40      0.00      0.50      0.50      0.09
+Average:     dev253-0      4.12      0.00    321.10     78.00      0.01      2.42      0.92      0.38
+Average:     dev253-1    269.13   7739.28    307.03     29.90      0.15      0.55      0.43     11.49
+Average:     dev253-2      0.34      0.00      2.74      8.00      0.00      1.00      1.00      0.03
+Average:     dev253-3    211.66   8268.95    139.97     39.73      0.15      0.69      0.49     10.29
+Average:     dev253-4    274.79   8421.27     88.85     30.97      0.14      0.50      0.39     10.75
+Average:     dev253-5      3.43      2.06      3.77      1.70      0.00      0.55      0.50      0.17
+Average:     dev253-6      3.43      2.06      3.77      1.70      0.00      0.85      0.85      0.29
+Average:     dev253-7      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:     dev253-8      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:     dev253-9     40.14      0.00    321.10      8.00      0.32      7.98      0.09      0.38
+Average:    dev253-10      3.43      2.06      3.77      1.70      0.00      0.95      0.95      0.33
+Average:    dev253-11      9.61     21.96    194.85     22.57      0.01      1.25      1.25      1.20
+Average:    dev253-12      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev253-13      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev253-14      2.74      0.00     21.96      8.00      0.00      0.06      0.06      0.02
+Average:    dev253-15      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev253-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev253-17      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev253-18      2.06      0.00     16.47      8.00      0.00      0.75      0.75      0.15
+Average:    dev253-19     35.33      0.00    282.68      8.00      0.32      9.01      0.06      0.21
+Average:     dev66-80    163.98   4459.69     65.87     27.60      0.09      0.53      0.45      7.32
+Average:     dev66-96      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev66-112      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev66-128    163.98   4426.76     60.38     27.36      0.08      0.46      0.38      6.19
+Average:    dev253-20    327.96   8886.45    126.24     27.48      0.17      0.50      0.37     12.21
+Average:    dev66-144    120.41   4717.67     35.68     39.48      0.08      0.68      0.59      7.05
+Average:    dev66-160      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev66-176      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev66-192    120.41   4857.63     24.70     40.55      0.07      0.57      0.46      5.59
+Average:    dev253-21    240.82   9575.30     60.38     40.01      0.15      0.64      0.46     11.15
+Average:    dev66-208    153.86   4034.31     35.68     26.45      0.08      0.49      0.41      6.24
+Average:    dev66-224      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev66-240      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:      dev67-0    153.86   3949.23     57.63     26.04      0.07      0.46      0.36      5.52
+Average:    dev253-22    307.72   7983.53     93.31     26.25      0.15      0.49      0.35     10.69
+Average:     dev67-16      4.46     43.91    138.42     40.88      0.00      1.08      1.08      0.48
+Average:     dev67-32      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:     dev67-48      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:     dev67-64      4.46     32.93     77.70     24.81      0.01      1.50      1.50      0.67
+Average:    dev253-23      8.92     76.84    216.12     32.85      0.01      1.29      0.98      0.87
+Average:     dev67-80    152.49   4717.67     98.28     31.58      0.09      0.61      0.53      8.04
+Average:     dev67-96      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev67-112      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev67-128    152.14   4646.31    176.16     31.70      0.08      0.54      0.45      6.90
+Average:    dev253-24    304.63   9363.98    274.44     31.64      0.18      0.58      0.43     13.00
+Average:    dev67-144      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev67-160      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev67-176      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev67-192      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev253-25      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    dev252-214017      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+</IOSTAT>
+<THPSTAT>
+AnonHugePages:         0 kB
+always madvise [never]
+</THPSTAT>
+<HUGPAGE>
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+</HUGPAGE>
+<NUMA>
+</NUMA>
+<NTP>
+ntp       11968      1  0  2018 ?        00:07:58 ntpd -u ntp:ntp -p /var/run/ntpd.pid -g
+</NTP>
+<TMZONE>
+</TMZONE>
+<RPM_FIREFOX>
+</RPM_FIREFOX>
+<RPM_FREETYPE>
+freetype-2.3.11-17.el6.x86_64
+</RPM_FREETYPE>
+<RPM_GHOSTSCRIPT>
+ghostscript-fonts-5.50-23.2.el6.noarch
+</RPM_GHOSTSCRIPT>
+<RPM_SAMBA>
+</RPM_SAMBA>
+<RPM_OPENVMTOOLS>
+</RPM_OPENVMTOOLS>
+<DBCRSCHECK>
+--------------------------------------------------------------------------------
+Name           Target  State        Server                   State details       
+--------------------------------------------------------------------------------
+Local Resources
+--------------------------------------------------------------------------------
+ora.BACKUPDG.BACKUP.advm
+               ONLINE  ONLINE       lm0ora01                 Volume device /dev/a
+                                                             sm/backup-418 is onl
+                                                             ine,STABLE
+               ONLINE  ONLINE       lm0ora02                 Volume device /dev/a
+                                                             sm/backup-418 is onl
+                                                             ine,STABLE
+ora.BACKUPDG.dg
+               ONLINE  ONLINE       lm0ora01                 STABLE
+               ONLINE  ONLINE       lm0ora02                 STABLE
+ora.DATADG.dg
+               ONLINE  ONLINE       lm0ora01                 STABLE
+               ONLINE  ONLINE       lm0ora02                 STABLE
+ora.FRADG.dg
+               ONLINE  ONLINE       lm0ora01                 STABLE
+               ONLINE  ONLINE       lm0ora02                 STABLE
+ora.LISTENER.lsnr
+               ONLINE  ONLINE       lm0ora01                 STABLE
+               ONLINE  ONLINE       lm0ora02                 STABLE
+ora.OCRVOTE.dg
+               ONLINE  ONLINE       lm0ora01                 STABLE
+               ONLINE  ONLINE       lm0ora02                 STABLE
+ora.asm
+               ONLINE  ONLINE       lm0ora01                 Started,STABLE
+               ONLINE  ONLINE       lm0ora02                 Started,STABLE
+ora.net1.network
+               ONLINE  ONLINE       lm0ora01                 STABLE
+               ONLINE  ONLINE       lm0ora02                 STABLE
+ora.ons
+               ONLINE  ONLINE       lm0ora01                 STABLE
+               ONLINE  ONLINE       lm0ora02                 STABLE
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.LISTENER_SCAN1.lsnr
+      1        ONLINE  ONLINE       lm0ora02                 STABLE
+ora.LISTENER_SCAN2.lsnr
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.LISTENER_SCAN3.lsnr
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.MGMTLSNR
+      1        OFFLINE OFFLINE                               STABLE
+ora.cvu
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.lm0ora01.vip
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.lm0ora02.vip
+      1        ONLINE  ONLINE       lm0ora02                 STABLE
+ora.m001r01dg.db
+      1        ONLINE  ONLINE       lm0ora02                 Open,STABLE
+      2        ONLINE  ONLINE       lm0ora01                 Open,STABLE
+ora.m001r02.db
+      1        ONLINE  ONLINE       lm0ora01                 Open,STABLE
+      2        ONLINE  ONLINE       lm0ora02                 Open,STABLE
+ora.m101r01s.db
+      1        ONLINE  ONLINE       lm0ora01                 Open,STABLE
+      2        ONLINE  ONLINE       lm0ora02                 Open,STABLE
+ora.mgmtdb
+      1        OFFLINE OFFLINE                               STABLE
+ora.oc4j
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.scan1.vip
+      1        ONLINE  ONLINE       lm0ora02                 STABLE
+ora.scan2.vip
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.scan3.vip
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Name           Target  State        Server                   State details       
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.asm
+      1        ONLINE  ONLINE       lm0ora01                 Started,STABLE
+ora.cluster_interconnect.haip
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.crf
+      1        OFFLINE OFFLINE                               STABLE
+ora.crsd
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.cssd
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.cssdmonitor
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.ctssd
+      1        ONLINE  ONLINE       lm0ora01                 OBSERVER,STABLE
+ora.diskmon
+      1        OFFLINE OFFLINE                               STABLE
+ora.drivers.acfs
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.evmd
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.gipcd
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.gpnpd
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.mdnsd
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+ora.storage
+      1        ONLINE  ONLINE       lm0ora01                 STABLE
+--------------------------------------------------------------------------------
+lm0ora01
+lm0ora02
+Status of Oracle Cluster Registry is as follows :
+	 Version                  :          4
+	 Total space (kbytes)     :     409568
+	 Used space (kbytes)      :       1676
+	 Available space (kbytes) :     407892
+	 ID                       : 1214494124
+	 Device/File Name         :   +OCRVOTE
+                                    Device/File integrity check succeeded
+
+                                    Device/File not configured
+
+                                    Device/File not configured
+
+                                    Device/File not configured
+
+                                    Device/File not configured
+
+	 Cluster registry integrity check succeeded
+
+	 Logical corruption check bypassed due to non-privileged user
+
+
+lm0ora01     2024/04/01 08:34:43     /ghome/app/oracle/product/12.1.0/grid/cdata/lm0orarac/backup00.ocr
+
+lm0ora01     2024/04/01 04:34:43     /ghome/app/oracle/product/12.1.0/grid/cdata/lm0orarac/backup01.ocr
+
+lm0ora01     2024/04/01 00:34:43     /ghome/app/oracle/product/12.1.0/grid/cdata/lm0orarac/backup02.ocr
+
+lm0ora01     2024/03/31 08:34:42     /ghome/app/oracle/product/12.1.0/grid/cdata/lm0orarac/day.ocr
+
+lm0ora01     2024/03/22 05:56:38     /ghome/app/oracle/product/12.1.0/grid/cdata/lm0orarac/week.ocr
+
+lm0ora01     2018/06/29 16:03:29     /ghome/app/oracle/product/12.1.0/grid/cdata/lm0orarac/backup_20180629_160329.ocr
+
+lm0ora01     2018/06/29 15:51:26     /ghome/app/oracle/product/12.1.0/grid/cdata/lm0orarac/backup_20180629_155126.ocr
+##  STATE    File Universal Id                File Name Disk group
+--  -----    -----------------                --------- ---------
+ 1. ONLINE   d6da84d1a50a4fc4bf7451e4afac5259 (/dev/mapper/mpathf) [OCRVOTE]
+ 2. ONLINE   fe91d9f4b1e24fdabf4c500b6e8fdd76 (/dev/mapper/mpathg) [OCRVOTE]
+ 3. ONLINE   c2260bc6beab4fcbbfecd43ec4a73065 (/dev/mapper/mpathh) [OCRVOTE]
+Located 3 voting disk(s).
+CRS-4678: Successful get misscount 30 for Cluster Synchronization Services.
+CRS-4678: Successful get disktimeout 200 for Cluster Synchronization Services.
+</DBCRSCHECK>
+<DBASMUSAGE>
+
+NAME         TOTAL_MB    FREE_MB PCT_USED_RATE(%)
+---------- ---------- ---------- ----------------
+BACKUPDG      1024156      20511               98
+FRADG          819317     610024            25.54
+DATADG        3584546     343043            90.43
+OCRVOTE         61440      23457            61.82
+
+</DBASMUSAGE>
+</TAG0>
+<TAG1>
+<M101R01S1>
+
+Session altered.
+
+<DBVER>
+
+Oracle Database 12c Enterprise Edition Release 12.1.0.1.0 - 64bit Production
+
+1 row selected.
+
+</DBVER>
+<DBOSINFO><![CDATA[
+
+     128
+
+1 row selected.
+
+
+	   64
+
+1 row selected.
+
+
+   1,009.577
+
+1 row selected.
+
+]]></DBOSINFO>
+<LOGMODE>
+
+ARCHIVELOG
+
+1 row selected.
+
+</LOGMODE>
+<FLASHBACK>
+
+NO
+
+1 row selected.
+
+</FLASHBACK>
+<DBTOTALSIZE><![CDATA[
+
+    102.33
+
+1 row selected.
+
+]]></DBTOTALSIZE>
+<DBFILECOUNT><![CDATA[
+
+	36
+
+1 row selected.
+
+]]></DBFILECOUNT>
+<DBTBLCOUNT><![CDATA[
+
+      4440
+
+1 row selected.
+
+]]></DBTBLCOUNT>
+<DBROLE><![CDATA[
+
+PRIMARY,MAXIMUM PERFORMANCE
+
+1 row selected.
+
+]]></DBROLE>
+<DBTBSUSAGE><![CDATA[
+
+TABLESPACE_NAME      MAXEXTEND(GB) ALLOCATED(GB)   USED(GB)   Free(GB) USED_RATE(%)
+-------------------- ------------- ------------- ---------- ---------- ------------
+ADMIN                           .1         .0977       .001      .0967            1
+INDEX                           .1         .0977       .001      .0967            1
+LOB                             .1         .0977       .001      .0967            1
+OP                              .1         .0977       .001      .0967            1
+STAGING                         .1         .0977       .001      .0967            1
+TYPELIST                        .1         .0977       .001      .0967            1
+AB_LOB                         .49         .4883      .1794      .3089        36.61
+CC_TYPELIST                    .49         .4883      .0448      .4435         9.14
+TRANSFER_DATA                  .49         .4883      .0057      .4826         1.16
+AB_ADMIN                       .49         .4883      .4441      .0442        90.63
+AB_STAGING                     .49         .4883       .027      .4613         5.51
+CC_STAGING                     .49         .4883      .1566      .3317        31.96
+CC_LOB                         .49         .4883       .001      .4873           .2
+AB_TYPELIST                    .49         .4883       .013      .4753         2.65
+ARC_DATA                       .78         .7813      .4559      .3254        58.45
+AB_INDEX                         1             1      .4642      .5358        46.42
+USERS                            1             1      .0024      .9976          .24
+AB_OP                            1             1      .1942      .8058        19.42
+QUEST_DATA                       1             1      .0574      .9426         5.74
+CC_OP                            1             1       .093       .907          9.3
+CC_INDEX                         1             1      .5619      .4381        56.19
+CC_ADMIN                         2             2      .9559     1.0441         47.8
+SYSTEM                           4             4      1.028      2.972         25.7
+UNDOTBS1                         8             8     6.0459     1.9541        75.57
+UNDOTBS2                         8             8      5.749      2.251        71.86
+SYSAUX                          64            64    52.9565    11.0435        82.74
+
+26 rows selected.
+
+]]></DBTBSUSAGE>
+<DBDATAFILE><![CDATA[
+
+FILE_NAME                                                                        STATUS         CUR_GB AUTOEXT          MAX_GB
+-------------------------------------------------------------------------------- ---------- ---------- ------------ ----------
++DATADG/M101R01S/DATAFILE/ab_admin01.dbf                                         AVAILABLE         .49 NO                    0
++DATADG/M101R01S/DATAFILE/ab_index01.dbf                                         AVAILABLE           1 NO                    0
++DATADG/M101R01S/DATAFILE/ab_lob01.dbf                                           AVAILABLE         .49 NO                    0
++DATADG/M101R01S/DATAFILE/ab_op01.dbf                                            AVAILABLE           1 NO                    0
++DATADG/M101R01S/DATAFILE/ab_staging01.dbf                                       AVAILABLE         .49 NO                    0
++DATADG/M101R01S/DATAFILE/ab_typelist01.dbf                                      AVAILABLE         .49 NO                    0
++DATADG/M101R01S/DATAFILE/admin01.dbf                                            AVAILABLE          .1 NO                    0
++DATADG/M101R01S/DATAFILE/arc_data01.dbf                                         AVAILABLE         .78 NO                    0
++DATADG/M101R01S/DATAFILE/cc_admin01.dbf                                         AVAILABLE           2 NO                    0
++DATADG/M101R01S/DATAFILE/cc_index01.dbf                                         AVAILABLE           1 NO                    0
++DATADG/M101R01S/DATAFILE/cc_lob01.dbf                                           AVAILABLE         .49 NO                    0
++DATADG/M101R01S/DATAFILE/cc_op01.dbf                                            AVAILABLE           1 NO                    0
++DATADG/M101R01S/DATAFILE/cc_staging01.dbf                                       AVAILABLE         .49 NO                    0
++DATADG/M101R01S/DATAFILE/cc_typelist01.dbf                                      AVAILABLE         .49 NO                    0
++DATADG/M101R01S/DATAFILE/index01.dbf                                            AVAILABLE          .1 NO                    0
++DATADG/M101R01S/DATAFILE/lob01.dbf                                              AVAILABLE          .1 NO                    0
++DATADG/M101R01S/DATAFILE/op01.dbf                                               AVAILABLE          .1 NO                    0
++DATADG/M101R01S/DATAFILE/quest_data01.dbf                                       AVAILABLE           1 NO                    0
++DATADG/M101R01S/DATAFILE/staging01.dbf                                          AVAILABLE          .1 NO                    0
++DATADG/M101R01S/DATAFILE/sysaux.609.1056790703                                  AVAILABLE           8 NO                    0
++DATADG/M101R01S/DATAFILE/sysaux.649.1083320309                                  AVAILABLE           8 NO                    0
++DATADG/M101R01S/DATAFILE/sysaux.667.1094127131                                  AVAILABLE           8 NO                    0
++DATADG/M101R01S/DATAFILE/sysaux01.dbf                                           AVAILABLE          16 NO                    0
++DATADG/M101R01S/DATAFILE/sysaux02.dbf                                           AVAILABLE          16 NO                    0
++DATADG/M101R01S/DATAFILE/sysaux03.dbf                                           AVAILABLE           8 NO                    0
++DATADG/M101R01S/DATAFILE/system01.dbf                                           AVAILABLE           4 NO                    0
++DATADG/M101R01S/DATAFILE/transfer_data01.dbf                                    AVAILABLE         .49 NO                    0
++DATADG/M101R01S/DATAFILE/typelist01.dbf                                         AVAILABLE          .1 NO                    0
++DATADG/M101R01S/DATAFILE/undotbs01.dbf                                          AVAILABLE           8 NO                    0
++DATADG/M101R01S/DATAFILE/undotbs02.dbf                                          AVAILABLE           8 NO                    0
++DATADG/M101R01S/DATAFILE/users01.dbf                                            AVAILABLE           1 NO                    0
+
+31 rows selected.
+
+]]></DBDATAFILE>
+<DATAFILE_SIZE><![CDATA[
+
+   DBF_CNT         GB
+---------- ----------
+        31 97.2734375
+
+1 row selected.
+
+]]></DATAFILE_SIZE>
+<TMPFILE_SIZE><![CDATA[
+
+   TMP_CNT         GB
+---------- ----------
+         5  .05859375
+
+1 row selected.
+
+]]></TMPFILE_SIZE>
+<OWNER_SIZE><![CDATA[
+
+OWNER                        GB
+-------------------- ----------
+ABUSER                     1.87
+AUDSYS                        0
+CCUSER                     2.26
+CTXSYS                        0
+DBMGR                         0
+DBSNMP                        0
+GSMADMIN_INTERNAL             0
+GW_ARC_OPR                  .45
+GW_TRANSFER_OPR               0
+MDSYS                       .11
+OJVMSYS                       0
+ORDDATA                     .02
+ORDSYS                        0
+OUTLN                         0
+QUEST_PA                    .13
+R_CAIYAOJUN                   0
+R_EX_BAOWEI                   0
+R_ZIHL                        0
+SYS                       65.53
+SYSTEM                      .03
+WMSYS                       .01
+XDB                         .07
+
+22 rows selected.
+
+]]></OWNER_SIZE>
+<USER_INFO> <![CDATA[
+
+USERNAME             ACCOUNT_STATUS       DEFAULT_TABLESPACE   TEMPORARY_TABLESPACE PROFILE
+-------------------- -------------------- -------------------- -------------------- ---------------
+ANONYMOUS            EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+APPQOSSYS            EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+AUDSYS               EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+CTXSYS               EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+DBSNMP               EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+DIP                  EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+GSMADMIN_INTERNAL    EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+GSMCATUSER           EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+GSMUSER              EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+MDDATA               EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+MDSYS                EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+OJVMSYS              EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+OLAPSYS              EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+ORACLE_OCM           EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+ORDDATA              EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+ORDPLUGINS           EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+ORDSYS               EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+OUTLN                EXPIRED & LOCKED     SYSTEM               TEMP                 DEFAULT
+R_LINAN              EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+SI_INFORMTN_SCHEMA   EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+SPATIAL_CSW_ADMIN_US EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+R
+
+SPATIAL_WFS_ADMIN_US EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+R
+
+SYSBACKUP            EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+SYSDG                EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+SYSKM                EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+WMSYS                EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+XDB                  EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+XS$NULL              EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+CMDP                 LOCKED               USERS                TEMP                 DEFAULT
+R_WANGHS             LOCKED               USERS                TEMP                 DEFAULT
+R_ZHANGRY            LOCKED               USERS                TEMP                 DEFAULT
+R_ZIHL               LOCKED               USERS                TEMP                 DEFAULT
+ABUSER               OPEN                 AB_OP                AB_TEMP              DEFAULT
+AUTO_LINK            OPEN                 USERS                TEMP                 DEFAULT
+CCUSER               OPEN                 CC_OP                CC_TEMP              DEFAULT
+CIF_LINK             OPEN                 USERS                TEMP                 DEFAULT
+CODE_GW_TRANSFER_OPR OPEN                 TRANSFER_DATA        TRANSFER_TEMP        DEFAULT
+CS_LINK              OPEN                 USERS                TEMP                 DEFAULT
+DBMGR                OPEN                 USERS                TEMP                 DEFAULT
+GW_ARC_OPR           OPEN                 ARC_DATA             ARC_TEMP             DEFAULT
+GW_TRANSFER_OPR      OPEN                 TRANSFER_DATA        TRANSFER_TEMP        DEFAULT
+OA_LINK              OPEN                 USERS                TEMP                 DEFAULT
+QUEST_PA             OPEN                 USERS                TEMP                 DEFAULT
+R_AUDIT_OPR          OPEN                 USERS                TEMP                 DEFAULT
+R_BAIXJ              OPEN                 USERS                TEMP                 DEFAULT
+R_CAIYAOJUN          OPEN                 USERS                TEMP                 DEFAULT
+R_CONN_VERF          OPEN                 USERS                TEMP                 DEFAULT
+R_EMG                OPEN                 USERS                TEMP                 DEFAULT
+R_EX_BAOWEI          OPEN                 USERS                TEMP                 DEFAULT
+R_SECURITY_OPR       OPEN                 USERS                TEMP                 DEFAULT
+R_WANGHONGYU         OPEN                 USERS                TEMP                 DEFAULT
+R_YURIQI             OPEN                 USERS                TEMP                 DEFAULT
+SYS                  OPEN                 SYSTEM               TEMP                 DEFAULT
+SYSTEM               OPEN                 SYSTEM               TEMP                 DEFAULT
+TP_GW_ARC_OPR        OPEN                 ARC_DATA             ARC_TEMP             DEFAULT
+TP_GW_TRANSFER_OPR   OPEN                 TRANSFER_DATA        TRANSFER_TEMP        DEFAULT
+
+56 rows selected.
+
+
+]]></USER_INFO>
+<TAB_INFO><![CDATA[
+
+OWNER                 TABLE_CNT
+-------------------- ----------
+ABUSER                      493
+CCUSER                     2006
+DBMGR                         6
+GW_ARC_OPR                    2
+GW_TRANSFER_OPR              14
+QUEST_PA                     65
+R_CAIYAOJUN                   1
+R_EX_BAOWEI                   1
+R_ZIHL                        2
+
+9 rows selected.
+
+]]></TAB_INFO>
+<DBUSERSIZE><![CDATA[
+
+OWNER                USER_SIZE_GB
+-------------------- ------------
+ABUSER                       1.87
+AUDSYS                        .00
+CCUSER                       2.26
+CTXSYS                        .00
+DBMGR                         .00
+DBSNMP                        .00
+GSMADMIN_INTERNAL             .00
+GW_ARC_OPR                    .45
+GW_TRANSFER_OPR               .00
+MDSYS                         .11
+OJVMSYS                       .00
+ORDDATA                       .02
+ORDSYS                        .00
+OUTLN                         .00
+QUEST_PA                      .13
+R_CAIYAOJUN                   .00
+R_EX_BAOWEI                   .00
+R_ZIHL                        .00
+SYS                         65.53
+SYSTEM                        .03
+WMSYS                         .01
+XDB                           .07
+
+22 rows selected.
+
+]]></DBUSERSIZE>
+
+Session altered.
+
+<DBREDOCHECK><![CDATA[
+
+    GROUP#    THREAD#  SEQUENCE#         MB ARCHIVED     STATUS
+---------- ---------- ---------- ---------- ------------ ----------
+         1          1       4291        512 YES          INACTIVE
+         2          1       4292        512 NO           CURRENT
+         3          1       4288        512 YES          INACTIVE
+         4          1       4289        512 YES          INACTIVE
+         5          1       4290        512 YES          INACTIVE
+         6          2       4211        512 YES          INACTIVE
+         7          2       4212        512 YES          INACTIVE
+         8          2       4213        512 NO           CURRENT
+         9          2       4209        512 YES          INACTIVE
+        10          2       4210        512 YES          INACTIVE
+
+10 rows selected.
+
+]]></DBREDOCHECK>
+<DBRESOURCE><![CDATA[
+
+INST_ID RESOURCE_NAME                  CURRENT_UTILIZATION MAX_UTILIZATION LIMIT_VALUE
+------- ------------------------------ ------------------- --------------- ---------------
+      1 processes                                      106             117       6000
+      1 sessions                                       119             132       9088
+      1 ges_procs                                      102             112       6001
+      1 ges_rsv_msgs                                     0               1       1000
+      1 parallel_max_servers                             9              11      32767
+      2 processes                                      102             116       6000
+      2 sessions                                       115             129       9088
+      2 ges_procs                                       98             111       6001
+      2 ges_rsv_msgs                                     0               1       1000
+      2 parallel_max_servers                             9              10      32767
+
+10 rows selected.
+
+]]></DBRESOURCE>
+
+Session altered.
+
+<DBRMANCHECK><![CDATA[
+
+no rows selected
+
+]]></DBRMANCHECK>
+
+Session altered.
+
+<DBDGLAGCHECK><![CDATA[
+
+no rows selected
+
+
+   THREAD# Last Primary Seq Generated
+---------- --------------------------
+         1                       4291
+         2                       4212
+
+2 rows selected.
+
+]]></DBDGLAGCHECK>
+<DBTABLEPARALLEL><![CDATA[
+
+no rows selected
+
+]]></DBTABLEPARALLEL>
+<DBINDEXPARALLEL><![CDATA[
+
+OWNER                          TABLE_NAME                     INDEX_NAME                               DEGREE     STATUS
+------------------------------ ------------------------------ ---------------------------------------- ---------- --------
+CCUSER                         CCTL_ACCOUNTTYPE_EXT           PKTL_ACCOUNTTYPE_EXT                     4          VALID
+CCUSER                         CCTL_ADVANCECLOSEDSTATUS_EXT   PKTL_ADVANCECLOSEDSTATUS_EXT             4          VALID
+CCUSER                         CCTL_ANTAUTOIMAGETYPE_EXT      PKTL_ANTAUTOIMAGETYPE_EXT                4          VALID
+CCUSER                         CCTL_ANTIMAGEUPLOADSTATUS      PKTL_ANTIMAGEUPLOADSTATUS                4          VALID
+CCUSER                         CCTL_APPLICATIONTYPE_EXT       PKTL_APPLICATIONTYPE_EXT                 4          VALID
+CCUSER                         CCTL_APPLYFOREXCEPTYPE_EXT     PKTL_APPLYFOREXCEPTYPE_EXT               4          VALID
+CCUSER                         CCTL_APPOINTMENTSTATUS_EXT     PKTL_APPOINTMENTSTATUS_EXT               4          VALID
+CCUSER                         CCTL_AUDITOPINION_EXT          PKTL_AUDITOPINION_EXT                    4          VALID
+CCUSER                         CCTL_AUDITPRICESTATUS_EXT      PKTL_AUDITPRICESTATUS_EXT                4          VALID
+CCUSER                         CCTL_AUTHENTICATIONTYPE_EXT    PKTL_AUTHENTICATIONTYPE_EXT              4          VALID
+CCUSER                         CCTL_AUTHRESULTTYPE_EXT        PKTL_AUTHRESULTTYPE_EXT                  4          VALID
+CCUSER                         CCTL_AUTOAUDITPRICETYPE_EXT    PKTL_AUTOAUDITPRICETYPE_EXT              4          VALID
+CCUSER                         CCTL_AUTOCALCCLOSEEXPOSURE_EXT PKTL_AUTOCALCCLOSEEXPOSURE_EXT           4          VALID
+CCUSER                         CCTL_AUTOCALCLOSSCAUSE_EXT     PKTL_AUTOCALCLOSSCAUSE_EXT               4          VALID
+CCUSER                         CCTL_AUTOCLOSECONDTION_EXT     PKTL_AUTOCLOSECONDTION_EXT               4          VALID
+CCUSER                         CCTL_AUTOCLOSEMAINREPAIR_EXT   PKTL_AUTOCLOSEMAINREPAIR_EXT             4          VALID
+CCUSER                         CCTL_AUTOCLOSEPARTNAME_EXT     PKTL_AUTOCLOSEPARTNAME_EXT               4          VALID
+CCUSER                         CCTL_AUTOCLOSERULERESULT       PKTL_AUTOCLOSERULERESULT                 4          VALID
+CCUSER                         CCTL_AUTOCLOSERULETYPE_EXT     PKTL_AUTOCLOSERULETYPE_EXT               4          VALID
+CCUSER                         CCTL_AUTOMATICCLOSEDSTATUS_EXT PKTL_AUTOMATICCLOSEDSTATUS_EXT           4          VALID
+CCUSER                         CCTL_AUTOMATICCLOSESTATE_EXT   PKTL_AUTOMATICCLOSESTATE_EXT             4          VALID
+CCUSER                         CCTL_AUTOREPAIRSHOPTYPE        PKTL_AUTOREPAIRSHOPTYPE                  4          VALID
+CCUSER                         CCTL_BATCHCHECKINFO_EXT        PKTL_BATCHCHECKINFO_EXT                  4          VALID
+CCUSER                         CCTL_BATTERYDAMAGEDBEGREE_EXT  PKTL_BATTERYDAMAGEDBEGREE_EXT            4          VALID
+CCUSER                         CCTL_BATTERYREPAIRMETHOD_EXT   PKTL_BATTERYREPAIRMETHOD_EXT             4          VALID
+CCUSER                         CCTL_BATTERYTYPE_EXT           PKTL_BATTERYTYPE_EXT                     4          VALID
+CCUSER                         CCTL_BODYAREA_EXT              PKTL_BODYAREA_EXT                        4          VALID
+ABUSER                         ABTL_ALADINTERFACECHANNEL_EXT  PKTL_ALADINTERFACECHANNEL_EXT            4          VALID
+ABUSER                         ABTL_BATTERYSERVICETYPE_EXT    PKTL_BATTERYSERVICETYPE_EXT              4          VALID
+ABUSER                         ABTL_COSTCATEGORY_EXT          PKTL_COSTCATEGORY_EXT                    4          VALID
+ABUSER                         ABTL_CUSTOMERIDTYPE_EXT        PKTL_CUSTOMERIDTYPE_EXT                  4          VALID
+CCUSER                         CCTL_MEASURETYPE_EXT           PKTL_MEASURETYPE_EXT                     4          VALID
+CCUSER                         CCTL_MIDDLETIERCHANNELTYPE_EXT PKTL_MIDDLETIERCHANNELTYPE_EXT           4          VALID
+CCUSER                         CCTL_MISSDOCUMENTTYPE_EXT      PKTL_MISSDOCUMENTTYPE_EXT                4          VALID
+CCUSER                         CCTL_NEWENERGYAPPLYVALUE_EXT   PKTL_NEWENERGYAPPLYVALUE_EXT             4          VALID
+CCUSER                         CCTL_NEWENERGYTYPE_EXT         PKTL_NEWENERGYTYPE_EXT                   4          VALID
+CCUSER                         CCTL_NEWVEHICLETYPE_EXT        PKTL_NEWVEHICLETYPE_EXT                  4          VALID
+CCUSER                         CCTL_NONQUERYRESIDUEREASON_EXT PKTL_NONQUERYRESIDUEREASON_EXT           4          VALID
+CCUSER                         CCTL_NOTUSEFASTPAYREASON_EXT   PKTL_NOTUSEFASTPAYREASON_EXT             4          VALID
+CCUSER                         CCTL_OAPDATASOURCE_EXT         PKTL_OAPDATASOURCE_EXT                   4          VALID
+CCUSER                         CCTL_OCRANDPOLICYVINRESULT_EXT PKTL_OCRANDPOLICYVINRESULT_EXT           4          VALID
+CCUSER                         CCTL_ONLINEASSESSRESULT_EXT    PKTL_ONLINEASSESSRESULT_EXT              4          VALID
+CCUSER                         CCTL_ONLINEFAILREASON_EXT      PKTL_ONLINEFAILREASON_EXT                4          VALID
+CCUSER                         CCTL_PAYINFOREADYTYPE_EXT      PKTL_PAYINFOREADYTYPE_EXT                4          VALID
+CCUSER                         CCTL_PAYINFOTYPE_EXT           PKTL_PAYINFOTYPE_EXT                     4          VALID
+CCUSER                         CCTL_PERSONRISKTYPE_EXT        PKTL_PERSONRISKTYPE_EXT                  4          VALID
+CCUSER                         CCTL_PHONERISKTYPE_EXT         PKTL_PHONERISKTYPE_EXT                   4          VALID
+CCUSER                         CCTL_PHOTOSOURCE_EXT           PKTL_PHOTOSOURCE_EXT                     4          VALID
+CCUSER                         CCTL_PHOTOTYPE_EXT             PKTL_PHOTOTYPE_EXT                       4          VALID
+CCUSER                         CCTL_POLICYYEARTYPE_EXT        PKTL_POLICYYEARTYPE_EXT                  4          VALID
+CCUSER                         CCTL_POWEROFATTORNEYTYPE_EXT   PKTL_POWEROFATTORNEYTYPE_EXT             4          VALID
+CCUSER                         CCTL_RATESOURCETYPE_EXT        PKTL_RATESOURCETYPE_EXT                  4          VALID
+CCUSER                         CCTL_RATETYPE_EXT              PKTL_RATETYPE_EXT                        4          VALID
+CCUSER                         CCTL_REASONNOTCLOSECASE_EXT    PKTL_REASONNOTCLOSECASE_EXT              4          VALID
+CCUSER                         CCTL_REASSIGNRESULTREASON_EXT  PKTL_REASSIGNRESULTREASON_EXT            4          VALID
+CCUSER                         CCTL_RECOVERYBANKINFO_EXT      PKTL_RECOVERYBANKINFO_EXT                4          VALID
+CCUSER                         CCTL_REFUSEDREASON_EXT         PKTL_REFUSEDREASON_EXT                   4          VALID
+CCUSER                         CCTL_REGIONSEGMENT_EXT         PKTL_REGIONSEGMENT_EXT                   4          VALID
+CCUSER                         CCTL_REPAIRPROBLEMTYPE_EXT     PKTL_REPAIRPROBLEMTYPE_EXT               4          VALID
+CCUSER                         CCTL_REPAIRSERVICETYPE_EXT     PKTL_REPAIRSERVICETYPE_EXT               4          VALID
+CCUSER                         CCTL_REPAIRSHOPPARTNERTYPE_EXT PKTL_REPAIRSHOPPARTNERTYPE_EXT           4          VALID
+CCUSER                         CCTL_REPAIRSHOPSAPPRAISE_EXT   PKTL_REPAIRSHOPSAPPRAISE_EXT             4          VALID
+CCUSER                         CCTL_REPAIRSHOPSSCORETYPE_EXT  PKTL_REPAIRSHOPSSCORETYPE_EXT            4          VALID
+CCUSER                         CCTL_REPAIRSHOPTYPEALAD_EXT    PKTL_REPAIRSHOPTYPEALAD_EXT              4          VALID
+CCUSER                         CCTL_RESCUEFEESUBTYPE_EXT      PKTL_RESCUEFEESUBTYPE_EXT                4          VALID
+CCUSER                         CCTL_RESOLUTION_EXT            PKTL_RESOLUTION_EXT                      4          VALID
+CCUSER                         CCTL_RESOURCEGROUPTYPE_EXT     PKTL_RESOURCEGROUPTYPE_EXT               4          VALID
+CCUSER                         CCTL_RISKCONTROLTYPE_EXT       PKTL_RISKCONTROLTYPE_EXT                 4          VALID
+CCUSER                         CCTL_RISKINFO_EXT              PKTL_RISKINFO_EXT                        4          VALID
+CCUSER                         CCTL_RISKREPORTRESULT_EXT      PKTL_RISKREPORTRESULT_EXT                4          VALID
+CCUSER                         CCTL_RISKREQUESTTYPE_EXT       PKTL_RISKREQUESTTYPE_EXT                 4          VALID
+CCUSER                         CCTL_RISKSYSTEMINFOTYPE_EXT    PKTL_RISKSYSTEMINFOTYPE_EXT              4          VALID
+CCUSER                         CCTL_SCOREOBJECTCATEGOR_EXT    PKTL_SCOREOBJECTCATEGOR_EXT              4          VALID
+CCUSER                         CCTL_CUSTOMERIDTYPE_EXT        PKTL_CUSTOMERIDTYPE_EXT                  4          VALID
+CCUSER                         CCTL_CUSTOMERSOURCE_EXT        PKTL_CUSTOMERSOURCE_EXT                  4          VALID
+CCUSER                         CCTL_DATASOURCE                PKTL_DATASOURCE                          4          VALID
+CCUSER                         CCTL_DISABILITYPART_EXT        PKTL_DISABILITYPART_EXT                  4          VALID
+CCUSER                         CCTL_DISCERNSTATUS_EXT         PKTL_DISCERNSTATUS_EXT                   4          VALID
+CCUSER                         CCTL_DISCERNTYPE_EXT           PKTL_DISCERNTYPE_EXT                     4          VALID
+CCUSER                         CCTL_DISPUTEDSETTLEMODE_EXT    PKTL_DISPUTEDSETTLEMODE_EXT              4          VALID
+CCUSER                         CCTL_INDUSTRYTYPE_EXT          PKTL_INDUSTRYTYPE_EXT                    4          VALID
+CCUSER                         CCTL_INITIATINGREASON          PKTL_INITIATINGREASON                    4          VALID
+CCUSER                         CCTL_INJURYASSESSNORM_EXT      PKTL_INJURYASSESSNORM_EXT                4          VALID
+CCUSER                         CCTL_INSTITUTIONRISKTYPE_EXT   PKTL_INSTITUTIONRISKTYPE_EXT             4          VALID
+CCUSER                         CCTL_INVOICEINFO_EXT           PKTL_INVOICEINFO_EXT                     4          VALID
+CCUSER                         CCTL_INVOICESETINFO_EXT        PKTL_INVOICESETINFO_EXT                  4          VALID
+CCUSER                         CCTL_INVOICESOURCE_EXT         PKTL_INVOICESOURCE_EXT                   4          VALID
+CCUSER                         CCTL_INVOICETYPE_EXT           PKTL_INVOICETYPE_EXT                     4          VALID
+CCUSER                         CCTL_JOINGOODCUSTOMERS_EXT     PKTL_JOINGOODCUSTOMERS_EXT               4          VALID
+CCUSER                         CCTL_JURORGOFFICETYPE_EXT      PKTL_JURORGOFFICETYPE_EXT                4          VALID
+CCUSER                         CCTL_KCYPIMAGETYPE_EXT         PKTL_KCYPIMAGETYPE_EXT                   4          VALID
+CCUSER                         CCTL_LABELREGIONTYPE_EXT       PKTL_LABELREGIONTYPE_EXT                 4          VALID
+CCUSER                         CCTL_LOSSPART_EXT              PKTL_LOSSPART_EXT                        4          VALID
+CCUSER                         CCTL_LOWCARBONTYPE_EXT         PKTL_LOWCARBONTYPE_EXT                   4          VALID
+CCUSER                         CCTL_MANUALSEGMENTCAUSE_EXT    PKTL_MANUALSEGMENTCAUSE_EXT              4          VALID
+CCUSER                         CCTL_VALUEADDEDSERVICETYPE_EXT PKTL_VALUEADDEDSERVICETYPE_EXT           4          VALID
+CCUSER                         CCTL_VEHICLECOLORLIST_EXT      PKTL_VEHICLECOLORLIST_EXT                4          VALID
+CCUSER                         CCTL_VEHICLERISKTYPE_EXT       PKTL_VEHICLERISKTYPE_EXT                 4          VALID
+CCUSER                         CCTL_VEHICLESTYLE_EXT          PKTL_VEHICLESTYLE_EXT                    4          VALID
+CCUSER                         CCTL_VEHICLETYPE_EXT           PKTL_VEHICLETYPE_EXT                     4          VALID
+CCUSER                         CCTL_VINANALYSISTYPE_EXT       PKTL_VINANALYSISTYPE_EXT                 4          VALID
+CCUSER                         CCTL_WARNSTAGE_EXT             PKTL_WARNSTAGE_EXT                       4          VALID
+CCUSER                         CCTL_WATERFLOODLEVEL_EXT       PKTL_WATERFLOODLEVEL_EXT                 4          VALID
+CCUSER                         CCTL_WATERQUALITY_EXT          PKTL_WATERQUALITY_EXT                    4          VALID
+CCUSER                         CCTL_WEATHERINDEXTYPE_EXT      PKTL_WEATHERINDEXTYPE_EXT                4          VALID
+CCUSER                         CCTL_WEIBAOCHECKTYPE_EXT       PKTL_WEIBAOCHECKTYPE_EXT                 4          VALID
+CCUSER                         CCTL_WEIBAONOTICSTATUS         PKTL_WEIBAONOTICSTATUS                   4          VALID
+CCUSER                         CCTL_ZEROCLAIMSTATUS_EXT       PKTL_ZEROCLAIMSTATUS_EXT                 4          VALID
+CCUSER                         CCX_ACCIDENTCARINFO_EXT        PKX_ACCIDENTCARINFO_EXT                  4          VALID
+CCUSER                         CCX_ACCIDENTIMAGEINFO_EXT      PKX_ACCIDENTIMAGEINFO_EXT                4          VALID
+CCUSER                         CCX_ACCIDENTPARTYINFO_EXT      PKX_ACCIDENTPARTYINFO_EXT                4          VALID
+CCUSER                         CCX_ACCIDENTREPORTINFO_EXT     PKX_ACCIDENTREPORTINFO_EXT               4          VALID
+CCUSER                         CCX_ACCIDENTSHAREINFO_EXT      PKX_ACCIDENTSHAREINFO_EXT                4          VALID
+CCUSER                         CCX_ACTIVITYRETURNREASON_EXT   PKX_ACTIVITYRETURNREASON_EXT             4          VALID
+CCUSER                         CCX_ADDSERVICERESERVEINFO_EXT  PKX_ADDSERVICERESERVEINFO_EXT            4          VALID
+CCUSER                         CCX_ADVANCECLOSED_EXT          PKX_ADVANCECLOSED_EXT                    4          VALID
+CCUSER                         CCX_AISCONFIGURATION_EXT       PKX_AISCONFIGURATION_EXT                 4          VALID
+CCUSER                         CCX_ALLOCATIONPAYMENTITEM_EXT  PKX_ALLOCATIONPAYMENTITEM_EXT            4          VALID
+CCUSER                         CCX_ANNOUNCEMENT_EXT           PKX_ANNOUNCEMENT_EXT                     4          VALID
+CCUSER                         CCX_ANTESTIMATECLAIMTYPE_EXT   PKX_ANTESTIMATECLAIMTYPE_EXT             4          VALID
+CCUSER                         CCX_ANTESTIMATEINFO_EXT        PKX_ANTESTIMATEINFO_EXT                  4          VALID
+CCUSER                         CCX_ANTEVAREPAIRPART_EXT       PKX_ANTEVAREPAIRPART_EXT                 4          VALID
+CCUSER                         CCX_ANTIFRAUDEARLYWARN_EXT     PKX_ANTIFRAUDEARLYWARN_EXT               4          VALID
+CCUSER                         CCX_ANTREPAIRPART_EXT          PKX_ANTREPAIRPART_EXT                    4          VALID
+CCUSER                         CCX_APPOINTAUTOREPAIRSHOP_EXT  PKX_APPOINTAUTOREPAIRSHOP_EXT            4          VALID
+CCUSER                         CCX_APPOINTMENTASSIGNMENT_EXT  PKX_APPOINTMENTASSIGNMENT_EXT            4          VALID
+CCUSER                         CCX_APPROVALPARTSCONF_EXT      PKX_APPROVALPARTSCONF_EXT                4          VALID
+CCUSER                         CCX_APPROVALTHRESHOLDCONF_EXT  PKX_APPROVALTHRESHOLDCONF_EXT            4          VALID
+CCUSER                         CCX_ATTRIBUTEUSERGENERAL_EXT   PKX_ATTRIBUTEUSERGENERAL_EXT             4          VALID
+CCUSER                         CCX_AUDITPRICECONSULTRULE_EXT  PKX_AUDITPRICECONSULTRULE_EXT            4          VALID
+CCUSER                         CCX_AUTOAUDITPRICERULE_EXT     PKX_AUTOAUDITPRICERULE_EXT               4          VALID
+CCUSER                         CCX_AUTOCALCATTRIBUTE_EXT      PKX_AUTOCALCATTRIBUTE_EXT                4          VALID
+CCUSER                         CCX_AUTOCALCCLOSEEXPOSURE_EXT  PKX_AUTOCALCCLOSEEXPOSURE_EXT            4          VALID
+CCUSER                         CCX_AUTOCALCLOSSCAUSE_EXT      PKX_AUTOCALCLOSSCAUSE_EXT                4          VALID
+CCUSER                         CCX_AUTOCALCPAYEEACCOUNT_EXT   PKX_AUTOCALCPAYEEACCOUNT_EXT             4          VALID
+CCUSER                         CCX_AUTOCLOSEINSURED_EXT       PKX_AUTOCLOSEINSURED_EXT                 4          VALID
+CCUSER                         CCX_AUTOCLOSELOG_EXT           PKX_AUTOCLOSELOG_EXT                     4          VALID
+CCUSER                         CCX_AUTOCLOSEMAINREPAIR_EXT    PKX_AUTOCLOSEMAINREPAIR_EXT              4          VALID
+CCUSER                         CCX_AUTOCLOSEPARTNAME_EXT      PKX_AUTOCLOSEPARTNAME_EXT                4          VALID
+CCUSER                         CCX_AUTOCLOSEPLATETYPE_EXT     PKX_AUTOCLOSEPLATETYPE_EXT               4          VALID
+CCUSER                         CCX_AUTOCLOSERULEVALIDATE_EXT  PKX_AUTOCLOSERULEVALIDATE_EXT            4          VALID
+CCUSER                         CCX_AUTOCLOSEVEHICLETYPE_EXT   PKX_AUTOCLOSEVEHICLETYPE_EXT             4          VALID
+CCUSER                         CCX_AUTOCLOSEVINCARTAG_EXT     PKX_AUTOCLOSEVINCARTAG_EXT               4          VALID
+CCUSER                         CCX_AUTOLOSSDETERMINATION_EXT  PKX_AUTOLOSSDETERMINATION_EXT            4          VALID
+CCUSER                         CCX_AUTOPASSRULE_EXT           PKX_AUTOPASSRULE_EXT                     4          VALID
+CCUSER                         CCX_BANKCERTIFICATION_EXT      PKX_BANKCERTIFICATION_EXT                4          VALID
+CCUSER                         CCX_BARHEADEDPIC_EXT           PKX_BARHEADEDPIC_EXT                     4          VALID
+CCUSER                         CCX_BASICREVIEWINFO_EXT        PKX_BASICREVIEWINFO_EXT                  4          VALID
+CCUSER                         CCX_BATCHCHECKIMPORT_EXT       PKX_BATCHCHECKIMPORT_EXT                 4          VALID
+CCUSER                         CCX_BATCHCHECKINFO_EXT         PKX_BATCHCHECKINFO_EXT                   4          VALID
+CCUSER                         CCX_BATCHCHECKRESULT_EXT       PKX_BATCHCHECKRESULT_EXT                 4          VALID
+CCUSER                         CCX_BIZACTIVITY_EXT            PKX_BIZACTIVITY_EXT                      4          VALID
+CCUSER                         CCX_BUSINESSPARAMCONFIG_EXT    PKX_BUSINESSPARAMCONFIG_EXT              4          VALID
+CCUSER                         CCX_VACATIONHISTORIES_EXT      PKX_VACATIONHISTORIES_EXT                4          VALID
+CCUSER                         CCX_VACATIONTIME_EXT           PKX_VACATIONTIME_EXT                     4          VALID
+CCUSER                         CCX_VEHICLEBRAND_EXT           PKX_VEHICLEBRAND_EXT                     4          VALID
+CCUSER                         CCX_VERIFYBUTTONSNAPSHOT_EXT   PKX_VERIFYBUTTONSNAPSHOT_EXT             4          VALID
+CCUSER                         CCX_VOICEPRINTRECOG_EXT        PKX_VOICEPRINTRECOG_EXT                  4          VALID
+CCUSER                         CCX_VOLAUTOCRETERIA_EXT        PKX_VOLAUTOCRETERIA_EXT                  4          VALID
+CCUSER                         CCX_WARNINFO_EXT               PKX_WARNINFO_EXT                         4          VALID
+CCUSER                         CCX_WARNINGINSTANCEINFO_EXT    PKX_WARNINGINSTANCEINFO_EXT              4          VALID
+CCUSER                         CCX_WBAPPLYDETAIL_EXT          PKX_WBAPPLYDETAIL_EXT                    4          VALID
+CCUSER                         CCX_WECHATINFO_EXT             PKX_WECHATINFO_EXT                       4          VALID
+CCUSER                         CCX_WEIBAOADVANCEPAYEE_EXT     PKX_WEIBAOADVANCEPAYEE_EXT               4          VALID
+CCUSER                         CCX_WEIBAOPUSHRECORD_EXT       PKX_WEIBAOPUSHRECORD_EXT                 4          VALID
+ABUSER                         AB_DOCUMENT                    PK_DOCUMENT                              4          VALID
+ABUSER                         ABTL_FITSFEERATETYPE_EXT       PKTL_FITSFEERATETYPE_EXT                 4          VALID
+ABUSER                         ABTL_FIXREPAIRTYPE_EXT         PKTL_FIXREPAIRTYPE_EXT                   4          VALID
+ABUSER                         ABTL_INDUSTRYTYPE_EXT          PKTL_INDUSTRYTYPE_EXT                    4          VALID
+ABUSER                         ABTL_INVOICETYPE_EXT           PKTL_INVOICETYPE_EXT                     4          VALID
+ABUSER                         ABTL_JURORGOFFICETYPE_EXT      PKTL_JURORGOFFICETYPE_EXT                4          VALID
+ABUSER                         ABTL_NEWENERGYTYPE_EXT         PKTL_NEWENERGYTYPE_EXT                   4          VALID
+ABUSER                         ABTL_PARTNERVENDORTYPE_EXT     PKTL_PARTNERVENDORTYPE_EXT               4          VALID
+ABUSER                         ABTL_REPAIRSHOPCHANNEL_EXT     PKTL_REPAIRSHOPCHANNEL_EXT               4          VALID
+ABUSER                         ABTL_REPAIRSHOPPARTNERTYPE_EXT PKTL_REPAIRSHOPPARTNERTYPE_EXT           4          VALID
+ABUSER                         ABTL_REPAIRSHOPTYPEALAD_EXT    PKTL_REPAIRSHOPTYPEALAD_EXT              4          VALID
+ABUSER                         ABTL_TAXRATE_EXT               PKTL_TAXRATE_EXT                         4          VALID
+ABUSER                         ABTL_TOTALLOSSPARTNERTYPE_EXT  PKTL_TOTALLOSSPARTNERTYPE_EXT            4          VALID
+ABUSER                         ABTL_TOTALLOSSSERVICETYPE_EXT  PKTL_TOTALLOSSSERVICETYPE_EXT            4          VALID
+ABUSER                         ABX_ADDRESSPARAM_EXT           PKX_ADDRESSPARAM_EXT                     4          VALID
+ABUSER                         ABX_ASPECTRULE_EXT             PKX_ASPECTRULE_EXT                       4          VALID
+ABUSER                         ABX_CSRABAUTOREPAIRSHOP_EXT    PKX_CSRABAUTOREPAIRSHOP_EXT              4          VALID
+ABUSER                         ABX_FITSFEERULE_EXT            PKX_FITSFEERULE_EXT                      4          VALID
+ABUSER                         ABX_FITSRULE_EXT               PKX_FITSRULE_EXT                         4          VALID
+ABUSER                         ABX_FIXREPAIRINFO_EXT          PKX_FIXREPAIRINFO_EXT                    4          VALID
+ABUSER                         ABX_HEALTHEVALUATORFEE_EXT     PKX_HEALTHEVALUATORFEE_EXT               4          VALID
+ABUSER                         ABX_JURISDICTIONPERSON_EXT     PKX_JURISDICTIONPERSON_EXT               4          VALID
+ABUSER                         ABX_MANPOWERRULE_EXT           PKX_MANPOWERRULE_EXT                     4          VALID
+ABUSER                         ABX_NEBRAND_EXT                PKX_NEBRAND_EXT                          4          VALID
+ABUSER                         ABX_ONLINECLAIMSERVICEFEE_EXT  PKX_ONLINECLAIMSERVICEFEE_EXT            4          VALID
+ABUSER                         ABX_PRICEEVALUATIONPERSON_EXT  PKX_PRICEEVALUATIONPERSON_EXT            4          VALID
+ABUSER                         ABX_REPAIRCUSTOMERSOURCE_EXT   PKX_REPAIRCUSTOMERSOURCE_EXT             4          VALID
+ABUSER                         ABX_STATECITYMAPPING_EXT       PKX_STATECITYMAPPING_EXT                 4          VALID
+ABUSER                         ABX_TOTALBUSINESSTYPEINFO_EXT  PKX_TOTALBUSINESSTYPEINFO_EXT            4          VALID
+CCUSER                         CCX_CARAGEMECHANISMSWITCH_EXT  PKX_CARAGEMECHANISMSWITCH_EXT            4          VALID
+CCUSER                         CCX_CARWEBHISTORY_EXT          PKX_CARWEBHISTORY_EXT                    4          VALID
+CCUSER                         CCX_CHANNELINTERFACE_EXT       PKX_CHANNELINTERFACE_EXT                 4          VALID
+CCUSER                         CCX_CHARGINGPILEINFO_EXT       PKX_CHARGINGPILEINFO_EXT                 4          VALID
+CCUSER                         CCX_CIRCANTIFRAUDINFO_EXT      PKX_CIRCANTIFRAUDINFO_EXT                4          VALID
+CCUSER                         CCX_CIRCCERTIFICATION_EXT      PKX_CIRCCERTIFICATION_EXT                4          VALID
+CCUSER                         CCX_CIRCCLAIMRISKDATA_EXT      PKX_CIRCCLAIMRISKDATA_EXT                4          VALID
+CCUSER                         CCX_CIRCFRANDDETAIL_EXT        PKX_CIRCFRANDDETAIL_EXT                  4          VALID
+CCUSER                         CCX_CIRCONLINECONFIGURE_EXT    PKX_CIRCONLINECONFIGURE_EXT              4          VALID
+CCUSER                         CCX_CIRCSUBROGATERETCHKD_EXT   PKX_CIRCSUBROGATERETCHKD_EXT             4          VALID
+CCUSER                         CCX_CIRCSUBROGATERETCHK_EXT    PKX_CIRCSUBROGATERETCHK_EXT              4          VALID
+CCUSER                         CCX_CIRCSUBROGATERETINFO_EXT   PKX_CIRCSUBROGATERETINFO_EXT             4          VALID
+CCUSER                         CCX_CIRCSUBROGATERET_EXT       PKX_CIRCSUBROGATERET_EXT                 4          VALID
+CCUSER                         CCX_CIRCTHIRDVEHICLEINFO_EXT   PKX_CIRCTHIRDVEHICLEINFO_EXT             4          VALID
+CCUSER                         CCX_CLAIMADDTIONALINFO_EXT     PKX_CLAIMADDTIONALINFO_EXT               4          VALID
+CCUSER                         CCX_CLAIMALIPAYBIZINFO_EXT     PKX_CLAIMALIPAYBIZINFO_EXT               4          VALID
+CCUSER                         CCX_CLAIMAUTOCLOSECRETERIA     PKX_CLAIMAUTOCLOSECRETERIA               4          VALID
+CCUSER                         CCX_CLAIMAUTOCLOSEEXPOSURE     PKX_CLAIMAUTOCLOSEEXPOSURE               4          VALID
+CCUSER                         CCX_CLAIMAUTOCLOSELOSSCAUSE    PKX_CLAIMAUTOCLOSELOSSCAUSE              4          VALID
+CCUSER                         CCX_CLAIMAUTOMATICCLOSEREQDOC  PKX_CLAIMAUTOMATICCLOSEREQDOC            4          VALID
+CCUSER                         CCX_CLAIMAUTOMATICRANDOM_EXT   PKX_CLAIMAUTOMATICRANDOM_EXT             4          VALID
+CCUSER                         CCX_CLAIMAUTOUSAGETYPE_EXT     PKX_CLAIMAUTOUSAGETYPE_EXT               4          VALID
+CCUSER                         CCX_CLAIMBIZINFO_EXT           PKX_CLAIMBIZINFO_EXT                     4          VALID
+CCUSER                         CCX_CLAIMCLOSEBATCHINFO_EXT    PKX_CLAIMCLOSEBATCHINFO_EXT              4          VALID
+CCUSER                         CCX_CLAIMCLOSECRETERIANEW_EXT  PKX_CLAIMCLOSECRETERIANEW_EXT            4          VALID
+CCUSER                         CCX_CLAIMORGANIZATION_EXT      PKX_CLAIMORGANIZATION_EXT                4          VALID
+CCUSER                         CCX_CLAIMSURVEYSYNC_EXT        PKX_CLAIMSURVEYSYNC_EXT                  4          VALID
+CCUSER                         CCX_CONTACTCHECKRESULT_EXT     PKX_CONTACTCHECKRESULT_EXT               4          VALID
+CCUSER                         CCX_CONTACTREGISTERRESULT_EXT  PKX_CONTACTREGISTERRESULT_EXT            4          VALID
+CCUSER                         CCX_COURTACCIDENTINFO_EXT      PKX_COURTACCIDENTINFO_EXT                4          VALID
+CCUSER                         CCX_COURTAGENTINFO_EXT         PKX_COURTAGENTINFO_EXT                   4          VALID
+CCUSER                         CCX_COURTBASICINFO_EXT         PKX_COURTBASICINFO_EXT                   4          VALID
+CCUSER                         CCX_COURTCASEINFO_EXT          PKX_COURTCASEINFO_EXT                    4          VALID
+CCUSER                         CCX_COURTCOMPENSATIONINFO_EXT  PKX_COURTCOMPENSATIONINFO_EXT            4          VALID
+CCUSER                         CCX_COURTDEPENDENTINFO_EXT     PKX_COURTDEPENDENTINFO_EXT               4          VALID
+CCUSER                         CCX_COURTDISABILITYLEVEL_EXT   PKX_COURTDISABILITYLEVEL_EXT             4          VALID
+CCUSER                         CCX_COURTFEEINFO_EXT           PKX_COURTFEEINFO_EXT                     4          VALID
+CCUSER                         CCX_COURTFILEINFO_EXT          PKX_COURTFILEINFO_EXT                    4          VALID
+CCUSER                         CCX_COURTIDENTIFYINFO_EXT      PKX_COURTIDENTIFYINFO_EXT                4          VALID
+CCUSER                         CCX_COURTINJUREINFO_EXT        PKX_COURTINJUREINFO_EXT                  4          VALID
+CCUSER                         CCX_COURTJUDICIALCONFIRM_EXT   PKX_COURTJUDICIALCONFIRM_EXT             4          VALID
+CCUSER                         CCX_COURTLMEDIATION_EXT        PKX_COURTLMEDIATION_EXT                  4          VALID
+CCUSER                         CCX_COURTMEDIATIONINFO_EXT     PKX_COURTMEDIATIONINFO_EXT               4          VALID
+CCUSER                         CCX_COURTNOTICE_EXT            PKX_COURTNOTICE_EXT                      4          VALID
+CCUSER                         CCX_COURTONLINEREGINFO_EXT     PKX_COURTONLINEREGINFO_EXT               4          VALID
+CCUSER                         CCX_COURTPARTYINFO_EXT         PKX_COURTPARTYINFO_EXT                   4          VALID
+CCUSER                         CCX_COURTREGISTINFO_EXT        PKX_COURTREGISTINFO_EXT                  4          VALID
+CCUSER                         CCX_COURTRETURNINFO_EXT        PKX_COURTRETURNINFO_EXT                  4          VALID
+CCUSER                         CCX_DASHBOARDHISTORY_EXT       PKX_DASHBOARDHISTORY_EXT                 4          VALID
+CCUSER                         CCX_DIRECTFEECOVERAGE_EXT      PKX_DIRECTFEECOVERAGE_EXT                4          VALID
+CCUSER                         CCX_DISABLEBASISSUBTYPE_EXT    PKX_DISABLEBASISSUBTYPE_EXT              4          VALID
+CCUSER                         CCX_DOCUMENTBIZ_EXT            PKX_DOCUMENTBIZ_EXT                      4          VALID
+CCUSER                         CCX_DOCUMENTMISS_EXT           PKX_DOCUMENTMISS_EXT                     4          VALID
+CCUSER                         CCX_DRIVEDATEINFO_EXT          PKX_DRIVEDATEINFO_EXT                    4          VALID
+CCUSER                         CCX_DYNAMICRATION_EXT          PKX_DYNAMICRATION_EXT                    4          VALID
+CCUSER                         CCX_EARLYWARNINFO_EXT          PKX_EARLYWARNINFO_EXT                    4          VALID
+CCUSER                         CCX_EBAOAUTOREPAIRSHOP_EXT     PKX_EBAOAUTOREPAIRSHOP_EXT               4          VALID
+CCUSER                         CCX_ELECTRONICDOCUMENT         PKX_ELECTRONICDOCUMENT                   4          VALID
+CCUSER                         CCX_ELECTRONICINCIDENT         PKX_ELECTRONICINCIDENT                   4          VALID
+CCUSER                         CCX_EXCEPTIONSTATISTICS_EXT    PKX_EXCEPTIONSTATISTICS_EXT              4          VALID
+CCUSER                         CCX_FEEDBACK_EXT               PKX_FEEDBACK_EXT                         4          VALID
+CCUSER                         CCX_FINANCEPAYMENTSPLIT_EXT    PKX_FINANCEPAYMENTSPLIT_EXT              4          VALID
+CCUSER                         CCX_FIXDETAILOFLOSS_EXT        PKX_FIXDETAILOFLOSS_EXT                  4          VALID
+CCUSER                         CCX_FIXEDREFERENCE_EXT         PKX_FIXEDREFERENCE_EXT                   4          VALID
+CCUSER                         CCX_FIXEDTASKINFO_EXT          PKX_FIXEDTASKINFO_EXT                    4          VALID
+CCUSER                         CCX_FIXEDTHRESHOLD_EXT         PKX_FIXEDTHRESHOLD_EXT                   4          VALID
+CCUSER                         CCX_FIXPROREPAIRINFO_EXT       PKX_FIXPROREPAIRINFO_EXT                 4          VALID
+CCUSER                         CCX_FIXREPAIRINFO_EXT          PKX_FIXREPAIRINFO_EXT                    4          VALID
+CCUSER                         CCX_FIXREPAIRTYPEHINTINFO_EXT  PKX_FIXREPAIRTYPEHINTINFO_EXT            4          VALID
+CCUSER                         CCX_FRAUDTYPE_EXT              PKX_FRAUDTYPE_EXT                        4          VALID
+CCUSER                         CCX_FRAUDWARNINGCONFIG_EXT     PKX_FRAUDWARNINGCONFIG_EXT               4          VALID
+CCUSER                         CCX_GDANTIFRAUDRISKRESULT_EXT  PKX_GDANTIFRAUDRISKRESULT_EXT            4          VALID
+CCUSER                         CCX_GDANTIFRAUDSEARCHINFO_EXT  PKX_GDANTIFRAUDSEARCHINFO_EXT            4          VALID
+CCUSER                         CCX_GENERALGROUPSHIFT_EXT      PKX_GENERALGROUPSHIFT_EXT                4          VALID
+CCUSER                         CCX_GENERALUSERSHIFTINFOS_EXT  PKX_GENERALUSERSHIFTINFOS_EXT            4          VALID
+CCUSER                         CCX_GPSDISTANCE_EXT            PKX_GPSDISTANCE_EXT                      4          VALID
+CCUSER                         CCX_GPSDOCUMENTINFO_EXT        PKX_GPSDOCUMENTINFO_EXT                  4          VALID
+CCUSER                         CCX_GRANDAUTOREPAIRSHOP_EXT    PKX_GRANDAUTOREPAIRSHOP_EXT              4          VALID
+CCUSER                         CCX_GROUPAPPROVALPARTS_EXT     PKX_GROUPAPPROVALPARTS_EXT               4          VALID
+CCUSER                         CCX_GROUPSHIFT_EXT             PKX_GROUPSHIFT_EXT                       4          VALID
+CCUSER                         CCX_GROUPSMSSENDCONFIG_EXT     PKX_GROUPSMSSENDCONFIG_EXT               4          VALID
+CCUSER                         CCX_GROUPUSERAUTHORIZA_EXT     PKX_GROUPUSERAUTHORIZA_EXT               4          VALID
+CCUSER                         CCX_HUMANELECTRONICDOCUMENT    PKX_HUMANELECTRONICDOCUMENT              4          VALID
+CCUSER                         CCX_HUMANPARTYINFO_EXT         PKX_HUMANPARTYINFO_EXT                   4          VALID
+CCUSER                         CCX_HUMANSIGNINFO_EXT          PKX_HUMANSIGNINFO_EXT                    4          VALID
+CCUSER                         CCX_IDTYPERELATIONBYPARTY_EXT  PKX_IDTYPERELATIONBYPARTY_EXT            4          VALID
+CCUSER                         CCX_INJURYCOMPENSATION_EXT     PKX_INJURYCOMPENSATION_EXT               4          VALID
+CCUSER                         CCX_INJURYTRACKCLAIMINFO       PKX_INJURYTRACKCLAIMINFO                 4          VALID
+CCUSER                         CCX_INJURYTRACKMATTERINFO_EXT  PKX_INJURYTRACKMATTERINFO_EXT            4          VALID
+CCUSER                         CCX_INJURYTRACKRULE_EXT        PKX_INJURYTRACKRULE_EXT                  4          VALID
+CCUSER                         CCX_INVOICEINFO_EXT            PKX_INVOICEINFO_EXT                      4          VALID
+CCUSER                         CCX_INVOICERECYCLECONFIG_EXT   PKX_INVOICERECYCLECONFIG_EXT             4          VALID
+CCUSER                         CCX_INVOICERECYCLEREGION_EXT   PKX_INVOICERECYCLEREGION_EXT             4          VALID
+CCUSER                         CCX_INVOICERECYCLE_EXT         PKX_INVOICERECYCLE_EXT                   4          VALID
+CCUSER                         CCX_INVOICERELATION_EXT        PKX_INVOICERELATION_EXT                  4          VALID
+CCUSER                         CCX_INVOICESETINFO_EXT         PKX_INVOICESETINFO_EXT                   4          VALID
+CCUSER                         CCX_INVOICESETTAXITEM_EXT      PKX_INVOICESETTAXITEM_EXT                4          VALID
+CCUSER                         CCX_INVOICESET_EXT             PKX_INVOICESET_EXT                       4          VALID
+CCUSER                         CCX_INVOICE_EXT                PKX_INVOICE_EXT                          4          VALID
+CCUSER                         CCX_JURISDICTIONPERSON_EXT     PKX_JURISDICTIONPERSON_EXT               4          VALID
+CCUSER                         CCX_KCYPCERTIFICATEINFO_EXT    PKX_KCYPCERTIFICATEINFO_EXT              4          VALID
+CCUSER                         CCTL_CAREERTYPE_EXT            PKTL_CAREERTYPE_EXT                      4          VALID
+CCUSER                         CCTL_CATASTROPHEIDTYPE_EXT     PKTL_CATASTROPHEIDTYPE_EXT               4          VALID
+CCUSER                         CCTL_CIRCCNCOMPANYCODE_EXT     PKTL_CIRCCNCOMPANYCODE_EXT               4          VALID
+CCUSER                         CCX_LAWACTSYSASSIGNDATA_EXT    PKX_LAWACTSYSASSIGNDATA_EXT              4          VALID
+CCUSER                         CCX_LAWASSIGNDETAILDATA_EXT    PKX_LAWASSIGNDETAILDATA_EXT              4          VALID
+CCUSER                         CCX_LAWWORKSSCORE_EXT          PKX_LAWWORKSSCORE_EXT                    4          VALID
+CCUSER                         CCX_LAWYERSCORE_EXT            PKX_LAWYERSCORE_EXT                      4          VALID
+CCUSER                         CCX_LCPTOTALLOSSINFO_EXT       PKX_LCPTOTALLOSSINFO_EXT                 4          VALID
+CCUSER                         CCX_LOSSOBJECTIMPORT_EXT       PKX_LOSSOBJECTIMPORT_EXT                 4          VALID
+CCUSER                         CCX_LOSSOBJECT_EXT             PKX_LOSSOBJECT_EXT                       4          VALID
+CCUSER                         CCX_LOSSPART                   PKX_LOSSPART                             4          VALID
+CCUSER                         CCX_LOWCASEHELPERREASON_EXT    PKX_LOWCASEHELPERREASON_EXT              4          VALID
+CCUSER                         CCX_LOWSEGMENTCAUSE_EXT        PKX_LOWSEGMENTCAUSE_EXT                  4          VALID
+CCUSER                         CCX_MOLECULEDIAGNOSIS_EXT      PKX_MOLECULEDIAGNOSIS_EXT                4          VALID
+CCUSER                         CCX_NATIONRELATIONBYPARTY_EXT  PKX_NATIONRELATIONBYPARTY_EXT            4          VALID
+CCUSER                         CCX_NEBRAND_EXT                PKX_NEBRAND_EXT                          4          VALID
+CCUSER                         CCX_NEWEQUIPMENT_EXT           PKX_NEWEQUIPMENT_EXT                     4          VALID
+CCUSER                         CCX_NEWINJURYSWITCHHIS_EXT     PKX_NEWINJURYSWITCHHIS_EXT               4          VALID
+CCUSER                         CCX_NEWINJURYSWITCH_EXT        PKX_NEWINJURYSWITCH_EXT                  4          VALID
+CCUSER                         CCX_NEWVEHICLESWITCHHIS_EXT    PKX_NEWVEHICLESWITCHHIS_EXT              4          VALID
+CCUSER                         CCX_NEWVEHICLESWITCH_EXT       PKX_NEWVEHICLESWITCH_EXT                 4          VALID
+CCUSER                         CCX_NOTICE_EXT                 PKX_NOTICE_EXT                           4          VALID
+CCUSER                         CCX_NOTIFICATIONTEMPLATE_EXT   PKX_NOTIFICATIONTEMPLATE_EXT             4          VALID
+CCUSER                         CCX_OCRVEHICLETYPE_EXT         PKX_OCRVEHICLETYPE_EXT                   4          VALID
+CCUSER                         CCX_OC_CONNECTEDINFO_EXT       PKX_OC_CONNECTEDINFO_EXT                 4          VALID
+CCUSER                         CCX_OC_REPORTINGINFO_EXT       PKX_OC_REPORTINGINFO_EXT                 4          VALID
+CCUSER                         CCX_OLDCLAIMINJURYIDCOUNT_EXT  PKX_OLDCLAIMINJURYIDCOUNT_EXT            4          VALID
+CCUSER                         CCX_OLDCLAIMVINCOUNT_EXT       PKX_OLDCLAIMVINCOUNT_EXT                 4          VALID
+CCUSER                         CCX_ONLINECLAIMSERVICEFEE_EXT  PKX_ONLINECLAIMSERVICEFEE_EXT            4          VALID
+CCUSER                         CCX_ONLINESEGMENTCRITERIA_EXT  PKX_ONLINESEGMENTCRITERIA_EXT            4          VALID
+CCUSER                         CCX_ORTRUTHVERIFICATION_EXT    PKX_ORTRUTHVERIFICATION_EXT              4          VALID
+CCUSER                         CCX_OTHERSYSSAVEVERSION_EXT    PKX_OTHERSYSSAVEVERSION_EXT              4          VALID
+CCUSER                         CCX_PARENTOR                   PKX_PARENTOR                             4          VALID
+CCUSER                         CCX_PARTRISK_EXT               PKX_PARTRISK_EXT                         4          VALID
+CCUSER                         CCX_PAYEARLYWARNINFO_EXT       PKX_PAYEARLYWARNINFO_EXT                 4          VALID
+CCUSER                         CCX_PAYEEINCIDENT_EXT          PKX_PAYEEINCIDENT_EXT                    4          VALID
+CCUSER                         CCX_PAYEE_EXT                  PKX_PAYEE_EXT                            4          VALID
+CCUSER                         CCX_PAYINFO_EXT                PKX_PAYINFO_EXT                          4          VALID
+CCUSER                         CCX_PAYLOSSCALCULATION_EXT     PKX_PAYLOSSCALCULATION_EXT               4          VALID
+CCUSER                         CCX_PHOTODATA_EXT              PKX_PHOTODATA_EXT                        4          VALID
+CCUSER                         CCX_PLATEDATA_EXT              PKX_PLATEDATA_EXT                        4          VALID
+CCUSER                         CCX_POLICYCHANNEL_EXT          PKX_POLICYCHANNEL_EXT                    4          VALID
+CCUSER                         CCX_POLICYSOURCE_EXT           PKX_POLICYSOURCE_EXT                     4          VALID
+CCUSER                         CCX_POLICYVALUEADDSERVICE_EXT  PKX_POLICYVALUEADDSERVICE_EXT            4          VALID
+CCUSER                         CCX_PREPAYINFO_EXT             PKX_PREPAYINFO_EXT                       4          VALID
+CCUSER                         CCX_PRICEASSESSORGINFO_EXT     PKX_PRICEASSESSORGINFO_EXT               4          VALID
+CCUSER                         CCX_PSPHOTORULE_EXT            PKX_PSPHOTORULE_EXT                      4          VALID
+CCUSER                         CCX_RATEINFO_EXT               PKX_RATEINFO_EXT                         4          VALID
+CCUSER                         CCX_REASSESSRULEVALIDATE_EXT   PKX_REASSESSRULEVALIDATE_EXT             4          VALID
+CCUSER                         CCX_REASSRULERECORD_EXT        PKX_REASSRULERECORD_EXT                  4          VALID
+CCUSER                         CCX_RECOVERYBANKINFO_EXT       PKX_RECOVERYBANKINFO_EXT                 4          VALID
+CCUSER                         CCX_REINSURANCERETURNDATA_EXT  PKX_REINSURANCERETURNDATA_EXT            4          VALID
+CCUSER                         CCX_REPAIRCUSTOMERSOURCE_EXT   PKX_REPAIRCUSTOMERSOURCE_EXT             4          VALID
+CCUSER                         CCX_REPAIRSHOPSSCORE_EXT       PKX_REPAIRSHOPSSCORE_EXT                 4          VALID
+CCUSER                         CCX_RESOURCESTOREHISTORY_EXT   PKX_RESOURCESTOREHISTORY_EXT             4          VALID
+CCUSER                         CCX_RESOURCESTORE_EXT          PKX_RESOURCESTORE_EXT                    4          VALID
+CCUSER                         CCX_RISKCAR_EXT                PKX_RISKCAR_EXT                          4          VALID
+CCUSER                         CCX_RISKCONTROLVALIDATE_EXT    PKX_RISKCONTROLVALIDATE_EXT              4          VALID
+CCUSER                         CCX_RISKINFOSZ_EXT             PKX_RISKINFOSZ_EXT                       4          VALID
+CCUSER                         CCX_RISKINFO_EXT               PKX_RISKINFO_EXT                         4          VALID
+CCUSER                         CCX_RISKORGAN_EXT              PKX_RISKORGAN_EXT                        4          VALID
+CCUSER                         CCX_RISKPERSONA_EXT            PKX_RISKPERSONA_EXT                      4          VALID
+CCUSER                         CCX_RISKPHONE_EXT              PKX_RISKPHONE_EXT                        4          VALID
+CCUSER                         CCX_SAVELABELREGIONDATA_EXT    PKX_SAVELABELREGIONDATA_EXT              4          VALID
+CCUSER                         CCX_SCOREITEMCONFIG_EXT        PKX_SCOREITEMCONFIG_EXT                  4          VALID
+CCUSER                         CCX_SCORERECORDHISTORY_EXT     PKX_SCORERECORDHISTORY_EXT               4          VALID
+CCUSER                         CCX_SCORERECORD_EXT            PKX_SCORERECORD_EXT                      4          VALID
+CCUSER                         CCX_SCOREVALUEITEM_EXT         PKX_SCOREVALUEITEM_EXT                   4          VALID
+CCUSER                         CCX_SEGMENTATIONLOSSFORLOW     PKX_SEGMENTATIONLOSSFORLOW               4          VALID
+CCUSER                         CCX_SEGMENTATIONLOSSFORLOWSUB  PKX_SEGMENTATIONLOSSFORLOWSUB            4          VALID
+CCUSER                         CCX_SEGMENTATIONREGION_EXT     PKX_SEGMENTATIONREGION_EXT               4          VALID
+CCUSER                         CCX_SEGMENTATIONWEATHER_EXT    PKX_SEGMENTATIONWEATHER_EXT              4          VALID
+CCUSER                         CCX_SENDINTERFACE_EXT          PKX_SENDINTERFACE_EXT                    4          VALID
+CCUSER                         CCX_SENTRISERVICERECORD_EXT    PKX_SENTRISERVICERECORD_EXT              4          VALID
+CCUSER                         CCX_SHAOXINGREPORTINFO_EXT     PKX_SHAOXINGREPORTINFO_EXT               4          VALID
+CCUSER                         CCX_SINGLEINCIDENTCONFIG_EXT   PKX_SINGLEINCIDENTCONFIG_EXT             4          VALID
+CCUSER                         CCX_SITRIGGERINFO_EXT          PKX_SITRIGGERINFO_EXT                    4          VALID
+CCUSER                         CCX_SITRIGGER_EXT              PKX_SITRIGGER_EXT                        4          VALID
+CCUSER                         CCX_SIUINVESTGATIONHIS_EXT     PKX_SIUINVESTGATIONHIS_EXT               4          VALID
+CCUSER                         CCX_SMSINFORMCONFIGURE_EXT     PKX_SMSINFORMCONFIGURE_EXT               4          VALID
+CCUSER                         CCX_SMSINFORMCONFIG_EXT        PKX_SMSINFORMCONFIG_EXT                  4          VALID
+CCUSER                         CCX_SNAINFO_EXT                PKX_SNAINFO_EXT                          4          VALID
+CCUSER                         CCX_STATERELATIONBYPARTY_EXT   PKX_STATERELATIONBYPARTY_EXT             4          VALID
+CCUSER                         CCX_TENGXINBID_EXT             PKX_TENGXINBID_EXT                       4          VALID
+CCUSER                         CCX_TENGXINQUOINFO_EXT         PKX_TENGXINQUOINFO_EXT                   4          VALID
+CCUSER                         CCX_THIRDCHANNELCLAIMINFO_EXT  PKX_THIRDCHANNELCLAIMINFO_EXT            4          VALID
+CCUSER                         CCX_THIRDINDEMNITYRECORD_EXT   PKX_THIRDINDEMNITYRECORD_EXT             4          VALID
+CCUSER                         CCX_THIRDPARTYCHANNEL_EXT      PKX_THIRDPARTYCHANNEL_EXT                4          VALID
+CCUSER                         CCX_THIRDPARTYINFO_EXT         PKX_THIRDPARTYINFO_EXT                   4          VALID
+CCUSER                         CCX_THIRDPARTYINTERFACE_EXT    PKX_THIRDPARTYINTERFACE_EXT              4          VALID
+CCUSER                         CCX_TOTALLOSSCOVERAGES_EXT     PKX_TOTALLOSSCOVERAGES_EXT               4          VALID
+CCUSER                         CCX_TOTALLOSSTOWINGPERSON_EXT  PKX_TOTALLOSSTOWINGPERSON_EXT            4          VALID
+CCUSER                         CCX_USERAUTHORIZATION_EXT      PKX_USERAUTHORIZATION_EXT                4          VALID
+CCUSER                         CCX_USERLABELREGIONDATA_EXT    PKX_USERLABELREGIONDATA_EXT              4          VALID
+CCUSER                         CCX_USERSHIFTINFOS_EXT         PKX_USERSHIFTINFOS_EXT                   4          VALID
+CCUSER                         CCX_USERWKTIMESTATS_EXT        PKX_USERWKTIMESTATS_EXT                  4          VALID
+CCUSER                         CCTL_DOCSUBSECTIONSORT_EXT     PKTL_DOCSUBSECTIONSORT_EXT               4          VALID
+CCUSER                         CCTL_DOCUMENTCHANNELTYPE_EXT   PKTL_DOCUMENTCHANNELTYPE_EXT             4          VALID
+CCUSER                         CCTL_DOCUMENTSECTIONSORT_EXT   PKTL_DOCUMENTSECTIONSORT_EXT             4          VALID
+CCUSER                         CCTL_DOCUMENTSHOWTYPE_EXT      PKTL_DOCUMENTSHOWTYPE_EXT                4          VALID
+CCUSER                         CCTL_DOUBTCASETYPE_EXT         PKTL_DOUBTCASETYPE_EXT                   4          VALID
+CCUSER                         CCTL_EINVOICESTATE_EXT         PKTL_EINVOICESTATE_EXT                   4          VALID
+CCUSER                         CCTL_ELECTRONICDOCUMENT_EXT    PKTL_ELECTRONICDOCUMENT_EXT              4          VALID
+CCUSER                         CCTL_ELECTRONICINCIDENT_EXT    PKTL_ELECTRONICINCIDENT_EXT              4          VALID
+CCUSER                         CCTL_ELEDOCUMENTTYPE_EXT       PKTL_ELEDOCUMENTTYPE_EXT                 4          VALID
+CCUSER                         CCTL_EMAILSENDTYPE_EXT         PKTL_EMAILSENDTYPE_EXT                   4          VALID
+CCUSER                         CCTL_ENABLEMENTTYPE_EXT        PKTL_ENABLEMENTTYPE_EXT                  4          VALID
+CCUSER                         CCTL_EXCUTEDTYPE_EXT           PKTL_EXCUTEDTYPE_EXT                     4          VALID
+CCUSER                         CCTL_FEEDBACKRATE_EXT          PKTL_FEEDBACKRATE_EXT                    4          VALID
+CCUSER                         CCTL_FINANCESYSPAYMENTTYPE_EXT PKTL_FINANCESYSPAYMENTTYPE_EXT           4          VALID
+CCUSER                         CCTL_FIXREPAIRSUBTYPE_EXT      PKTL_FIXREPAIRSUBTYPE_EXT                4          VALID
+CCUSER                         CCTL_FIXREPAIRTYPE_EXT         PKTL_FIXREPAIRTYPE_EXT                   4          VALID
+CCUSER                         CCTL_FLEXIBLEPAYMENTSTATUS     PKTL_FLEXIBLEPAYMENTSTATUS               4          VALID
+CCUSER                         CCTL_FLEXIBLEPAYMENTTYPE_EXT   PKTL_FLEXIBLEPAYMENTTYPE_EXT             4          VALID
+CCUSER                         CCTL_FLOODINGDURATION_EXT      PKTL_FLOODINGDURATION_EXT                4          VALID
+CCUSER                         CCTL_FRAUDCHANNEL_EXT          PKTL_FRAUDCHANNEL_EXT                    4          VALID
+CCUSER                         CCTL_FRAUDTYPE_EXT             PKTL_FRAUDTYPE_EXT                       4          VALID
+CCUSER                         CCTL_FUELTYPE_EXT              PKTL_FUELTYPE_EXT                        4          VALID
+CCUSER                         CCTL_GOODCUSTOMERS_EXT         PKTL_GOODCUSTOMERS_EXT                   4          VALID
+CCUSER                         CCTL_GRANDINTERFACETYPE_EXT    PKTL_GRANDINTERFACETYPE_EXT              4          VALID
+CCUSER                         CCTL_HUMANELECTRONICDOCUMENT   PKTL_HUMANELECTRONICDOCUMENT             4          VALID
+CCUSER                         CCTL_SIUHISTORYTYPE_EXT        PKTL_SIUHISTORYTYPE_EXT                  4          VALID
+CCUSER                         CCTL_SMSINFORMTYPE             PKTL_SMSINFORMTYPE                       4          VALID
+CCUSER                         CCTL_SMSSENDTYPE_EXT           PKTL_SMSSENDTYPE_EXT                     4          VALID
+CCUSER                         CCTL_SOURCEFLAG_EXT            PKTL_SOURCEFLAG_EXT                      4          VALID
+CCUSER                         CCTL_TAXAUDITSTATUS_EXT        PKTL_TAXAUDITSTATUS_EXT                  4          VALID
+CCUSER                         CCTL_TAXPAYMENTTYPE_EXT        PKTL_TAXPAYMENTTYPE_EXT                  4          VALID
+CCUSER                         CCTL_TAXRATELIST_EXT           PKTL_TAXRATELIST_EXT                     4          VALID
+CCUSER                         CCTL_TEMPLATECATEGORY_EXT      PKTL_TEMPLATECATEGORY_EXT                4          VALID
+CCUSER                         CCTL_TEMPLATEUSETYPE_EXT       PKTL_TEMPLATEUSETYPE_EXT                 4          VALID
+CCUSER                         CCTL_THIRDPARTYINTERFACE_EXT   PKTL_THIRDPARTYINTERFACE_EXT             4          VALID
+CCUSER                         CCTL_THIRDPARTYSTATE_EXT       PKTL_THIRDPARTYSTATE_EXT                 4          VALID
+CCUSER                         CCTL_TOTALLOSSRECOVERYTYPE_EXT PKTL_TOTALLOSSRECOVERYTYPE_EXT           4          VALID
+
+428 rows selected.
+
+]]></DBINDEXPARALLEL>
+<DBSEQUENCE><![CDATA[
+
+SEQUENCE_OWNER  CNT_LESS_200
+--------------- ------------
+CCUSER                    10
+GW_TRANSFER_OPR            7
+ABUSER                     4
+QUEST_PA                   2
+GW_ARC_OPR                 2
+
+5 rows selected.
+
+]]></DBSEQUENCE>
+<DB_SEQ_USAGE><![CDATA[
+
+no rows selected
+
+]]></DB_SEQ_USAGE>
+<DBSTATUS>
+
+DB_UNIQUE_NAME       OPEN_MODE            LOG_MODE     PROTECTION_LEVEL     DATABASE_ROLE        SWITCHOVER_STATUS
+-------------------- -------------------- ------------ -------------------- -------------------- --------------------
+M101R01S             READ WRITE           ARCHIVELOG   MAXIMUM PERFORMANCE  PRIMARY              NOT ALLOWED
+
+1 row selected.
+
+</DBSTATUS>
+<DBOPTION><![CDATA[
+
+OPTION
+--------------------------------------------------
+Partitioning
+Objects
+Real Application Clusters
+Advanced replication
+Bit-mapped indexes
+Connection multiplexing
+Connection pooling
+Database queuing
+Incremental backup and recovery
+Instead-of triggers
+Parallel backup and recovery
+Parallel execution
+Parallel load
+Point-in-time tablespace recovery
+Fine-grained access control
+Proxy authentication/authorization
+Change Data Capture
+Plan Stability
+Online Index Build
+Coalesce Index
+Managed Standby
+Materialized view rewrite
+Database resource manager
+Spatial
+Automatic Storage Management
+Export transportable tablespaces
+Transparent Application Failover
+Fast-Start Fault Recovery
+Sample Scan
+Duplexed backups
+Java
+OLAP Window Functions
+Block Media Recovery
+Fine-grained Auditing
+Application Role
+Enterprise User Security
+Oracle Data Guard
+Oracle Label Security
+OLAP
+Basic Compression
+Join index
+Trial Recovery
+Advanced Analytics
+Online Redefinition
+Streams Capture
+File Mapping
+Block Change Tracking
+Flashback Table
+Flashback Database
+Transparent Data Encryption
+Backup Encryption
+Unused Block Compression
+Oracle Database Vault
+Result Cache
+SQL Plan Management
+SecureFiles Encryption
+Real Application Testing
+Flashback Data Archive
+DICOM
+Active Data Guard
+Server Flash Cache
+Advanced Compression
+XStream
+Deferred Segment Creation
+Unified Auditing
+Management Database
+I/O Server
+ASM Proxy Instance
+Exadata Discovery
+Data Mining
+Global Data Services
+Adaptive Execution Plans
+Table Clustering
+Zone Maps
+Real Application Security
+Privilege Analysis
+Data Redaction
+Cross Transportable Backups
+Cache Fusion Lock Accelerator
+Snapshot time recovery
+Heat Map
+Automatic Data Optimization
+
+82 rows selected.
+
+]]></DBOPTION>
+<DBFEATURES><![CDATA[
+
+NAME                           VERSION         LAST_USAGE_DATE      DESCRIPTION
+------------------------------ --------------- -------------------- ----------------------------------------
+Client Identifier              12.1.0.1.0      2024-03-30 00:28:20  Application User Proxy Authentication: C
+                                                                    lient Identifier is used at this specifi
+                                                                    c time.
+
+Clusterwide Global Transaction 12.1.0.1.0      2024-03-30 00:28:20  Clusterwide Global Transactions is being
+s                                                                    used.
+
+Character Semantics            12.1.0.1.0      2024-03-30 00:28:20  Character length semantics is used in Or
+                                                                    acle Database
+
+Character Set                  12.1.0.1.0      2024-03-30 00:28:20  Character set is used in Oracle Database
+MTTR Advisor                   12.1.0.1.0      2024-03-30 00:28:20  Mean Time to Recover Advisor is enabled.
+Parallel SQL DDL Execution     12.1.0.1.0      2024-03-30 00:28:20  Parallel SQL DDL Execution is being used
+                                                                    .
+
+Parallel SQL Query Execution   12.1.0.1.0      2024-03-30 00:28:20  Parallel SQL Query Execution is being us
+                                                                    ed.
+
+Partitioning (system)          12.1.0.1.0      2024-03-30 00:28:20  Oracle Partitioning option is being used
+                                                                     - there is at least one partitioned obj
+                                                                    ect created.
+
+Partitioning (user)            12.1.0.1.0      2024-03-30 00:28:20  Oracle Partitioning option is being used
+                                                                     - there is at least one user partitione
+                                                                    d object created.
+
+Real Application Clusters (RAC 12.1.0.1.0      2024-03-30 00:28:20  Real Application Clusters (RAC) is confi
+)                                                                   gured.
+
+Recovery Area                  12.1.0.1.0      2024-03-30 00:28:20  The recovery area is configured.
+Logfile Multiplexing           12.1.0.1.0      2024-03-30 00:28:20  Multiple members are used in a single lo
+                                                                    g file group
+
+Internode Parallel Execution   12.1.0.1.0      2024-03-30 00:28:20  Internode Parallel Execution is being us
+                                                                    ed.
+
+Deferred Segment Creation      12.1.0.1.0      2024-03-30 00:28:20  Deferred Segment Creation is being used
+Locally Managed Tablespaces (s 12.1.0.1.0      2024-03-30 00:28:20  There exists tablespaces that are locall
+ystem)                                                              y managed in the database.
+
+Locally Managed Tablespaces (u 12.1.0.1.0      2024-03-30 00:28:20  There exists user tablespaces that are l
+ser)                                                                ocally managed in the database.
+
+Automatic SGA Tuning           12.1.0.1.0      2024-03-30 00:28:20  Automatic SGA Tuning is enabled.
+Unified Audit                  12.1.0.1.0      2024-03-30 00:28:20  Unified Audit in use.
+Automatic Segment Space Manage 12.1.0.1.0      2024-03-30 00:28:20  Extents of locally managed tablespaces a
+ment (system)                                                       re managed automatically by Oracle.
+
+Automatic Segment Space Manage 12.1.0.1.0      2024-03-30 00:28:20  Extents of locally managed user tablespa
+ment (user)                                                         ces are managed automatically by Oracle.
+
+Automatic SQL Execution Memory 12.1.0.1.0      2024-03-30 00:28:20  Sizing of work areas for all dedicated s
+                                                                    essions (PGA) is automatic.
+
+Automatic Storage Management   12.1.0.1.0      2024-03-30 00:28:20  Automatic Storage Management has been en
+                                                                    abled
+
+Automatic Undo Management      12.1.0.1.0      2024-03-30 00:28:20  Oracle automatically manages undo data u
+                                                                    sing an UNDO tablespace.
+
+SQL Plan Directive             12.1.0.1.0      2024-03-30 00:28:20  Sql plan directive has been used
+Result Cache                   12.1.0.1.0      2024-03-30 00:28:20  The Result Cache feature has been used.
+SecureFiles (user)             12.1.0.1.0      2024-03-30 00:28:20  SecureFiles is being used
+SecureFiles (system)           12.1.0.1.0      2024-03-30 00:28:20  SecureFiles is being used by system user
+                                                                    s
+
+Heat Map                       12.1.0.1.0      2024-03-30 00:28:20  Heat Map is used
+Oracle Java Virtual Machine (u 12.1.0.1.0      2024-03-30 00:28:20  OJVM has been used by at least one non-s
+ser)                                                                ystem user
+
+Oracle Java Virtual Machine (s 12.1.0.1.0      2024-03-30 00:28:20  OJVM default system users
+ystem)
+
+Server Parameter File          12.1.0.1.0      2024-03-30 00:28:20  The server parameter file (SPFILE) was u
+                                                                    sed to startup the database.
+
+Spatial                        12.1.0.1.0      2024-03-30 00:28:20  There is at least one usage of the Oracl
+                                                                    e Spatial feature usage table.
+
+Virtual Private Database (VPD) 12.1.0.1.0      2024-03-30 00:28:20  Virtual Private Database (VPD) policies
+                                                                    are being used.
+
+LOB                            12.1.0.1.0      2024-03-30 00:28:20  Persistent LOBs are being used.
+Object                         12.1.0.1.0      2024-03-30 00:28:20  Object feature is being used.
+Extensibility                  12.1.0.1.0      2024-03-30 00:28:20  Extensibility feature is being used.
+
+36 rows selected.
+
+]]></DBFEATURES>
+<DBLANG>
+
+AMERICAN_AMERICA.AL32UTF8
+
+1 row selected.
+
+</DBLANG>
+<DBREDOSWITCH>
+
+DT         DY      Total  h0  h1  h2  h3  h4  h5  h6  h7  h8  h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23
+---------- ------- ----- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+2024-03-14 Thu         2   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1
+2024-03-15 Fri         1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+2024-03-16 Sat         3   0   1   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1
+2024-03-17 Sun         1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+2024-03-18 Mon         2   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+2024-03-19 Tue         2   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0
+2024-03-20 Wed         2   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0
+2024-03-21 Thu         1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+2024-03-22 Fri         4   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   2
+2024-03-23 Sat         3   2   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0
+2024-03-24 Sun         2   0   0   0   0   0   0   0   0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+2024-03-25 Mon         1   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+2024-03-26 Tue         2   0   1   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+2024-03-27 Wed         2   0   0   0   0   0   0   0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+2024-03-28 Thu         2   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0
+2024-03-29 Fri         1   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+2024-03-30 Sat         3   1   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   1
+2024-03-31 Sun         1   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+
+18 rows selected.
+
+</DBREDOSWITCH>
+<DBPARAMETER><![CDATA[
+
+NAME                                          VALUE
+--------------------------------------------- ------------------------------------------------------------
+background_dump_dest                          /uhome/app/oracle/diag/rdbms/m101r01s/M101R01S1/trace
+control_file_record_keep_time                 7
+db_cache_size                                 0
+db_file_name_convert
+db_files                                      600
+deferred_segment_creation                     FALSE
+event
+fal_server
+log_archive_config
+log_archive_dest_1                            location=+FRADG/M101R01S/ARCHIVELOG
+log_archive_dest_2
+log_archive_dest_3
+log_archive_dest_4
+log_archive_dest_state_1                      enable
+log_archive_dest_state_2                      enable
+log_archive_dest_state_3                      enable
+log_archive_dest_state_4                      enable
+log_file_name_convert
+max_dump_file_size                            unlimited
+memory_max_target                             0
+memory_target                                 0
+parallel_force_local                          FALSE
+parallel_max_servers                          8
+pga_aggregate_target                          10737418240
+processes                                     6000
+session_cached_cursors                        500
+sga_max_size                                  107374182400
+sga_target                                    107374182400
+shared_pool_size                              0
+streams_pool_size                             0
+undo_retention                                7200
+user_dump_dest                                /uhome/app/oracle/diag/rdbms/m101r01s/M101R01S1/trace
+
+32 rows selected.
+
+]]></DBPARAMETER>
+<DB_SGA_SIZE><![CDATA[
+
+SGA_SIZE_MB
+-----------
+     101943
+
+1 row selected.
+
+]]></DB_SGA_SIZE>
+<DB_SHP_SIZE><![CDATA[
+
+SGA_MAX_SIZE(M) SGA_TARGET SHARED_POOL_SIZE(M) SHARED_POOL_FREE(M) DB_CACHE_CURRENT_SIZE
+--------------- ---------- ------------------- ------------------- ---------------------
+         102400     102400               11520                3440                 86784
+
+1 row selected.
+
+]]></DB_SHP_SIZE>
+<DB_SHP_PCT><![CDATA[
+
+SHARED_POOL_USAGE_PCT(%)
+------------------------
+                       8
+
+1 row selected.
+
+]]></DB_SHP_PCT>
+<DB_4031CHECK><![CDATA[
+
+TOTAL_SHARED_POOL_USAGE(MB) ABORTED_REQUESTS
+--------------------------- ----------------
+                       8080                0
+
+1 row selected.
+
+]]></DB_4031CHECK>
+<DB_CURSORMEM><![CDATA[
+
+no rows selected
+
+]]></DB_CURSORMEM>
+<DB_EXPIR_USER><![CDATA[
+
+no rows selected
+
+]]></DB_EXPIR_USER>
+<DB_PASSWORD_VERIF><![CDATA[
+
+PROFILE              LIMIT
+-------------------- ------------------------------
+DEFAULT              NULL
+
+1 row selected.
+
+]]></DB_PASSWORD_VERIF>
+<DBDBAPRIV><![CDATA[
+
+GRANTEE                        GRANTED_ROLE    ADMIN_OPTION
+------------------------------ --------------- --------------------
+R_CAIYAOJUN                    DBA             NO
+R_ZIHL                         DBA             NO
+QUEST_PA                       DBA             NO
+R_EX_BAOWEI                    DBA             NO
+R_YURIQI                       DBA             NO
+R_ZHANGRY                      DBA             NO
+R_DBA_ROLE                     DBA             NO
+R_BAIXJ                        DBA             NO
+R_WANGHS                       DBA             NO
+
+9 rows selected.
+
+]]></DBDBAPRIV>
+<DBSYSDBA><![CDATA[
+
+USERNAME        SYSDBA
+--------------- ---------------
+QUEST_PA        TRUE
+
+1 row selected.
+
+]]></DBSYSDBA>
+<DBAUDITSEGMENT><![CDATA[
+
+no rows selected
+
+]]></DBAUDITSEGMENT>
+<DBAUDITCONT><![CDATA[
+
+PL/SQL procedure successfully completed.
+
+
+    AUDCNT
+----------
+         0
+
+]]></DBAUDITCONT>
+<DBINVALIDOBJECT><![CDATA[
+
+OWNER                          OBJECT_TYPE                      OBJ_COUNT
+------------------------------ ------------------------- ----------------
+ABUSER                         VIEW                                     1
+CCUSER                         VIEW                                    14
+
+2 rows selected.
+
+]]></DBINVALIDOBJECT>
+<DBINVALIDINDEX><![CDATA[
+
+no rows selected
+
+]]></DBINVALIDINDEX>
+<DBCONTROLFILE><![CDATA[
+
++FRADG/M101R01S/CONTROLFILE/control01.ctl
++DATADG/M101R01S/CONTROLFILE/control02.ctl
++DATADG/M101R01S/CONTROLFILE/control03.ctl
+
+3 rows selected.
+
+]]></DBCONTROLFILE>
+<DB_NOSYS_IN_SYSTEM><![CDATA[
+
+no rows selected
+
+]]></DB_NOSYS_IN_SYSTEM>
+<DBRECOVERYDEST><![CDATA[
+
+NAME                                          SPACE_LIMIT       SPACE_USED SPACE_RECLAIMABLE  NUMBER_OF_FILES     CON_ID
+---------------------------------------- ---------------- ---------------- ----------------- ---------------- ----------
++FRADG                                     53,687,091,200                0                 0                0          0
+
+1 row selected.
+
+]]></DBRECOVERYDEST>
+<DBFLASHRECOVERYUSEAGE><![CDATA[
+
+FILE_TYPE                                PERCENT_SPACE_RECLAIMABLE PERCENT_SPACE_USED
+---------------------------------------- ------------------------- ------------------
+CONTROL FILE                                                     0                  0
+REDO LOG                                                         0                  0
+ARCHIVED LOG                                                     0                  0
+BACKUP PIECE                                                     0                  0
+IMAGE COPY                                                       0                  0
+FLASHBACK LOG                                                    0                  0
+FOREIGN ARCHIVED LOG                                             0                  0
+AUXILIARY DATAFILE COPY                                          0                  0
+
+8 rows selected.
+
+]]></DBFLASHRECOVERYUSEAGE>
+<DBPRODUCTUSERFAILEDLOGIN><![CDATA[
+
+USERNAME                       PROFILE              RESOURCE_NAME                  RESOURCE_T LIMIT
+------------------------------ -------------------- ------------------------------ ---------- ------------------------------
+R_EX_BAOWEI                    DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+R_SECURITY_OPR                 DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+R_CAIYAOJUN                    DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+AUTO_LINK                      DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+R_ZHANGRY                      DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+R_WANGHONGYU                   DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+DBMGR                          DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+R_ZIHL                         DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+R_BAIXJ                        DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+R_EMG                          DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+CIF_LINK                       DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+R_CONN_VERF                    DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+QUEST_PA                       DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+R_WANGHS                       DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+R_AUDIT_OPR                    DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+OA_LINK                        DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+CS_LINK                        DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+CMDP                           DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+R_LINAN                        DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+R_YURIQI                       DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+CCUSER                         DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+ABUSER                         DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+GW_TRANSFER_OPR                DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+TP_GW_TRANSFER_OPR             DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+CODE_GW_TRANSFER_OPR           DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+TP_GW_ARC_OPR                  DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+GW_ARC_OPR                     DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   UNLIMITED
+
+27 rows selected.
+
+]]></DBPRODUCTUSERFAILEDLOGIN>
+<DBVIRSCHECK><![CDATA[
+
+no rows selected
+
+]]></DBVIRSCHECK>
+<DBSCNHEALTHCHECK><![CDATA[
+--------------------------------------------------------------
+ScnHealthCheck
+--------------------------------------------------------------
+Current Date: 2024/04/01 10:35:06
+Current SCN:   6711902850662
+Version:       12.1.0.1.0
+--------------------------------------------------------------
+Result: A - SCN Headroom is good
+Apply the latest recommended patches
+based on your maintenance schedule
+For further information review MOS document id 1393363.1
+--------------------------------------------------------------
+
+PL/SQL procedure successfully completed.
+
+]]></DBSCNHEALTHCHECK>
+<DBNAME><![CDATA[M101R01S]]></DBNAME>
+<LOADPROFILE>
+Load Profile                    Per Second   Per Transaction  Per Exec  Per Call
+~~~~~~~~~~~~~~~            ---------------   --------------- --------- ---------
+             DB Time(s):               0.0               0.0      0.00      0.00
+              DB CPU(s):               0.0               0.0      0.00      0.00
+      Redo size (bytes):             978.5          11,236.7
+  Logical read (blocks):              49.8             571.6
+          Block changes:               2.8              31.6
+ Physical read (blocks):               0.0               0.2
+Physical write (blocks):               0.2               2.7
+       Read IO requests:               0.0               0.1
+      Write IO requests:               0.2               2.0
+           Read IO (MB):               0.0               0.0
+          Write IO (MB):               0.0               0.0
+ RAC GC blocks received:               0.2               2.3
+   RAC GC blocks served:               0.2               1.7
+             User calls:               9.3             106.3
+           Parses (SQL):               5.7              65.0
+      Hard parses (SQL):               0.0               0.0
+     SQL Work Area (MB):               0.0               0.2
+                 Logons:               0.3               2.9
+         Executes (SQL):               3.6              40.8
+              Rollbacks:               0.0               0.0
+           Transactions:               0.1
+
+</LOADPROFILE>
+<INSTEFFICIENCY>
+Instance Efficiency Percentages (Target 100%)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            Buffer Nowait %:  100.00       Redo NoWait %:  100.00
+            Buffer  Hit   %:   99.97    In-memory Sort %:  100.00
+            Library Hit   %:   99.96        Soft Parse %:   99.99
+         Execute to Parse %:  -59.26         Latch Hit %:  100.00
+Parse CPU to Parse Elapsd %:   26.02     % Non-Parse CPU:   96.31
+
+</INSTEFFICIENCY>
+<TOPEVENT><![CDATA[
+Top 10 Foreground Events by Total Wait Time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                            Total Wait    Wait   % DB
+Event                                 Waits Time (sec) Avg(ms)   time Wait Class
+------------------------------ ------------ ---------- ------- ------ ----------
+DB CPU                                             8.7           94.7
+log file sync                           364        1.1       3   11.7 Commit
+PX Deq: Slave Session Stats           1,597         .6       0    6.7 Other
+name-service call wait                    4         .3      80    3.5 Other
+control file sequential read             96         .1       2    1.6 System I/O
+resmgr:internal state change              1         .1     100    1.1 Concurrenc
+gc current block 2-way                  178         .1       0     .9 Cluster
+SQL*Net message to client            37,730         .1       0     .7 Network
+gc cr block 2-way                        77          0       0     .4 Cluster
+SQL*Net break/reset to client         1,438          0       0     .4 Applicatio
+
+]]></TOPEVENT>
+<TOPSQLBYELAPSTIME><![CDATA[
+]]></TOPSQLBYELAPSTIME>
+<DBERRLOG><![CDATA[
+
+no rows selected
+
+]]></DBERRLOG>
+<DBPSU><![CDATA[
+DBPSU:[ 
+ACTION_TIME			    ACTION     NAMESPACE       VERSION			ID COMMENTS					      BUNDLE_SER
+----------------------------------- ---------- --------------- ---------------------- ---- -------------------------------------------------- ----------
+11-AUG-15 05.50.11.620035 PM	    APPLY      SERVER	       12.1.0.1 		 8 PSU 12.1.0.1.8				      PSU ]
+]]></DBPSU>
+<DBPATCH><![CDATA[
+20831107;Database Patch Set Update : 12.1.0.1.8 (20831107)
+17077442;Oracle Clusterware Patch Set Update 12.1.0.1.1
+
+OPatch succeeded.
+]]></DBPATCH>
+<DBDGERRCHECK><![CDATA[
+]]></DBDGERRCHECK>
+<DBLSNRINFO><![CDATA[
+oracle    11131 124299  0 Mar30 pts/0    00:00:01 tail -500f /ghome/app/grid/diag/tnslsnr/lm0ora01/listener/alert/log.xml
+grid     111946      1  0 Mar22 ?        00:02:23 /ghome/app/oracle/product/12.1.0/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+grid     119285      1  0 Mar23 ?        00:02:19 /ghome/app/oracle/product/12.1.0/grid/bin/tnslsnr LISTENER_SCAN3 -no_crs_notify -inherit
+grid     119296      1  0 Mar23 ?        00:02:20 /ghome/app/oracle/product/12.1.0/grid/bin/tnslsnr LISTENER_SCAN2 -no_crs_notify -inherit
+
+LSNRCTL for Linux: Version 12.1.0.1.0 - Production on 01-APR-2024 10:35:20
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+TNS-01101: Could not find service name /lm0ora01/listener/alert/log.xml
+
+LSNRCTL for Linux: Version 12.1.0.1.0 - Production on 01-APR-2024 10:35:20
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+Connecting to (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1521))
+STATUS of the LISTENER
+------------------------
+Alias                     LISTENER
+Version                   TNSLSNR for Linux: Version 12.1.0.1.0 - Production
+Start Date                22-MAR-2024 23:54:27
+Uptime                    9 days 10 hr. 40 min. 53 sec
+Trace Level               off
+Security                  ON: Local OS Authentication
+SNMP                      OFF
+Listener Parameter File   /ghome/app/oracle/product/12.1.0/grid/network/admin/listener.ora
+Listener Log File         /ghome/app/grid/diag/tnslsnr/lm0ora01/listener/alert/log.xml
+Listening Endpoints Summary...
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=ipc)(KEY=LISTENER)))
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.100.11.88)(PORT=1521)))
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.100.11.90)(PORT=1521)))
+Services Summary...
+Service "+ASM" has 1 instance(s).
+  Instance "+ASM1", status READY, has 1 handler(s) for this service...
+Service "M001R01" has 2 instance(s).
+  Instance "M001R011", status UNKNOWN, has 1 handler(s) for this service...
+  Instance "M001R011", status READY, has 1 handler(s) for this service...
+Service "M001R01DG" has 1 instance(s).
+  Instance "M001R011", status READY, has 1 handler(s) for this service...
+Service "M001R02" has 1 instance(s).
+  Instance "M001R021", status READY, has 1 handler(s) for this service...
+Service "M101R01S" has 1 instance(s).
+  Instance "M101R01S1", status READY, has 1 handler(s) for this service...
+The command completed successfully
+
+LSNRCTL for Linux: Version 12.1.0.1.0 - Production on 01-APR-2024 10:35:20
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+TNS-01101: Could not find service name LISTENER_SCAN3
+
+LSNRCTL for Linux: Version 12.1.0.1.0 - Production on 01-APR-2024 10:35:20
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+TNS-01101: Could not find service name LISTENER_SCAN2
+]]></DBLSNRINFO>
+<DB_PARAMETER_FILE><![CDATA[
+/tmp/ea/20240401_lm0ora01/20240401_lm0ora01.M101R01S1.ora
+]]></DB_PARAMETER_FILE>
+</M101R01S1>
+</TAG1>
+</EACHK>
