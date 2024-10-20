@@ -235,3 +235,9 @@ PutSht_INFO、PutSht_OS、PutSht_DB：
 代码重构：
 多个 PutSht_ 函数中存在重复的代码逻辑，特别是在处理样式和写入单元格的部分。可以考虑抽象出共用的功能，如设置单元格内容和样式的函数，以减少代码冗余并提高可维护性。
 这个模块是项目中处理数据输出的关键部分，良好的实现不仅可以提供清晰的数据展示，还能通过有效的错误处理和数据校验，提升整个应用的健壮性和用户体验
+
+
+
+## Bug List
+关于3.3.18序列最大值使用检查这一块的，当MAXVALUE为0时查询语句select sequence_owner,sequence_name, max_value,last_number,cache_size,round(last_number/max_value ,2) percent_use from dba_sequences 
+where  last_number/max_value >0.8 and  cycle_flag='N'会报错ORA-01476: divisor is equal to zero，看看要不要加上max_value<>0
