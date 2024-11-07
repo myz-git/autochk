@@ -3,6 +3,7 @@ package toxls
 import (
 	"autochk/structs"
 	"fmt"
+	"strings"
 
 	// "hlchk/utils"
 	"github.com/xuri/excelize/v2"
@@ -10,7 +11,7 @@ import (
 	// "github.com/qax-os/excelize"
 )
 
-func Xlsx(infstp *structs.InfoSht, osshtp *structs.OsSht, dbshtp *structs.DbSht, xlsnm string, colcnt int, sglf bool) {
+func Xlsx(infstp *structs.InfoSht, osshtp *structs.OsSht, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries, xlsnm string, colcnt int, sglf bool) {
 
 	//open xlsx
 	var newfnm string
@@ -49,6 +50,9 @@ func Xlsx(infstp *structs.InfoSht, osshtp *structs.OsSht, dbshtp *structs.DbSht,
 
 	//编辑工作表(DB)
 	PutSht_DB(f, infstp, dbshtp, colcnt)
+
+	// Add Summary sheet
+	PutSht_Summary(f, summaryEntries)
 
 	//新文件名保留原来的fnm名字,后缀名为_new.xlsx
 	// newcsvfnm := strings.Replace(fnm, ".xlsx", "_done.xlsx", -1)
@@ -627,10 +631,12 @@ func PutSht_DB(f *excelize.File, infstp *structs.InfoSht, dbsht *structs.DbSht, 
 func NewXlsx(xlsnm string) {
 
 	f := excelize.NewFile()
+	f.NewSheet("Summary")
 	f.NewSheet("INFO")
 	f.NewSheet("OS")
 	f.NewSheet("DB")
 	f.DeleteSheet("sheet1")
+
 	shnm := "INFO"
 	//按行的方式写入数据到二维数组中,
 	f.SetCellStr(shnm, "A1", "数据库名称\nDB_UNIQUE_NAME")
@@ -807,42 +813,23 @@ func NewXlsx(xlsnm string) {
 
 }
 
-// func SetStyle(shnm string, aixcell string, style string){
-// 	switch ossht.Cpustat.Alarm {
-// 	case "R":
-// 		f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-// 	case "B":
-// 		f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-// 	}
-// }
+func PutSht_Summary(f *excelize.File, summaryEntries *structs.SummaryEntries) {
+	shnm := "Summary"
+	// Define the headers for the Summary sheet
+	headers := []string{"检查类别", "检查项", "检查说明", "检查结果(严重)", "检查结果(一般),", "检查结果(轻微)"}
+	for i, header := range headers {
+		cell, _ := excelize.CoordinatesToCellName(i+1, 1)
+		f.SetCellStr(shnm, cell, header)
+	}
 
-// func FmtSht(f *excelize.File, shnm string) {
-
-// 	//设置excel style2  单元格自动行换
-// 	wrap_style, _ := f.NewStyle(`{
-// 			"alignment":{
-// 				"horizontal":"left",
-// 				"vertical":"top",
-// 				"wrap_text":true
-// 			}
-// 		}`)
-// 	Ttile_style, _ := f.NewStyle(`{
-// 		Fill:      &excelize.Fill{Type: "pattern", Color: []string{"#696969"}, Pattern: 1},
-// 		Alignment: &excelize.Alignment{Horizontal: "left", Vertical: "top", WrapText: true},
-// 		"border":[
-// 			{"type":"top","color":"#000000","style":1},
-// 			{"type":"left","color":"#000000","style":1},
-// 			{"type":"right","color":"#000000","style":1},
-// 			{"type":"bottom","color":"#000000","style":1}
-
-// 		]
-// 	}`)
-// 	styleB, _ := f.NewStyle(&excelize.Style{
-// 		// Fill:      excelize.Fill{Type: "pattern", Color: []string{"#A020F0"}, Pattern: 1},
-// 		Fill:      excelize.Fill{Type: "pattern", Color: []string{"#4876FF"}, Pattern: 1},
-// 		Alignment: &excelize.Alignment{Horizontal: "left", Vertical: "top", WrapText: true},
-// 	})
-
-// 	}
-
-// }
+	rowIndex := 2
+	for _, entry := range summaryEntries.Entries {
+		f.SetCellStr(shnm, fmt.Sprintf("A%d", rowIndex), entry.Category)
+		f.SetCellStr(shnm, fmt.Sprintf("B%d", rowIndex), entry.Nm)
+		f.SetCellStr(shnm, fmt.Sprintf("C%d", rowIndex), entry.Desc)
+		f.SetCellStr(shnm, fmt.Sprintf("D%d", rowIndex), strings.Join(entry.Severe, ", "))
+		f.SetCellStr(shnm, fmt.Sprintf("E%d", rowIndex), strings.Join(entry.Moderate, ", "))
+		f.SetCellStr(shnm, fmt.Sprintf("F%d", rowIndex), strings.Join(entry.Minor, ", "))
+		rowIndex++
+	}
+}

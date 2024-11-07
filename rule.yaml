@@ -1,5 +1,45 @@
 osrule: 
+  cpustat: 
+    nm: CPUSTAT
+    title: "CPU负载检查"
+    desc: "查看主机负载情况，id为空闲时间百分比，值越高负载越小"
+    idle_le1: 20
+    idle_le2: 10
+    swap_ge1: 100
+    swap_ge2: 1000
+  memstat: 
+    nm: MEMSTAT
+    title: "内存使用检查"
+    desc: "查看内存是否频繁使用换页SWAP"
+    available_le1:  2048
+    available_le2:  512
+  iostat: 
+    nm: IOSTAT
+    title: "磁盘IO负载检查"
+    desc: "查看主机IO及磁盘IO负载情况, 当有磁盘%util 超过85%时说明该磁盘非常繁忙, 需要进一步分析或优化IO负载"
+    diskutil_ge1: 80
+    diskutil_ge2: 95
+  filesystem: 
+    nm: FILESYSTEM
+    title: "文件系统使用率"
+    desc: "查看文件系统使用率，文件系统使用率小于80%为正常"
+    disk_ge1: 80%
+    disk_ge2: 90%
+    inode_ge1: 80%
+    inode_ge2: 90%
+  inodeusage: 
+    nm: INODEUSAGE
+    title: "索引资源节点使用率"
+    desc: "查看文件系统索引资源节点使用率小于80%为正常"
+  thpstat: 
+    nm: THPSTAT
+    title: "主机透明大页检查"
+    desc: "查看主机透明大页配置情况,为提升系统稳定性建议关闭透明在大页"
+    anpages_gt: 8192  
   osparameter: 
+    nm: OSPARAMETER
+    title: "内核参数"
+    desc: "查看主机内核参数配置情况"
     l_nproc_ne: 16384
     l_nofile_ne: 65536
     l_randomize_va_space: 0
@@ -7,99 +47,211 @@ osrule:
     l_min_free_kbytes: 102400
     s_disable_ism_large_pages: [0xF4,0x74]
   ulimit: 
+    nm: ULIMIT
+    title: "资源限制"
+    desc: "查看用户主机资源限制配置情况"
     open_files_ne: 65536
     max_user_rocesses_ne: 16384
-  filesystem: 
-    disk_ge1: 80%
-    disk_ge2: 90%
-    inode_ge1: 80%
-    inode_ge2: 90%
-  cpustat: 
-    idle_le1: 20
-    idle_le2: 10
-    swap_ge1: 100
-    swap_ge2: 1000
-  memstat: 
-    available_le1:  2048
-    available_le2:  512
-  iostat:
-    diskutil_ge1: 80
-    diskutil_ge2: 95
-  thpstat:
-    anpages_gt: 8192
-  numa:
+  numa: 
+    nm: NUMA
+    title: "NUMA使用检查"
+    desc: "查看主机NUMA状态，NUMA特性会对数据库服务器稳定运行带来非常大的影响，为避免系统性能隐患,建议关闭NUMA"
     flg1: "No NUMA"
     flg2: "NUMA turned off"
 
-dbrule:
-  dbtbsusage:
+dbrule: 
+  dbstatus: 
+    nm: DBSTATUS
+    title: "数据库状态检查"
+    desc: "数据库状态检查主要包括：数据库启动状态，Dataguard保护模式，保护级别，数据库角色等。"
+  dbtbsusage: 
+    nm: DBTBSUSAGE
+    title: "表空间使用率"
+    desc: "针对表空间使用率超过80%且剩余空间不足8G，进行预警。"
     tbsutil_ge1: 80
     tbsutil_ge2: 90
     freesize_le1: 8
     freesize_le2: 4
-  dbdatafile:
+  dbdatafile: 
+    nm: DBDATAFILE
+    title: "数据文件状态检查"
+    desc: "检查数据库文件状态;"  
     status: AVAILABLE
-  dbcontrolfile:
+  dbcontrolfile: 
+    nm: DBCONTROLFILE
+    title: "控制文件检查"
+    desc: "检查控制文件路径信息：控制文件至少要有2路冗余，才符合安全配置要求，并建议检查是否放在在不同存储路径上。"  
     cnt_le1: 2
-  dbredocheck:
+  dbusersize: 
+    nm: DBUSERSIZE
+    title: "数据库用户大小"
+    desc: "仅记录,作为其它项分析参考"
+  db_expir_user: 
+    nm: DB_EXPIR_USER
+    title: "数据库用户临期检查"
+    desc: "检查数据库用户口令过期时间小于30天,当达到口令过期时间用户将会被锁定,如果是业务用户未提前处理会造成业务中断。"  
+  dbredoswitch: 
+    nm: DBREDOSWITCH
+    title: "归档切换检查"
+    desc: "对Oracle数据库的归档切换次数进行检查，建议日平均15-20 分钟切换一次, 业务高峰期也尽量大于5分钟一次。"
+    sw_cnt_ge1: 12
+  dbredocheck: 
+    nm: DBREDOCHECK
+    title: "REDO文件性能检查"
+    desc: "检查REDO文件是否过小,建议生产环境每个redo文件在200M-4G之间。"
     rdf_size_lt1: 200
     rdf_status_list: [INACTIVE,ACTIVE,CURRENT]
-  dbredoswitch:
-    sw_cnt_ge1: 12
-  dbresource:
+  dbresource: 
+    nm: DBRESOURCE
+    title: "最大资源使用限制检查"
+    desc: "检查CURRENT_UTILIZATION的值和MAX_UTILIZATION的值要接近LIMIT_VALUE值。"
     res_use_ge1: 90
-  loadprofile:
-    redosize_ge1: 30
-    logons_ge1: 30
-  instefficiency:
+  instefficiency: 
+    nm: INSTEFFICIENCY
+    title: "数据库性能运行效率"
+    desc: "在Oracle AWR报告中，Library Cache Hit Ratio（库缓存命中率）是一个重要的性能指标。如果该指标低于90%，则可能会影响数据库的性能。"
     buffer_hit: 90
     library_hit: 90
     soft_parse: 90
-  dbtopevent:
-  dbtopsql:
-  dblsnrinfo:
+  topevent: 
+    nm: TOPEVENT
+    title: "TOP等待事件检查"
+    desc: "检查常见非空闲等待事件。"
+  topsqlbyelapstime: 
+    nm: TOPSQLBYELAPSTIME
+    title: "TOP SQL语句(最大消耗时间)"
+    desc: "根据执行次数和单次执行时间综合检查，建议统计时间内(如2h)，执行次数超过1000次，单次执行时间不超过2秒。"
+  dblsnrinfo: 
+    nm: DBLSNRINFO
+    title: "监听状态及日志检查"
+    desc: "监听日志文件较大，影响监听响应性能，建议定期清理保持在2G以下。"
     log_size: 2147483648
-  dbtableparallel:
+  dbtableparallel: 
+    nm: DBTABLEPARALLEL
+    title: "并行度>1的表"
+    desc: "OLTP系统建议所有对象并行度不应大于0。"
     result: "no rows selected"
-  dbindexparallel:
+  dbindexparallel: 
+    nm: DBINDEXPARALLEL
+    title: "并行度>1的索引"
+    desc: "OLTP系统建议所有对象并行度不应大于0。"
     result: "no rows selected"
-  dbinvalidindex:
+  dbinvalidindex: 
+    nm: DBINVALIDINDEX
+    title: "无效索引检查"
+    desc: "如存在无效(不可用)索引，需要对索引进行重建或删除。"
     result: "no rows selected"
-  dbsequence:
+  dbsequence: 
+    nm: DBSEQUENCE
+    title: "SEQUENCE序列设置检查"
+    desc: "RAC环境下, 在高负载数据库高频访问的sequence如果 cache小于400会引起性能下降。建议为修改sequence的cache 400或以上及NOORDER。"
     result: "no rows selected"
-  dbrecoverydest:
-    result: "no rows selected"
-  dbflashrecoveryuseage:
+  db_seq_usage: 
+    nm: DB_SEQ_USAGE
+    title: "序列最大值使用检查"
+    desc: "检查SEQUENCE当前值是否接近最大值限制的80%, 当SEQUENCE接近最大值时,建议使用命令来修改最大值alter sequence <name> nomaxvalue。"
+  dbflashrecoveryuseage: 
+    nm: DBFLASHRECOVERYUSEAGE
+    title: "flash recovery useage使用情况"
+    desc: "检查闪回区使用率, 使用率较高时及时清理或增加闪回区大小"
     useage1: 80
     useage2: 90
-  dberrlog:
-    resultB: "no rows selected"
-  dbproductuserfailedlogin:
-    result: "no rows selected"
-  dbrmancheck:
+  dbparameter: 
+    nm: DBPARAMETER
+    title: "数据库初始化参数检查"
+    desc: "检查Oracle初始化参数，建议结合实际情况排查数据库重要参数设置是否合理。"  
+  db_parameter_file: 
+    nm: DB_PARAMETER_FILE
+    title: "数据库初始化参数检查（详细）"
+    desc: "检查Oracle初始化参数，建议结合实际情况排查数据库重要参数设置是否合理。（详细）"
+  db_shp_size: 
+    nm: DB_SHP_SIZE
+    title: "共享池使用率"
+    desc: "检查共享池的大小"
+  db_shp_pct: 
+    nm: DB_SHP_PCT
+    title: "共享池使用率"
+    desc: "检查共享池的使用占比，通常SHARED_POOL的使用率不应超过SGA_SIZE的60%"
+  db_4031check: 
+    nm: DB_4031CHECK
+    title: "4031问题检查"
+    desc: "SHARED POOL空闲列表FREE LIST不能满足请求的次数,此时需要FLUSH LRU LIST。"
+  dberrlog: 
+    nm: DBERRLOG
+    title: "数据库日志检查"
+    desc: "检查数据库近期(一般为30天)日志是否有重要报错"
+    resultB: "no rows selected"  
+  dbcrscheck: 
+    nm: DBCRSCHECK
+    title: "RAC资源状态(含OCR)"
+    desc: "检查是否有UNKNOW状态；(除GDS), 建议OCR使用nomal冗余。"
+    resultG: ""
+  dbasmusage: 
+    nm: DBASMUSAGE
+    title: "ASM磁盘使用"
+    desc: "FREE_MB为剩余空间，该值建议大于10G为正常。"
+    resultG: ""
+  dbdglagcheck: 
+    nm: DBDGLAGCHECK
+    title: "DataGuard同步延迟检查"
+    desc: "检查gap延迟，通常情况下gap Value值应该<20秒。"
+    resultB: 1
+  dbdgerrcheck: 
+    nm: DBDGERRCHECK
+    title: "DataGuard同步报错检查"
+    desc: "检查数据库日志中是否存在DataGuard不同步的报错。"
+    resultG: ""    
+  dbrmancheck: 
+    nm: DBRMANCHECK
+    title: "数据库备份"
+    desc: "检查当天备份结果是否有error和warning，如果有建议检查。"
     resultB: "WARNINGS"
     resultR: "ERROR"
-  dbdbapriv:
+  dbdbapriv: 
+    nm: DBDBAPRIV
+    title: "具有DBA权限的业务账户"
+    desc: "Oracle 数据库存在具有DBA权限的业务账户，存在安全风险，建议整改，收回DBA并授予最小使用权限。"
     resultG: "no rows selected"
-  dbsysdba:
-    resultB: "no rows selected"
-  dbauditsegment:
+  dbauditsegment: 
+    nm: DBAUDITSEGMENT
+    title: "数据库审计空间检查"
+    desc: "数据库审计空间使用情况。"
     resultG: "no rows selected"
-  dbauditcont:
+  dbauditcont: 
+    nm: DBAUDITCONT
+    title: "数据库审计对象检查"
+    desc: "审计对象长期不归档或清理, 长期积累大量历史数据过多占用存储空间, 建议在满足审计监管要求下定期对历史归档数据进行导出归档或清理。"
     resultG: 10000
-  db_nosys_in_system:
+  db_nosys_in_system: 
+    nm: DB_NOSYS_IN_SYSTEM
+    title: "系统表空间上的业务对象"
+    desc: "Oracle数据库不建议使用SYSTEM、SYSAUX表空间存储业务账户对象。"
     resultB: "no rows selected"
-  dbvirscheck:
+  dbvirscheck: 
+    nm: DBVIRSCHECK
+    title: "病毒勒索攻击检查"
+    desc: "检查数据库是否被病毒（如比特币勒索）攻击，需要立即处理。"
     resultR: "no rows selected"
-  dbscnhealthcheck:
+  dbpsu: 
+    nm: DBPSU
+    title: "数据库PSU补丁集检查"
+    desc: "检查数据库安装的PSU补丁集，建议重要系统一年更新一次PSU(可选择次新psu补丁集)。"
+  dbpatch: 
+    nm: DBPATCH
+    title: "补丁集检查"
+    desc: "记录数据库安装了哪些补丁, 供其他项分析参考。"
+  dbscnhealthcheck: 
+    nm: DBSCNHEALTHCHECK
+    title: "SCNHealthCheck检查"
+    desc: "检查Oracle数据库当前scn的增长速度是否在正常范围内, 正常结果应该为: Result: A。"
     resulta: "Result: A"
     resultb: "Result: B"
     resultc: "Result: C"
-  dbdglagcheck:
-    resultB: 1
-  dbdgerrcheck:
-    resultG: ""
-  dbcrscheck:
-    resultG: ""
-  dbasmusage:
-    resultG: ""
+
+
+
+
+
+
+
+

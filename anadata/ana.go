@@ -40,7 +40,8 @@ func Contain(obj interface{}, target interface{}) bool {
 	return false
 }
 
-func Ana(infstp *structs.InfoSht, osshtp *structs.OsSht, dbshtp *structs.DbSht) {
+func Ana(infstp *structs.InfoSht, osshtp *structs.OsSht, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+
 	// log.Println("###--->Start Ana")
 	rules, err := utils.GetRule()
 	if err != nil {
@@ -56,7 +57,7 @@ func Ana(infstp *structs.InfoSht, osshtp *structs.OsSht, dbshtp *structs.DbSht) 
 	Fmt_DbTblcount(infstp)
 
 	//分析OS指标函数
-	Ana_Osparameter(rules, osshtp, infstp)
+	Ana_Osparameter(rules, osshtp, infstp, summaryEntries)
 	Ana_Ulimit(rules, osshtp, infstp)
 	Ana_Filesystem(rules, osshtp)
 	Ana_Inodeusage(rules, osshtp)
@@ -156,12 +157,15 @@ func Fmt_DbTblcount(infstp *structs.InfoSht) {
 	}
 }
 
-func Ana_Osparameter(rule *utils.RuleInfo, osshtp *structs.OsSht, infstp *structs.InfoSht) {
+func Ana_Osparameter(rule *utils.RuleInfo, osshtp *structs.OsSht, infstp *structs.InfoSht, summaryEntries *structs.SummaryEntries) {
 	oS := strings.ToUpper(infstp.Os)
-	// log.Println("oS--->", oS)
 	//log.Println("rule.Osrule.Osparameter->", rule.Osrule.Osparameter)
 	msgdata := osshtp.Osparameter.Contents
-
+	entry := structs.SummaryEntry{
+		Category: "OS",
+		Nm:       rule.Osrule.Osparameter.Nm,
+		Desc:     rule.Osrule.Osparameter.Desc,
+	}
 Looop:
 	for index, value := range strings.Split(msgdata, "\n") {
 		if index == 0 {
@@ -183,6 +187,8 @@ Looop:
 				if n < rule.Osrule.Osparameter.L_nproc_ne { //如果 < 16384 设定为 BLUE 重要告警级别, 且结束本次FOR循环
 					///log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_nproc_ne)
 					osshtp.Osparameter.Alarm = "B"
+					// 添加到 SummaryEntries
+					entry.Moderate = append(entry.Moderate, infstp.HostName)
 					break Looop
 				}
 			}
@@ -193,6 +199,7 @@ Looop:
 				if n < rule.Osrule.Osparameter.L_nofile_ne { //如果 <65536 设定为 BLUE 重要告警级别, 且结束本次FOR循环
 					///log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_nofile_ne)
 					osshtp.Osparameter.Alarm = "B"
+					entry.Moderate = append(entry.Moderate, infstp.HostName)
 					break Looop
 				}
 			}
@@ -203,6 +210,7 @@ Looop:
 				if n != rule.Osrule.Osparameter.L_randomize_va_space {
 					///log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_randomize_va_space)
 					osshtp.Osparameter.Alarm = "B"
+					entry.Moderate = append(entry.Moderate, infstp.HostName)
 					break Looop
 				}
 			}
@@ -212,6 +220,7 @@ Looop:
 				if n != rule.Osrule.Osparameter.L_panic_on_oops {
 					///log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_panic_on_oops)
 					osshtp.Osparameter.Alarm = "G"
+					entry.Minor = append(entry.Minor, infstp.HostName)
 					break Looop
 				}
 			}
@@ -221,6 +230,7 @@ Looop:
 				if n < rule.Osrule.Osparameter.L_min_free_kbytes {
 					///log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_min_free_kbytes)
 					osshtp.Osparameter.Alarm = "G"
+					entry.Minor = append(entry.Minor, infstp.HostName)
 					break Looop
 				}
 			}
@@ -242,6 +252,7 @@ Looop:
 					//判断取到的值是否包含在 list [0xF4 0x74]中,假如没有则
 					///log.Printf("!!Matched!! value [%v] match rule [%v]", value, rule.Osrule.Osparameter.S_disable_ism_large_pages)
 					osshtp.Osparameter.Alarm = "B"
+					entry.Moderate = append(entry.Moderate, infstp.HostName)
 					break Looop
 				}
 			}
@@ -249,6 +260,10 @@ Looop:
 
 	}
 	// log.Printf("Osparameter.Alarm->%s", osshtp.Osparameter.Alarm)
+	// 如果有任何问题，添加到 SummaryEntries 中
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
 }
 
 func Ana_Ulimit(rule *utils.RuleInfo, osshtp *structs.OsSht, infstp *structs.InfoSht) {

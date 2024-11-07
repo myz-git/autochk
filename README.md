@@ -237,6 +237,23 @@ PutSht_INFO、PutSht_OS、PutSht_DB：
 这个模块是项目中处理数据输出的关键部分，良好的实现不仅可以提供清晰的数据展示，还能通过有效的错误处理和数据校验，提升整个应用的健壮性和用户体验
 
 
+## chk.db
+create table rules (id int PRIMARY KEY,nm varchar(10),desc varchar(30),type varchar(10),level int,rule text);
+insert into rules values (1001,'osparameter','主机参数检查','OS',1,'查看主机内核参数配置情况;根据最佳实践建议: 
+系统默认ASLR空间地址随机存在BUG隐患,根据ORACLE建议需要关闭ASLR ,修改randomze_va_space 1->0 或者2->0 （Doc ID 1345364.1）。
+panic_on_oops存在BUG隐患，根据ORACLE建议设置该值为1。
+kernel.panic_on_oops=1
+vm.min_free_kbytes 内核参数最少保留 524288 (即512MB 注意单位K）以允许OS更更快地回收内存，可以避免内存低的压⼒。
+net.ipv4.ip_local_port_range = 9000 65500，增加可用端口范围。
+/etc/security/limits.conf 
+* soft nproc 16384
+* hard nproc 16384
+* soft nofile 65536
+* hard nofile 65536
+注 : 达到SOFT限制应用也会报错,因此SOFT和HARD都需要检查
+');
+
+
 
 ## Bug List
 关于3.3.18序列最大值使用检查这一块的，当MAXVALUE为0时查询语句select sequence_owner,sequence_name, max_value,last_number,cache_size,round(last_number/max_value ,2) percent_use from dba_sequences 

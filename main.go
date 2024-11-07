@@ -65,10 +65,11 @@ func main() {
 		infosht := structs.InfoSht{}
 		ossht := structs.OsSht{}
 		dbsht := structs.DbSht{}
+		summaryEntries := &structs.SummaryEntries{}
 
 		readxml.ReadXml(fnm, &infosht, &ossht, &dbsht)
-		anadata.Ana(&infosht, &ossht, &dbsht)
-		toxls.Xlsx(&infosht, &ossht, &dbsht, prex, colcnt, *singlefile)
+		anadata.Ana(&infosht, &ossht, &dbsht, summaryEntries)
+		toxls.Xlsx(&infosht, &ossht, &dbsht, summaryEntries, prex, colcnt, *singlefile)
 		todocx.Todocx(&infosht, &ossht, &dbsht, prex, colcnt, *singlefile)
 		colcnt++
 	}

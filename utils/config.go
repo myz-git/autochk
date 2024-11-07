@@ -62,6 +62,9 @@ type Dbrule struct {
 
 // ///*** Lv3 OS Start***/////
 type Osparameter struct {
+	Nm                        string   `yaml:"nm"`
+	Title                     string   `yaml:"title"`
+	Desc                      string   `yaml:"desc"`
 	L_nproc_ne                int      `yaml:"l_nproc_ne"`
 	L_nofile_ne               int      `yaml:"l_nofile_ne"`
 	L_randomize_va_space      int      `yaml:"l_randomize_va_space"`

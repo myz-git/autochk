@@ -77,3 +77,17 @@ type Tpstrc struct {
 	Contents string
 	Alarm    string // 告警级别: R B G (Red, Blue, Green)
 }
+
+type SummaryEntry struct {
+	Category string   // 检查类别
+	Nm       string   // 检查项
+	Title    string   // 检查项中文
+	Desc     string   // 检查说明
+	Severe   []string // 检查结果（严重）
+	Moderate []string // 检查结果（一般）
+	Minor    []string // 检查结果（轻微）
+}
+
+type SummaryEntries struct {
+	Entries []SummaryEntry
+}
