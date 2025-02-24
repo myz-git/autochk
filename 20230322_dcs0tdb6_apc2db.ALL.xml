@@ -43,15 +43,15 @@ set msgsys:msginfo_msgmni=8192
 set msgsys:msginfo_msgssz=4096
 set msgsys:msginfo_msgtql=131072
 set msgsys:msginfo_msgseg=19712
-set rlim_fd_max=100
+set rlim_fd_max=w
 set rlim_fd_cur=65536
 set zfs:zfs_arc_max=53687091200
 set disable_ism_large_pages=0xF4
 set vxfs:vx_maxlink = 65534
 set lwp_default_stksize=0xa000
 set rpcmod:svc_default_stksize=0xa000
-set panic_on_oops=1
-*************network parameter (root)*************
+set panic_on_oops=0
+*************network pwarameter (root)*************
 57344
 57344
 *************system parameter*************

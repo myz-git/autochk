@@ -159,7 +159,7 @@ func Fmt_DbTblcount(infstp *structs.InfoSht) {
 
 func Ana_Osparameter(rule *utils.RuleInfo, osshtp *structs.OsSht, infstp *structs.InfoSht, summaryEntries *structs.SummaryEntries) {
 	oS := strings.ToUpper(infstp.Os)
-	//log.Println("rule.Osrule.Osparameter->", rule.Osrule.Osparameter)
+	log.Println("rule.Osrule.Osparameter->", rule.Osrule.Osparameter)
 	msgdata := osshtp.Osparameter.Contents
 	entry := structs.SummaryEntry{
 		Category: "OS",
@@ -185,7 +185,7 @@ Looop:
 				matchs := rd.FindString(value) // 匹配以数字结尾的数值,  如16384
 				n, _ := strconv.Atoi(matchs)
 				if n < rule.Osrule.Osparameter.L_nproc_ne { //如果 < 16384 设定为 BLUE 重要告警级别, 且结束本次FOR循环
-					///log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_nproc_ne)
+					log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_nproc_ne)
 					osshtp.Osparameter.Alarm = "B"
 					// 添加到 SummaryEntries
 					entry.Moderate = append(entry.Moderate, infstp.HostName)
@@ -197,7 +197,7 @@ Looop:
 				matchs := rd.FindString(value)
 				n, _ := strconv.Atoi(matchs)
 				if n < rule.Osrule.Osparameter.L_nofile_ne { //如果 <65536 设定为 BLUE 重要告警级别, 且结束本次FOR循环
-					///log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_nofile_ne)
+					log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_nofile_ne)
 					osshtp.Osparameter.Alarm = "B"
 					entry.Moderate = append(entry.Moderate, infstp.HostName)
 					break Looop
@@ -208,7 +208,7 @@ Looop:
 				matchs := rd.FindString(value)
 				n, _ := strconv.Atoi(matchs)
 				if n != rule.Osrule.Osparameter.L_randomize_va_space {
-					///log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_randomize_va_space)
+					log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_randomize_va_space)
 					osshtp.Osparameter.Alarm = "B"
 					entry.Moderate = append(entry.Moderate, infstp.HostName)
 					break Looop
@@ -218,7 +218,7 @@ Looop:
 				matchs := rd.FindString(value)
 				n, _ := strconv.Atoi(matchs)
 				if n != rule.Osrule.Osparameter.L_panic_on_oops {
-					///log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_panic_on_oops)
+					log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_panic_on_oops)
 					osshtp.Osparameter.Alarm = "G"
 					entry.Minor = append(entry.Minor, infstp.HostName)
 					break Looop
@@ -228,7 +228,7 @@ Looop:
 				matchs := rd.FindString(value)
 				n, _ := strconv.Atoi(matchs)
 				if n < rule.Osrule.Osparameter.L_min_free_kbytes {
-					///log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_min_free_kbytes)
+					log.Printf("!!Matched!! value [%v] match rule [%v]", matchs, rule.Osrule.Osparameter.L_min_free_kbytes)
 					osshtp.Osparameter.Alarm = "G"
 					entry.Minor = append(entry.Minor, infstp.HostName)
 					break Looop
@@ -250,7 +250,7 @@ Looop:
 				// log.Println("msg---->", msg[len(msg)-1])
 				if !Contain(msg[len(msg)-1], rule.Osrule.Osparameter.S_disable_ism_large_pages) {
 					//判断取到的值是否包含在 list [0xF4 0x74]中,假如没有则
-					///log.Printf("!!Matched!! value [%v] match rule [%v]", value, rule.Osrule.Osparameter.S_disable_ism_large_pages)
+					log.Printf("!!Matched!! value [%v] match rule [%v]", value, rule.Osrule.Osparameter.S_disable_ism_large_pages)
 					osshtp.Osparameter.Alarm = "B"
 					entry.Moderate = append(entry.Moderate, infstp.HostName)
 					break Looop

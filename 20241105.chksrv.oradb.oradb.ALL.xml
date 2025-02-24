@@ -1,0 +1,1039 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EACHK>
+<TAG0>
+<VER>chk198</VER>
+<HOSTNAME>chksrv</HOSTNAME>
+<OS>Linux</OS>
+<RELVER> Linux.CentOS Linux release 7.9.2009 (Core) </RELVER>
+<CORES> Intel(R) Xeon(R) Platinum 8269CY CPU @ 2.50GHz 2 </CORES>
+<CPUCOUNT>2</CPUCOUNT>
+<CPUMHZ> 2499.998</CPUMHZ>
+<MEMTOTAL> 7645032 kB</MEMTOTAL>
+<SWAPTOTAL> 0 kB</SWAPTOTAL>
+<OSPARAMETER>
+*************system parameter*************
+kernel.randomize_va_space = 0
+fs.file-max = 6815744
+kernel.shmall = 2097152
+kernel.shmmax = 8294967295
+kernel.shmmni = 4096
+kernel.sem = 250 32000 100 128
+net.ipv4.ip_local_port_range = 9000 65500
+net.core.rmem_default=4194304
+net.core.rmem_max=4194304
+net.core.wmem_default=262144
+net.core.wmem_max=1048586
+vm.min_free_kbytes= 102400
+kernel.panic_on_oops=0
+kernel.randomize_va_space = 0
+*************limit *************
+root soft nofile 65535
+root hard nofile 65535
+oracle soft nproc 16384
+* soft nofile 65536
+* hard nofile 65536
+* soft stack 10240
+* hard stack 10240</OSPARAMETER>
+<ULIMIT>
+core file size          (blocks, -c) 0
+data seg size           (kbytes, -d) unlimited
+scheduling priority             (-e) 0
+file size               (blocks, -f) unlimited
+pending signals                 (-i) 29780
+max locked memory       (kbytes, -l) 64
+max memory size         (kbytes, -m) unlimited
+open files                      (-n) 65536
+pipe size            (512 bytes, -p) 8
+POSIX message queues     (bytes, -q) 819200
+real-time priority              (-r) 0
+stack size              (kbytes, -s) 10240
+cpu time               (seconds, -t) unlimited
+max user processes              (-u) 16384
+virtual memory          (kbytes, -v) unlimited
+file locks                      (-x) unlimited
+</ULIMIT>
+<IPADDR>
+172.17.0.1
+172.16.95.47
+</IPADDR>
+<DBMAA>SINGLE INSTANCE</DBMAA>
+<OSLOG><![CDATA[
+]]></OSLOG>
+<FILESYSTEM>
+Filesystem     Type      Size  Used Avail Use% Mounted on
+devtmpfs       devtmpfs  3.7G     0  3.7G   0% /dev
+tmpfs          tmpfs     3.7G     0  3.7G   0% /dev/shm
+tmpfs          tmpfs     3.7G  624K  3.7G   1% /run
+tmpfs          tmpfs     3.7G     0  3.7G   0% /sys/fs/cgroup
+/dev/vda1      ext4      118G   94G   19G  84% /
+/dev/vdb1      xfs       100G  5.9G   95G   6% /data
+tmpfs          tmpfs     747M     0  747M   0% /run/user/12000
+</FILESYSTEM>
+<INODEUSAGE>
+Filesystem     Inodes IUsed IFree IUse% Mounted on
+devtmpfs         931K   345  931K    1% /dev
+tmpfs            934K     3  934K    1% /dev/shm
+tmpfs            934K   478  933K    1% /run
+tmpfs            934K    16  934K    1% /sys/fs/cgroup
+/dev/vda1        7.5M  195K  7.4M    3% /
+/dev/vdb1         50M    25   50M    1% /data
+tmpfs            934K     1  934K    1% /run/user/12000
+</INODEUSAGE>
+<CPUSTAT>
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ 2  0      0    516    118   6240    0    0     4    22    1    0  1  1 98  0  0
+ 0  0      0    516    118   6240    0    0     0   104 1161 1914  1  1 98  0  0
+ 0  0      0    516    118   6240    0    0     0     0 1093 1869  2  1 98  0  0
+ 0  0      0    516    118   6240    0    0     0     0 1060 1870  1  1 99  0  0
+ 0  0      0    516    118   6240    0    0     0    32 1113 1864  1  1 98  0  0
+</CPUSTAT>
+<MEMSTAT>
+free -m
+              total        used        free      shared  buff/cache   available
+Mem:           7465         909         492        2042        6063        4108
+Swap:             0           0           0
+</MEMSTAT>
+<IOSTAT>
+sar -d 3 2
+Linux 3.10.0-1160.88.1.el7.x86_64 (chksrv) 	11/05/2024 	_x86_64_	(2 CPU)
+
+04:01:30 PM       DEV       tps  rd_sec/s  wr_sec/s  avgrq-sz  avgqu-sz     await     svctm     %util
+04:01:33 PM  dev253-0      4.00      0.00    117.33     29.33      0.00      0.17      0.42      0.17
+04:01:33 PM dev253-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+
+04:01:33 PM       DEV       tps  rd_sec/s  wr_sec/s  avgrq-sz  avgqu-sz     await     svctm     %util
+04:01:36 PM  dev253-0      1.33      0.00     21.33     16.00      0.00      0.25      0.50      0.07
+04:01:36 PM dev253-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+
+Average:          DEV       tps  rd_sec/s  wr_sec/s  avgrq-sz  avgqu-sz     await     svctm     %util
+Average:     dev253-0      2.67      0.00     69.33     26.00      0.00      0.19      0.44      0.12
+Average:    dev253-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+</IOSTAT>
+<THPSTAT>
+AnonHugePages:     47104 kB
+[always] madvise never
+</THPSTAT>
+<HUGPAGE>
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+</HUGPAGE>
+<NUMA>
+[    0.000000] NUMA: Node 0 [mem 0x00000000-0x0009ffff] + [mem 0x00100000-0xbfffffff] -> [mem 0x00000000-0xbfffffff]
+[    0.000000] NUMA: Node 0 [mem 0x00000000-0xbfffffff] + [mem 0x100000000-0x22a9fffff] -> [mem 0x00000000-0x22a9fffff]
+</NUMA>
+<NTP>
+</NTP>
+<TMZONE>
+       Time zone: Asia/Shanghai (CST, +0800)
+</TMZONE>
+<RPM_FIREFOX>
+</RPM_FIREFOX>
+<RPM_FREETYPE>
+freetype-devel-2.8-14.el7_9.1.x86_64
+freetype-2.8-14.el7_9.1.x86_64
+</RPM_FREETYPE>
+<RPM_GHOSTSCRIPT>
+</RPM_GHOSTSCRIPT>
+<RPM_SAMBA>
+</RPM_SAMBA>
+<RPM_OPENVMTOOLS>
+</RPM_OPENVMTOOLS>
+<DBCRSCHECK>
+</DBCRSCHECK>
+<DBASMUSAGE>
+
+no rows selected
+
+</DBASMUSAGE>
+</TAG0>
+<TAG1>
+<oradb>
+
+Session altered.
+
+<DBVER>
+
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+
+1 row selected.
+
+</DBVER>
+<DBOSINFO><![CDATA[
+
+       2
+
+1 row selected.
+
+
+	    1
+
+1 row selected.
+
+
+       7.291
+
+1 row selected.
+
+]]></DBOSINFO>
+<LOGMODE>
+
+ARCHIVELOG
+
+1 row selected.
+
+</LOGMODE>
+<FLASHBACK>
+
+NO
+
+1 row selected.
+
+</FLASHBACK>
+<DBTOTALSIZE><![CDATA[
+
+      5.59
+
+1 row selected.
+
+]]></DBTOTALSIZE>
+<DBFILECOUNT><![CDATA[
+
+	11
+
+1 row selected.
+
+]]></DBFILECOUNT>
+<DBTBLCOUNT><![CDATA[
+
+      2259
+
+1 row selected.
+
+]]></DBTBLCOUNT>
+<DBROLE><![CDATA[
+
+PRIMARY,MAXIMUM PERFORMANCE
+
+1 row selected.
+
+]]></DBROLE>
+<DBTBSUSAGE><![CDATA[
+
+TABLESPACE_NAME      MAXEXTEND(GB) ALLOCATED(GB)   USED(GB)   Free(GB) USED_RATE(%)
+-------------------- ------------- ------------- ---------- ---------- ------------
+TS_NOCOMP                       .2         .1953       .125      .0703         62.5
+TS_COMP                        .24         .2441      .0031       .241         1.29
+UNDOTBS2                       1.1        1.0977      .7081      .3896        64.37
+SYSAUX                          32        1.8066     1.6931      .1135         5.29
+USERS                           32         .2563      .1834      .0729          .57
+SYSTEM                          32        1.0156     1.0068      .0088         3.15
+
+6 rows selected.
+
+]]></DBTBSUSAGE>
+<DBDATAFILE><![CDATA[
+
+FILE_NAME                                                                        STATUS         CUR_GB AUT     MAX_GB
+-------------------------------------------------------------------------------- ---------- ---------- --- ----------
+/u01/app/oracle/oradata/ORADB/datafile/o1_mf_ts_comp_mjrw4g4g_.dbf               AVAILABLE          .1 NO           0
+/u01/app/oracle/oradata/ORADB/datafile/o1_mf_ts_comp_mjrw986d_.dbf               AVAILABLE         .05 NO           0
+/u01/app/oracle/oradata/ORADB/datafile/o1_mf_ts_comp_mjrwq52d_.dbf               AVAILABLE          .1 NO           0
+/u01/app/oracle/oradata/ORADB/datafile/o1_mf_ts_nocom_mjrw4991_.dbf              AVAILABLE          .2 NO           0
+/u01/app/oracle/oradata/ORADB/datafile/o1_mf_undotbs2_mfnwcpfp_.dbf              AVAILABLE           1 NO           0
+/u01/app/oracle/oradata/ORADB/sysaux01.dbf                                       AVAILABLE        1.81 YES         32
+/u01/app/oracle/oradata/ORADB/system01.dbf                                       AVAILABLE        1.02 YES         32
+/u01/app/oracle/oradata/ORADB/undotbs02.dbf                                      AVAILABLE          .1 NO           0
+/u01/app/oracle/oradata/ORADB/users01.dbf                                        AVAILABLE         .26 YES         32
+
+9 rows selected.
+
+]]></DBDATAFILE>
+<DATAFILE_SIZE><![CDATA[
+
+   DBF_CNT         GB
+---------- ----------
+         9 4.61572266
+
+1 row selected.
+
+]]></DATAFILE_SIZE>
+<TMPFILE_SIZE><![CDATA[
+
+   TMP_CNT         GB
+---------- ----------
+         2    .390625
+
+1 row selected.
+
+]]></TMPFILE_SIZE>
+<OWNER_SIZE><![CDATA[
+
+OWNER                        GB
+-------------------- ----------
+AUDSYS                      .05
+COMPUSER                      0
+CTXSYS                        0
+DBSNMP                        0
+DVSYS                         0
+GSMADMIN_INTERNAL             0
+HR                            0
+JASON                       .36
+LBACSYS                       0
+MDSYS                       .23
+OJVMSYS                       0
+ORDDATA                       0
+ORDSYS                        0
+OUTLN                         0
+SYS                        3.03
+SYSTEM                      .02
+WMSYS                       .01
+XDB                         .07
+
+18 rows selected.
+
+]]></OWNER_SIZE>
+<USER_INFO> <![CDATA[
+
+USERNAME             ACCOUNT_STATUS       DEFAULT_TABLESPACE   TEMPORARY_TABLESPACE PROFILE
+-------------------- -------------------- -------------------- -------------------- ---------------
+ANONYMOUS            EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+CTXSYS               EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+HR                   EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+XS$NULL              EXPIRED & LOCKED     SYSTEM               TEMP                 DEFAULT
+APPQOSSYS            LOCKED               SYSAUX               TEMP                 DEFAULT
+AUDSYS               LOCKED               USERS                TEMP                 DEFAULT
+DBSFWUSER            LOCKED               SYSAUX               TEMP                 DEFAULT
+DBSNMP               LOCKED               SYSAUX               TEMP                 DEFAULT
+DIP                  LOCKED               USERS                TEMP                 DEFAULT
+DVF                  LOCKED               SYSAUX               TEMP                 DEFAULT
+DVSYS                LOCKED               SYSAUX               TEMP                 DEFAULT
+GGSYS                LOCKED               SYSAUX               TEMP                 DEFAULT
+GSMADMIN_INTERNAL    LOCKED               SYSAUX               TEMP                 DEFAULT
+GSMCATUSER           LOCKED               USERS                TEMP                 DEFAULT
+GSMROOTUSER          LOCKED               USERS                TEMP                 DEFAULT
+GSMUSER              LOCKED               USERS                TEMP                 GSM_PROF
+LBACSYS              LOCKED               SYSTEM               TEMP                 DEFAULT
+MDDATA               LOCKED               USERS                TEMP                 DEFAULT
+MDSYS                LOCKED               SYSAUX               TEMP                 DEFAULT
+OJVMSYS              LOCKED               SYSTEM               TEMP                 DEFAULT
+OLAPSYS              LOCKED               SYSAUX               TEMP                 DEFAULT
+ORACLE_OCM           LOCKED               USERS                TEMP                 DEFAULT
+ORDDATA              LOCKED               USERS                TEMP                 DEFAULT
+ORDPLUGINS           LOCKED               USERS                TEMP                 DEFAULT
+ORDSYS               LOCKED               USERS                TEMP                 DEFAULT
+OUTLN                LOCKED               SYSTEM               TEMP                 DEFAULT
+REMOTE_SCHEDULER_AGE LOCKED               USERS                TEMP                 DEFAULT
+NT
+
+SI_INFORMTN_SCHEMA   LOCKED               USERS                TEMP                 DEFAULT
+SYS$UMF              LOCKED               SYSTEM               TEMP                 DEFAULT
+SYSBACKUP            LOCKED               USERS                TEMP                 DEFAULT
+SYSDG                LOCKED               USERS                TEMP                 DEFAULT
+SYSKM                LOCKED               USERS                TEMP                 DEFAULT
+SYSRAC               LOCKED               USERS                TEMP                 DEFAULT
+WMSYS                LOCKED               SYSAUX               TEMP                 DEFAULT
+XDB                  LOCKED               SYSAUX               TEMP                 DEFAULT
+SYS                  LOCKED(TIMED)        SYSTEM               TEMP                 DEFAULT
+SYSTEM               LOCKED(TIMED)        SYSTEM               TEMP                 DEFAULT
+COMPUSER             OPEN                 TS_COMP              TEMP                 DEFAULT
+FGEDU                OPEN                 USERS                TEMP                 DEFAULT
+JASON                OPEN                 USERS                TEMP                 DEFAULT
+
+40 rows selected.
+
+
+]]></USER_INFO>
+<TAB_INFO><![CDATA[
+
+OWNER                 TABLE_CNT
+-------------------- ----------
+COMPUSER                      1
+JASON                         5
+
+2 rows selected.
+
+]]></TAB_INFO>
+<DBUSERSIZE><![CDATA[
+
+OWNER                USER_SIZE_GB
+-------------------- ------------
+AUDSYS                        .05
+COMPUSER                      .00
+CTXSYS                        .00
+DBSNMP                        .00
+DVSYS                         .00
+GSMADMIN_INTERNAL             .00
+HR                            .00
+JASON                         .36
+LBACSYS                       .00
+MDSYS                         .23
+OJVMSYS                       .00
+ORDDATA                       .00
+ORDSYS                        .00
+OUTLN                         .00
+SYS                          3.03
+SYSTEM                        .02
+WMSYS                         .01
+XDB                           .07
+
+18 rows selected.
+
+]]></DBUSERSIZE>
+
+Session altered.
+
+<DBREDOCHECK><![CDATA[
+
+    GROUP#    THREAD#  SEQUENCE#         MB ARC STATUS
+---------- ---------- ---------- ---------- --- ----------
+         1          1        229        200 YES INACTIVE
+         2          1        230        200 NO  CURRENT
+         3          1        228        200 YES INACTIVE
+
+3 rows selected.
+
+]]></DBREDOCHECK>
+<DBRESOURCE><![CDATA[
+
+INST_ID RESOURCE_NAME                  CURRENT_UTILIZATION MAX_UTILIZATION LIMIT_VALUE
+------- ------------------------------ ------------------- --------------- ---------------
+      1 processes                                       61              71        100
+      1 sessions                                        82              94        172
+      1 ges_procs                                        0               0          0
+      1 ges_rsv_msgs                                     0               0          0
+      1 parallel_max_servers                             4               4      32767
+
+5 rows selected.
+
+]]></DBRESOURCE>
+
+Session altered.
+
+<DBRMANCHECK><![CDATA[
+
+no rows selected
+
+]]></DBRMANCHECK>
+
+Session altered.
+
+<DBDGLAGCHECK><![CDATA[
+
+no rows selected
+
+
+   THREAD# Last Primary Seq Generated
+---------- --------------------------
+         1                        229
+
+1 row selected.
+
+]]></DBDGLAGCHECK>
+<DBTABLEPARALLEL><![CDATA[
+
+no rows selected
+
+]]></DBTABLEPARALLEL>
+<DBINDEXPARALLEL><![CDATA[
+
+no rows selected
+
+]]></DBINDEXPARALLEL>
+<DBSEQUENCE><![CDATA[
+
+no rows selected
+
+]]></DBSEQUENCE>
+<DB_SEQ_USAGE><![CDATA[
+
+no rows selected
+
+]]></DB_SEQ_USAGE>
+<DBSTATUS>
+
+DB_UNIQUE_NAME       OPEN_MODE            LOG_MODE     PROTECTION_LEVEL     DATABASE_ROLE        SWITCHOVER_STATUS
+-------------------- -------------------- ------------ -------------------- -------------------- --------------------
+oradb                READ WRITE           ARCHIVELOG   MAXIMUM PERFORMANCE  PRIMARY              NOT ALLOWED
+
+1 row selected.
+
+</DBSTATUS>
+<DBOPTION><![CDATA[
+
+OPTION
+--------------------------------------------------
+Partitioning
+Objects
+Real Application Clusters
+Advanced replication
+Bit-mapped indexes
+Connection multiplexing
+Connection pooling
+Database queuing
+Incremental backup and recovery
+Instead-of triggers
+Parallel backup and recovery
+Parallel execution
+Parallel load
+Point-in-time tablespace recovery
+Fine-grained access control
+Proxy authentication/authorization
+Change Data Capture
+Plan Stability
+Online Index Build
+Coalesce Index
+Managed Standby
+Materialized view rewrite
+Database resource manager
+Spatial
+Automatic Storage Management
+Export transportable tablespaces
+Transparent Application Failover
+Fast-Start Fault Recovery
+Sample Scan
+Duplexed backups
+Java
+OLAP Window Functions
+Block Media Recovery
+Fine-grained Auditing
+Application Role
+Enterprise User Security
+Oracle Data Guard
+Oracle Label Security
+OLAP
+Basic Compression
+Join index
+Trial Recovery
+Advanced Analytics
+Online Redefinition
+Streams Capture
+File Mapping
+Block Change Tracking
+Flashback Table
+Flashback Database
+Transparent Data Encryption
+Backup Encryption
+Unused Block Compression
+Oracle Database Vault
+Result Cache
+SQL Plan Management
+SecureFiles Encryption
+Real Application Testing
+Flashback Data Archive
+DICOM
+Active Data Guard
+Server Flash Cache
+Advanced Compression
+XStream
+Deferred Segment Creation
+Unified Auditing
+Management Database
+I/O Server
+ASM Proxy Instance
+Exadata Discovery
+Data Mining
+Global Data Services
+Adaptive Execution Plans
+Table Clustering
+Zone Maps
+Real Application Security
+Privilege Analysis
+Data Redaction
+Cross Transportable Backups
+Cache Fusion Lock Accelerator
+Snapshot time recovery
+Heat Map
+Automatic Data Optimization
+Transparent Sensitive Data Protection
+In-Memory Column Store
+Advanced Index Compression
+In-Memory Aggregation
+Centrally Managed User
+
+87 rows selected.
+
+]]></DBOPTION>
+<DBFEATURES><![CDATA[
+
+NAME                           VERSION         LAST_USAGE_DATE      DESCRIPTION
+------------------------------ --------------- -------------------- ----------------------------------------
+Automatic SGA Tuning           19.0.0.0.0      2024-11-03 09:34:22  Automatic SGA Tuning is enabled.
+Deferred Segment Creation      19.0.0.0.0      2024-11-03 09:34:22  Deferred Segment Creation is being used
+Locally Managed Tablespaces (s 19.0.0.0.0      2024-11-03 09:34:22  There exists tablespaces that are locall
+ystem)                                                              y managed in the database.
+
+Real Application Security      19.0.0.0.0      2024-11-03 09:34:22  Oracle Real Application Security is bein
+                                                                    g used
+
+SQL Plan Directive             19.0.0.0.0      2024-11-03 09:34:22  Sql plan directive has been used
+Statistics Advisor             19.0.0.0.0      2024-11-03 09:34:22  Statistics Advisor has been used.
+Traditional Audit              19.0.0.0.0      2024-11-03 09:34:22  Traditional Audit in use.
+Unified Audit                  19.0.0.0.0      2024-11-03 09:34:22  Unified Audit in use.
+Automatic SQL Tuning Advisor   19.0.0.0.0      2024-11-03 09:34:22  Automatic SQL Tuning Advisor has been us
+                                                                    ed.
+
+Object                         19.0.0.0.0      2024-11-03 09:34:22  Object feature is being used.
+Extensibility                  19.0.0.0.0      2024-11-03 09:34:22  Extensibility feature is being used.
+Oracle Managed Files           19.0.0.0.0      2024-11-03 09:34:22  Database files are being managed by Orac
+                                                                    le.
+
+Partitioning (user)            19.0.0.0.0      2024-11-03 09:34:22  Oracle Partitioning option is being used
+                                                                     - there is at least one user partitione
+                                                                    d object created.
+
+Automatic Maintenance - Optimi 19.0.0.0.0      2024-11-03 09:34:22  Automatic initiation of Optimizer Statis
+zer Statistics Gathering                                            tics Collection
+
+Automatic Maintenance - Space  19.0.0.0.0      2024-11-03 09:34:22  Automatic initiation of Space Advisor
+Advisor
+
+Automatic Maintenance - SQL Tu 19.0.0.0.0      2024-11-03 09:34:22  Automatic initiation of SQL Tuning Advis
+ning Advisor                                                        or
+
+Automatic Segment Space Manage 19.0.0.0.0      2024-11-03 09:34:22  Extents of locally managed tablespaces a
+ment (system)                                                       re managed automatically by Oracle.
+
+Automatic Segment Space Manage 19.0.0.0.0      2024-11-03 09:34:22  Extents of locally managed user tablespa
+ment (user)                                                         ces are managed automatically by Oracle.
+
+Automatic SQL Execution Memory 19.0.0.0.0      2024-11-03 09:34:22  Sizing of work areas for all dedicated s
+                                                                    essions (PGA) is automatic.
+
+Automatic Undo Management      19.0.0.0.0      2024-11-03 09:34:22  Oracle automatically manages undo data u
+                                                                    sing an UNDO tablespace.
+
+Character Set                  19.0.0.0.0      2024-11-03 09:34:22  Character set is used in Oracle Database
+Locally Managed Tablespaces (u 19.0.0.0.0      2024-11-03 09:34:22  There exists user tablespaces that are l
+ser)                                                                ocally managed in the database.
+
+Partitioning (system)          19.0.0.0.0      2024-11-03 09:34:22  Oracle Partitioning option is being used
+                                                                     - there is at least one partitioned obj
+                                                                    ect created.
+
+Recovery Area                  19.0.0.0.0      2024-11-03 09:34:22  The recovery area is configured.
+SQL Tuning Set (system)        19.0.0.0.0      2024-11-03 09:34:22  A SQL Tuning Set has been created in the
+                                                                     database in the SYS schema.
+
+Automatic Reoptimization       19.0.0.0.0      2024-11-03 09:34:22  Automatic Reoptimization have been used
+Result Cache                   19.0.0.0.0      2024-11-03 09:34:22  The Result Cache feature has been used.
+SecureFiles (user)             19.0.0.0.0      2024-11-03 09:34:22  SecureFiles is being used
+SecureFiles (system)           19.0.0.0.0      2024-11-03 09:34:22  SecureFiles is being used by system user
+                                                                    s
+
+Oracle Java Virtual Machine (s 19.0.0.0.0      2024-11-03 09:34:22  OJVM default system users
+ystem)
+
+
+30 rows selected.
+
+]]></DBFEATURES>
+<DBLANG>
+
+AMERICAN_AMERICA.AL32UTF8
+
+1 row selected.
+
+</DBLANG>
+<DBREDOSWITCH>
+
+DT         DY      Total  h0  h1  h2  h3  h4  h5  h6  h7  h8  h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23
+---------- ------- ----- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+2024-10-18 Fri         1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0
+2024-10-19 Sat         2   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   1
+2024-10-20 Sun         1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+2024-10-21 Mon         1   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+2024-10-22 Tue         2   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0
+2024-10-23 Wed         1   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+2024-10-24 Thu         2   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0
+2024-10-25 Fri         1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0
+2024-10-26 Sat         2   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0
+2024-10-27 Sun         1   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0
+2024-10-28 Mon         2   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0
+2024-10-29 Tue         1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+2024-10-30 Wed         2   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0
+2024-10-31 Thu         1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0
+2024-11-01 Fri         1   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+2024-11-02 Sat         2   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0
+2024-11-03 Sun         2   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0
+2024-11-04 Mon         1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+
+18 rows selected.
+
+</DBREDOSWITCH>
+<DBPARAMETER><![CDATA[
+
+NAME                                          VALUE
+--------------------------------------------- ------------------------------------------------------------
+_bloom_filter_enabled                         FALSE
+_bloom_pruning_enabled                        FALSE
+_cleanup_rollback_entries                     2000
+_cursor_obsolete_threshold                    256
+_max_spacebg_slaves                           128
+_optimizer_partial_join_eval                  FALSE
+_sys_logon_delay                              0
+_use_adaptive_log_file_sync                   FALSE
+_use_single_log_writer                        TRUE
+background_dump_dest                          /u01/app/oracle/product/19/db_1/rdbms/log
+control_file_record_keep_time                 7
+db_cache_size                                 536870912
+db_file_name_convert
+db_files                                      1024
+deferred_segment_creation                     FALSE
+event                                         10513 trace name context forever,level 2 : 10512 trace name
+                                              context forever,level 1: 10511 trace name context forever,le
+                                              vel 2: 10510 trace name context forever,level 1
+
+fal_server
+log_archive_config
+log_archive_dest_1
+log_archive_dest_2
+log_archive_dest_3
+log_archive_dest_4
+log_archive_dest_state_1                      enable
+log_archive_dest_state_2                      enable
+log_archive_dest_state_3                      enable
+log_archive_dest_state_4                      enable
+log_file_name_convert
+max_dump_file_size                            1024M
+memory_max_target                             0
+memory_target                                 0
+parallel_force_local                          FALSE
+parallel_max_servers                          20
+pga_aggregate_target                          1073741824
+processes                                     100
+session_cached_cursors                        10
+sga_max_size                                  2147483648
+sga_target                                    2147483648
+shared_pool_size                              536870912
+streams_pool_size                             0
+undo_retention                                900
+user_dump_dest                                /u01/app/oracle/product/19/db_1/rdbms/log
+
+41 rows selected.
+
+]]></DBPARAMETER>
+<DB_SGA_SIZE><![CDATA[
+
+SGA_SIZE_MB
+-----------
+       2048
+
+1 row selected.
+
+]]></DB_SGA_SIZE>
+<DB_SHP_SIZE><![CDATA[
+
+SGA_MAX_SIZE(M) SGA_TARGET SHARED_POOL_SIZE(M) SHARED_POOL_FREE(M) DB_CACHE_CURRENT_SIZE
+--------------- ---------- ------------------- ------------------- ---------------------
+           2048       2048                1232                 205                   656
+
+1 row selected.
+
+]]></DB_SHP_SIZE>
+<DB_SHP_PCT><![CDATA[
+
+SHARED_POOL_USAGE_PCT(%)
+------------------------
+                      78
+
+1 row selected.
+
+]]></DB_SHP_PCT>
+<DB_4031CHECK><![CDATA[
+
+TOTAL_SHARED_POOL_USAGE(MB) ABORTED_REQUESTS
+--------------------------- ----------------
+                       1027                0
+
+1 row selected.
+
+]]></DB_4031CHECK>
+<DB_CURSORMEM><![CDATA[
+
+no rows selected
+
+]]></DB_CURSORMEM>
+<DB_EXPIR_USER><![CDATA[
+
+USERNAME             EXPIRY_DATE
+-------------------- -------------------
+FGEDU                2024-01-21 15:48:38
+
+1 row selected.
+
+]]></DB_EXPIR_USER>
+<DB_PASSWORD_VERIF><![CDATA[
+
+PROFILE              LIMIT
+-------------------- ------------------------------
+DEFAULT              NULL
+
+1 row selected.
+
+]]></DB_PASSWORD_VERIF>
+<DBDBAPRIV><![CDATA[
+
+GRANTEE                        GRANTED_ROLE    ADMIN_OPTION
+------------------------------ --------------- --------------------
+JASON                          DBA             NO
+COMPUSER                       DBA             NO
+FGEDU                          DBA             NO
+
+3 rows selected.
+
+]]></DBDBAPRIV>
+<DBSYSDBA><![CDATA[
+
+USERNAME        SYSDBA
+--------------- ---------------
+JASON           TRUE
+
+1 row selected.
+
+]]></DBSYSDBA>
+<DBAUDITSEGMENT><![CDATA[
+
+no rows selected
+
+]]></DBAUDITSEGMENT>
+<DBAUDITCONT><![CDATA[
+
+PL/SQL procedure successfully completed.
+
+
+    AUDCNT
+----------
+     42878
+
+]]></DBAUDITCONT>
+<DBINVALIDOBJECT><![CDATA[
+
+OWNER                          OBJECT_TYPE                      OBJ_COUNT
+------------------------------ ------------------------- ----------------
+SYS                            PROCEDURE                                1
+
+1 row selected.
+
+]]></DBINVALIDOBJECT>
+<DBINVALIDINDEX><![CDATA[
+
+no rows selected
+
+]]></DBINVALIDINDEX>
+<DBCONTROLFILE><![CDATA[
+
+/u01/app/oracle/oradata/ORADB/control01.ctl
+/u01/app/oracle/oradata/ORADB/control02.ctl
+
+2 rows selected.
+
+]]></DBCONTROLFILE>
+<DB_NOSYS_IN_SYSTEM><![CDATA[
+
+no rows selected
+
+]]></DB_NOSYS_IN_SYSTEM>
+<DBRECOVERYDEST><![CDATA[
+
+NAME                                          SPACE_LIMIT       SPACE_USED SPACE_RECLAIMABLE  NUMBER_OF_FILES     CON_ID
+---------------------------------------- ---------------- ---------------- ----------------- ---------------- ----------
+/arch/ORADB                                10,737,418,240    8,587,280,384        88,211,456               56          0
+
+1 row selected.
+
+]]></DBRECOVERYDEST>
+<DBFLASHRECOVERYUSEAGE><![CDATA[
+
+FILE_TYPE                                PERCENT_SPACE_RECLAIMABLE PERCENT_SPACE_USED
+---------------------------------------- ------------------------- ------------------
+CONTROL FILE                                                     0                  0
+REDO LOG                                                         0                  0
+ARCHIVED LOG                                                     0                 79
+BACKUP PIECE                                                     1                  1
+IMAGE COPY                                                       0                  0
+FLASHBACK LOG                                                    0                  0
+FOREIGN ARCHIVED LOG                                             0                  0
+AUXILIARY DATAFILE COPY                                          0                  0
+
+8 rows selected.
+
+]]></DBFLASHRECOVERYUSEAGE>
+<DBPRODUCTUSERFAILEDLOGIN><![CDATA[
+
+USERNAME                       PROFILE              RESOURCE_NAME                  RESOURCE_T LIMIT
+------------------------------ -------------------- ------------------------------ ---------- ------------------------------
+JASON                          DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   10
+GSMROOTUSER                    DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   10
+FGEDU                          DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   10
+COMPUSER                       DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   10
+
+4 rows selected.
+
+]]></DBPRODUCTUSERFAILEDLOGIN>
+<DBVIRSCHECK><![CDATA[
+
+no rows selected
+
+]]></DBVIRSCHECK>
+<DBSCNHEALTHCHECK><![CDATA[
+--------------------------------------------------------------
+ScnHealthCheck
+--------------------------------------------------------------
+Current Date: 2024/11/05 16:01:43
+Current SCN:   45244995
+Version:       19.0.0.0.0
+--------------------------------------------------------------
+Result: A - SCN Headroom is good
+Apply the latest recommended patches
+based on your maintenance schedule
+For further information review MOS document id 1393363.1
+--------------------------------------------------------------
+
+PL/SQL procedure successfully completed.
+
+]]></DBSCNHEALTHCHECK>
+<DBNAME><![CDATA[oradb]]></DBNAME>
+<LOADPROFILE>
+Load Profile                    Per Second   Per Transaction  Per Exec  Per Call
+~~~~~~~~~~~~~~~            ---------------   --------------- --------- ---------
+             DB Time(s):               0.0               0.0      0.00      0.00
+              DB CPU(s):               0.0               0.0      0.00      0.00
+      Background CPU(s):               0.0               2.2      0.01      0.00
+      Redo size (bytes):           1,409.0         282,017.6
+  Logical read (blocks):              29.4           5,883.1
+          Block changes:               5.0             996.3
+ Physical read (blocks):               0.0               0.6
+Physical write (blocks):               0.5             101.6
+       Read IO requests:               0.0               0.6
+      Write IO requests:               0.3              58.8
+           Read IO (MB):               0.0               0.0
+          Write IO (MB):               0.0               0.8
+           IM scan rows:               0.0               0.0
+Session Logical Read IM:               0.0               0.0
+             User calls:               0.0               3.0
+           Parses (SQL):               1.8             353.3
+      Hard parses (SQL):               0.0               0.1
+     SQL Work Area (MB):               0.0               2.5
+                 Logons:               0.0               1.3
+            User logons:               0.0               0.0
+         Executes (SQL):               2.0             398.1
+              Rollbacks:               0.0               0.0
+           Transactions:               0.0
+
+</LOADPROFILE>
+<INSTEFFICIENCY>
+Instance Efficiency Percentages (Target 100%)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            Buffer Nowait %:  100.00       Redo NoWait %:  100.00
+            Buffer  Hit   %:   99.99    In-memory Sort %:  100.00
+            Library Hit   %:   99.93        Soft Parse %:   99.97
+         Execute to Parse %:   11.25         Latch Hit %:   99.70
+Parse CPU to Parse Elapsd %:  134.78     % Non-Parse CPU:   99.61
+          Flash Cache Hit %:    0.00
+
+</INSTEFFICIENCY>
+<TOPEVENT><![CDATA[
+Top 10 Foreground Events by Total Wait Time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                           Total Wait       Avg   % DB Wait
+Event                                Waits Time (sec)      Wait   time Class
+------------------------------ ----------- ---------- --------- ------ --------
+DB CPU                                             .3            165.9
+log file sync                            9          0  738.56us    3.5 Commit
+PGA memory operation                    55          0   18.71us     .5 Other
+Disk file operations I/O                 3          0  121.33us     .2 User I/O
+asynch descriptor resize                 2          0   23.00us     .0 Other
+ADR block file read                      0          0               .0 Other
+ADR block file write                     0          0               .0 Other
+ADR file lock                            0          0               .0 Other
+AWR Flush                                0          0               .0 Other
+KSV master wait                          0          0               .0 Other
+
+]]></TOPEVENT>
+<TOPSQLBYELAPSTIME><![CDATA[
+]]></TOPSQLBYELAPSTIME>
+<DBERRLOG><![CDATA[
+
+TM                   MSGLEVEL  MSG
+-------------------- --------- ------------------------------------------------------------
+2024-10-10 23:47:27  CRITICAL  Errors in file /u01/app/oracle/diag/rdbms/oradb/oradb/trace/
+2024-10-10 23:48:39  CRITICAL  Errors in file /u01/app/oracle/diag/rdbms/oradb/oradb/trace/
+2024-10-13 09:29:13  CRITICAL  Errors in file /u01/app/oracle/diag/rdbms/oradb/oradb/trace/
+2024-10-13 09:29:43  CRITICAL  Errors in file /u01/app/oracle/diag/rdbms/oradb/oradb/trace/
+2024-10-13 09:30:39  CRITICAL  Errors in file /u01/app/oracle/diag/rdbms/oradb/oradb/trace/
+2024-10-13 09:31:48  CRITICAL  Errors in file /u01/app/oracle/diag/rdbms/oradb/oradb/trace/
+
+6 rows selected.
+
+]]></DBERRLOG>
+<DBPSU><![CDATA[
+DBPSU:[ 
+ACTION_TIME			    ACTION     NAMESPACE       VERSION			ID COMMENTS					      BUNDLE_SER
+----------------------------------- ---------- --------------- ---------------------- ---- -------------------------------------------------- ----------
+				    BOOTSTRAP  DATAPATCH       19			   RDBMS_19.11.0.0.0DBRU_LINUX.X64_210412
+25-JUL-23 02.52.28.664948 PM	    RU_APPLY   SERVER	       19.0.0.0.0		   Patch applied from 19.3.0.0.0 to 19.11.0.0.0: Rele
+											   ase_Update - 210413004009
+
+25-DEC-23 11.06.31.003450 AM	    jvmpsu.sql SERVER	       19.11.0.0.210420OJVMRU	 0 RAN jvmpsu.sql
+25-DEC-23 11.06.31.028942 AM	    APPLY      SERVER	       19.11.0.0.210420OJVMRU	 0 OJVM RU post-install ]
+]]></DBPSU>
+<DBPATCH><![CDATA[
+33144001;REGRESSION FIXING FOR BUG 33048277 - TRACKING BUG FOR RTI 23800902
+33123985;DBW PROCESS GENERATE HUGE TRACES WITH DUMPING DBWR PROCESS STATE AFTER DBRU 19.11
+33121934;IAD E23POD LIBRARY CACHE LOCK / LOAD LOCK / MUTEX X DURING CONNECTION STORM
+32996071;CN  ORA-600 [KGLPNLT] RAISED AND INSTANCE CRASHED DURING STANDBY DB SHUTDOWN WHEN HOT COPY OBJECTS EXISTS
+32811069;19.10 DB UPGRADE IS HANGING WITH THIS SCRIPT
+32765738;AIM ORA-7445 [KEWSSYSVF_1] - KEWSSYSVF_1
+32530202;WRONG RESULT IN CORRELATED SUBQUERY WITH FIX 27864047
+32404638;ORA-12850 IN PX WHEN USING WITH CLAUSE - QUERY SUBFACTORING
+32345272;ORA-00600 [KCLCLS_2] [6] [1170731].  THE SESSION WAS BLOCKED BY A FLUSHED BUFFER.
+32044533;ORA-600 [OPIFCH2 ROWSETSEARLYRET] LOGGED IN DATABASE ALERT LOG
+31602782;SAME INSTANCE SLAVE PARSE FAILURE FLOOD CONTROL
+30978304;ORA-20000 DURING IMPDP WITH STATS AND THE UNIQUE INDEX FOR THE PK IS NOT CREATED
+26749785;PERF_DIAG  NEED TO HAVE MORE CONTROL IN DICTIONARY FOR AUTO_STATS_ADVISOR_TASK
+26724511;AUTO OPTIMIZER STATS RUN MULTIPLE JOBS DURING MAINTENANCE WINDOWS
+32399816;OJVM RELEASE UPDATE: 19.11.0.0.210420 (32399816)
+32545013;Database Release Update : 19.11.0.0.210420 (32545013)
+29585399;OCW RELEASE UPDATE 19.3.0.0.0 (29585399)
+
+OPatch succeeded.
+]]></DBPATCH>
+<DBDGERRCHECK><![CDATA[
+]]></DBDGERRCHECK>
+<DBLSNRINFO><![CDATA[
+oracle    7738     1  0 Jun19 ?        00:02:34 /u01/app/oracle/product/19/db_1/bin/tnslsnr LISTENER -inherit
+
+LSNRCTL for Linux: Version 19.0.0.0.0 - Production on 05-NOV-2024 16:02:06
+
+Copyright (c) 1991, 2021, Oracle.  All rights reserved.
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=chksrv)(PORT=1521)))
+STATUS of the LISTENER
+------------------------
+Alias                     LISTENER
+Version                   TNSLSNR for Linux: Version 19.0.0.0.0 - Production
+Start Date                19-JUN-2024 19:55:32
+Uptime                    138 days 20 hr. 6 min. 34 sec
+Trace Level               off
+Security                  ON: Local OS Authentication
+SNMP                      OFF
+Listener Parameter File   /u01/app/oracle/product/19/db_1/network/admin/listener.ora
+Listener Log File         /u01/app/oracle/diag/tnslsnr/chksrv/listener/alert/log.xml
+Listening Endpoints Summary...
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=chksrv)(PORT=1521)))
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=ipc)(KEY=EXTPROC1521)))
+Services Summary...
+Service "oradb" has 1 instance(s).
+  Instance "oradb", status READY, has 1 handler(s) for this service...
+The command completed successfully
+]]></DBLSNRINFO>
+<DB_PARAMETER_FILE><![CDATA[
+/tmp/ea/20241105.chksrv/20241105.chksrv.oradb.ora
+]]></DB_PARAMETER_FILE>
+</oradb>
+</TAG1>
+</EACHK>
