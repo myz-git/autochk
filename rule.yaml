@@ -2,7 +2,7 @@ osrule:
   cpustat: 
     nm: CPUSTAT
     title: "CPU负载检查"
-    desc: "查看主机负载情况，id为空闲时间百分比，值越高负载越小"
+    desc: "查看主机负载情况,id为空闲时间百分比,值越高负载越小"
     idle_le1: 20
     idle_le2: 10
     swap_ge1: 100
@@ -22,7 +22,7 @@ osrule:
   filesystem: 
     nm: FILESYSTEM
     title: "文件系统使用率"
-    desc: "查看文件系统使用率，文件系统使用率小于80%为正常"
+    desc: "查看文件系统使用率,文件系统使用率小于80%为正常"
     disk_ge1: 80%
     disk_ge2: 90%
     inode_ge1: 80%
@@ -55,7 +55,7 @@ osrule:
   numa: 
     nm: NUMA
     title: "NUMA使用检查"
-    desc: "查看主机NUMA状态，NUMA特性会对数据库服务器稳定运行带来非常大的影响，为避免系统性能隐患,建议关闭NUMA"
+    desc: "查看主机NUMA状态,NUMA特性会对数据库服务器稳定运行带来非常大的影响,为避免系统性能隐患,建议关闭NUMA"
     flg1: "No NUMA"
     flg2: "NUMA turned off"
 
@@ -63,11 +63,11 @@ dbrule:
   dbstatus: 
     nm: DBSTATUS
     title: "数据库状态检查"
-    desc: "数据库状态检查主要包括：数据库启动状态，Dataguard保护模式，保护级别，数据库角色等。"
+    desc: "数据库状态检查主要包括：数据库启动状态,Dataguard保护模式,保护级别,数据库角色等。"
   dbtbsusage: 
     nm: DBTBSUSAGE
     title: "表空间使用率"
-    desc: "针对表空间使用率超过80%且剩余空间不足8G，进行预警。"
+    desc: "针对表空间使用率超过80%且剩余空间不足8G,进行预警。"
     tbsutil_ge1: 80
     tbsutil_ge2: 90
     freesize_le1: 8
@@ -80,7 +80,7 @@ dbrule:
   dbcontrolfile: 
     nm: DBCONTROLFILE
     title: "控制文件检查"
-    desc: "检查控制文件路径信息：控制文件至少要有2路冗余，才符合安全配置要求，并建议检查是否放在在不同存储路径上。"  
+    desc: "检查控制文件路径信息:控制文件至少要有2路冗余,才符合安全配置要求,并建议检查是否放在在不同存储路径上。"  
     cnt_le1: 2
   dbusersize: 
     nm: DBUSERSIZE
@@ -93,7 +93,7 @@ dbrule:
   dbredoswitch: 
     nm: DBREDOSWITCH
     title: "归档切换检查"
-    desc: "对Oracle数据库的归档切换次数进行检查，建议日平均15-20 分钟切换一次, 业务高峰期也尽量大于5分钟一次。"
+    desc: "对Oracle数据库的归档切换次数进行检查,建议日平均15-20 分钟切换一次, 业务高峰期也尽量大于5分钟一次。"
     sw_cnt_ge1: 12
   dbredocheck: 
     nm: DBREDOCHECK
@@ -109,7 +109,7 @@ dbrule:
   instefficiency: 
     nm: INSTEFFICIENCY
     title: "数据库性能运行效率"
-    desc: "在Oracle AWR报告中，Library Cache Hit Ratio（库缓存命中率）是一个重要的性能指标。如果该指标低于90%，则可能会影响数据库的性能。"
+    desc: "在Oracle AWR报告中,Library Cache Hit Ratio(库缓存命中率)是一个重要的性能指标。如果该指标低于90%,则可能会影响数据库的性能。"
     buffer_hit: 90
     library_hit: 90
     soft_parse: 90
@@ -120,11 +120,11 @@ dbrule:
   topsqlbyelapstime: 
     nm: TOPSQLBYELAPSTIME
     title: "TOP SQL语句(最大消耗时间)"
-    desc: "根据执行次数和单次执行时间综合检查，建议统计时间内(如2h)，执行次数超过1000次，单次执行时间不超过2秒。"
+    desc: "根据执行次数和单次执行时间综合检查,建议统计时间内(如2h),执行次数超过1000次,单次执行时间不超过2秒。"
   dblsnrinfo: 
     nm: DBLSNRINFO
     title: "监听状态及日志检查"
-    desc: "监听日志文件较大，影响监听响应性能，建议定期清理保持在2G以下。"
+    desc: "监听日志文件较大,影响监听响应性能,建议定期清理保持在2G以下。"
     log_size: 2147483648
   dbtableparallel: 
     nm: DBTABLEPARALLEL
@@ -139,7 +139,7 @@ dbrule:
   dbinvalidindex: 
     nm: DBINVALIDINDEX
     title: "无效索引检查"
-    desc: "如存在无效(不可用)索引，需要对索引进行重建或删除。"
+    desc: "如存在无效(不可用)索引,需要对索引进行重建或删除。"
     result: "no rows selected"
   dbsequence: 
     nm: DBSEQUENCE
@@ -159,11 +159,11 @@ dbrule:
   dbparameter: 
     nm: DBPARAMETER
     title: "数据库初始化参数检查"
-    desc: "检查Oracle初始化参数，建议结合实际情况排查数据库重要参数设置是否合理。"  
+    desc: "检查Oracle初始化参数,建议结合实际情况排查数据库重要参数设置是否合理。"  
   db_parameter_file: 
     nm: DB_PARAMETER_FILE
     title: "数据库初始化参数检查（详细）"
-    desc: "检查Oracle初始化参数，建议结合实际情况排查数据库重要参数设置是否合理。（详细）"
+    desc: "检查Oracle初始化参数,建议结合实际情况排查数据库重要参数设置是否合理。（详细）"
   db_shp_size: 
     nm: DB_SHP_SIZE
     title: "共享池使用率"
@@ -171,7 +171,7 @@ dbrule:
   db_shp_pct: 
     nm: DB_SHP_PCT
     title: "共享池使用率"
-    desc: "检查共享池的使用占比，通常SHARED_POOL的使用率不应超过SGA_SIZE的60%"
+    desc: "检查共享池的使用占比,通常SHARED_POOL的使用率不应超过SGA_SIZE的60%"
   db_4031check: 
     nm: DB_4031CHECK
     title: "4031问题检查"
@@ -184,17 +184,17 @@ dbrule:
   dbcrscheck: 
     nm: DBCRSCHECK
     title: "RAC资源状态(含OCR)"
-    desc: "检查是否有UNKNOW状态；(除GDS), 建议OCR使用nomal冗余。"
+    desc: "检查是否有UNKNOW状态(除GDS), 建议OCR使用nomal冗余。"
     resultG: ""
   dbasmusage: 
     nm: DBASMUSAGE
     title: "ASM磁盘使用"
-    desc: "FREE_MB为剩余空间，该值建议大于10G为正常。"
+    desc: "FREE_MB为剩余空间,该值建议大于10G为正常。"
     resultG: ""
   dbdglagcheck: 
     nm: DBDGLAGCHECK
     title: "DataGuard同步延迟检查"
-    desc: "检查gap延迟，通常情况下gap Value值应该<20秒。"
+    desc: "检查gap延迟,通常情况下gap Value值应该<20秒。"
     resultB: 1
   dbdgerrcheck: 
     nm: DBDGERRCHECK
@@ -204,13 +204,13 @@ dbrule:
   dbrmancheck: 
     nm: DBRMANCHECK
     title: "数据库备份"
-    desc: "检查当天备份结果是否有error和warning，如果有建议检查。"
+    desc: "检查当天备份结果是否有error和warning,如果有建议检查。"
     resultB: "WARNINGS"
     resultR: "ERROR"
   dbdbapriv: 
     nm: DBDBAPRIV
     title: "具有DBA权限的业务账户"
-    desc: "Oracle 数据库存在具有DBA权限的业务账户，存在安全风险，建议整改，收回DBA并授予最小使用权限。"
+    desc: "Oracle 数据库存在具有DBA权限的业务账户,存在安全风险,建议整改,收回DBA并授予最小使用权限。"
     resultG: "no rows selected"
   dbauditsegment: 
     nm: DBAUDITSEGMENT
@@ -230,12 +230,12 @@ dbrule:
   dbvirscheck: 
     nm: DBVIRSCHECK
     title: "病毒勒索攻击检查"
-    desc: "检查数据库是否被病毒（如比特币勒索）攻击，需要立即处理。"
+    desc: "检查数据库是否被病毒（如比特币勒索）攻击,需要立即处理。"
     resultR: "no rows selected"
   dbpsu: 
     nm: DBPSU
     title: "数据库PSU补丁集检查"
-    desc: "检查数据库安装的PSU补丁集，建议重要系统一年更新一次PSU(可选择次新psu补丁集)。"
+    desc: "检查数据库安装的PSU补丁集,建议重要系统一年更新一次PSU(可选择次新psu补丁集)。"
   dbpatch: 
     nm: DBPATCH
     title: "补丁集检查"
