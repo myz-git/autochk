@@ -1,6 +1,7 @@
 local/
 *.log
 ~
+*~
 .DS_Store
 *Done.xlsx
 *Done.docx

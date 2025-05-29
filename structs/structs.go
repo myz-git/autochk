@@ -55,6 +55,7 @@ type DbSht struct {
 	Dbindexparallel          Tpstrc
 	Dbinvalidindex           Tpstrc
 	Dbsequence               Tpstrc
+	Db_seq_usage             Tpstrc
 	Dbrecoverydest           Tpstrc
 	Dbflashrecoveryuseage    Tpstrc
 	Dberrlog                 Tpstrc

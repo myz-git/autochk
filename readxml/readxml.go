@@ -2,30 +2,25 @@ package readxml
 
 import (
 	"autochk/structs"
+	"strconv"
 	"strings"
 
-	"github.com/beevik/etree" // go get github.com/beevik/etree
+	"github.com/beevik/etree"
 )
 
 func ReadXml(path string, infoshtp *structs.InfoSht, osshtp *structs.OsSht, dbshtp *structs.DbSht) {
-
 	doc := etree.NewDocument()
 	if err := doc.ReadFromFile(path); err != nil {
 		panic(err)
 	}
 
-	//读取root tag
 	root := doc.SelectElement("EACHK")
 
-	//找到tag0
+	// 处理 TAG0（主机相关信息）
 	for _, tag0 := range root.SelectElements("TAG0") {
-		//遍历tag0中tag
 		for _, tag := range tag0.ChildElements() {
-			// log.Printf("<%s>", tag.Tag)
-			// // log.Println( strings.TrimSpace(tag.Text()))
-			// log.Printf("</%s>", tag.Tag)
 			switch tag.Tag {
-			// 准备INFO 工作表 数据
+			// Server Info
 			case "HOSTNAME":
 				infoshtp.HostName = strings.TrimSpace(tag.Text())
 			case "IPADDR":
@@ -34,20 +29,14 @@ func ReadXml(path string, infoshtp *structs.InfoSht, osshtp *structs.OsSht, dbsh
 				infoshtp.Os = strings.TrimSpace(tag.Text())
 			case "RELVER":
 				infoshtp.Relver = strings.TrimSpace(tag.Text())
-			case "CORES":
-				infoshtp.Cores = strings.TrimSpace(tag.Text())
 			case "CPUCOUNT":
 				infoshtp.CpuCount = strings.TrimSpace(tag.Text())
 			case "CPUMHZ":
 				infoshtp.CpuMHZ = strings.TrimSpace(tag.Text())
 			case "MEMTOTAL":
-				infoshtp.MemTotal = strings.TrimSpace(tag.Text())
-			case "SWAPTOTAL":
-				infoshtp.SwapTotal = strings.TrimSpace(tag.Text())
-				// default:
-				// 	infoshtp.Others =  strings.TrimSpace(tag.Text())
-
-			// 准备OS工作表数据
+				memKB, _ := strconv.Atoi(strings.TrimSpace(tag.Text()))
+				infoshtp.MemTotal = strconv.Itoa(memKB/1024) + " Megabytes" // 转换为 MB
+			// OS Sheet
 			case "OSPARAMETER":
 				osshtp.Osparameter.Contents = strings.TrimSpace(tag.Text())
 			case "ULIMIT":
@@ -76,21 +65,14 @@ func ReadXml(path string, infoshtp *structs.InfoSht, osshtp *structs.OsSht, dbsh
 				dbshtp.Dbcrscheck.Contents = strings.TrimSpace(tag.Text())
 			case "DBASMUSAGE":
 				dbshtp.Dbasmusage.Contents = strings.TrimSpace(tag.Text())
-
 			}
 		}
-
 	}
-	//找到tag1
+
+	// 处理 TAG1（数据库相关信息）
 	for _, tag1 := range root.SelectElements("TAG1") {
-		//遍历tag1中tag ,这里为动态的数据库名 如 <myzdb></myzdb>
 		for _, tag11 := range tag1.ChildElements() {
-			// log.Println(tag11.Tag)
-			//遍历<数据库名> 内部tag
 			for _, tag := range tag11.ChildElements() {
-				// log.Printf("<%s>", tag.Tag)
-				// // log.Println( strings.TrimSpace(tag.Text()))
-				// log.Printf("</%s>", tag.Tag)
 				switch tag.Tag {
 				case "DBNAME":
 					infoshtp.DbName = strings.TrimSpace(tag.Text())
@@ -103,11 +85,11 @@ func ReadXml(path string, infoshtp *structs.InfoSht, osshtp *structs.OsSht, dbsh
 				case "FLASHBACK":
 					infoshtp.FlashBack = strings.TrimSpace(tag.Text())
 				case "DBTOTALSIZE":
-					infoshtp.DbTotalsize = strings.TrimSpace(tag.Text())
+					infoshtp.DbTotalsize = strings.TrimSpace(tag.Text()) + " GB"
 				case "DBFILECOUNT":
 					infoshtp.DbFilecount = strings.TrimSpace(tag.Text())
 				case "DBTBLCOUNT":
-					infoshtp.DbTblcount = strings.TrimSpace(tag.Text())
+					infoshtp.DbTblcount = strings.TrimSpace(tag.Text()) // 去除 GB 单位
 				case "DBLANG":
 					infoshtp.DbLang = strings.TrimSpace(tag.Text())
 				case "DBTBSUSAGE":
@@ -170,9 +152,6 @@ func ReadXml(path string, infoshtp *structs.InfoSht, osshtp *structs.OsSht, dbsh
 					dbshtp.Dbvirscheck.Contents = strings.TrimSpace(tag.Text())
 				case "DBSCNHEALTHCHECK":
 					dbshtp.Dbscnhealthcheck.Contents = strings.TrimSpace(tag.Text())
-
-					// default:
-					// 	infoshtp.Others =  strings.TrimSpace(tag.Text())
 				}
 			}
 		}

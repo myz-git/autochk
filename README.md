@@ -1,13 +1,29 @@
-# autochk
-健康检查自动分析系统
+# Autochk
+健康检查自动分析系统 Version 3.0
 
-# 主要功能介绍: 
-根据预设的检查规则对收集到的系统及数据库信息(XML格式文件)进行读取和分析,自动判断是否满足规则,然后最终生成检查报告;
+# 主要功能: 
+这是一个名为 `autochk` 的Go语言项目，主要功能是分析Oracle数据库和操作系统的健康检查数据。项目从XML文件中读取数据，进行分析处理，然后根据模版生成Excel报告和Word文档。
 
-# 详细功能设计:
-1. 给定检查规则rule.yaml文件,内容为OS及DB的检查项名称及检查值健康判断标准;
-2. autochk对给定的xml文件(内容为对LINUX及数据库的信息收集结果) 进行读取,在读取过程中会根据检查规则对每一个XML中的检查项进行健康判断,然后将检查项,检查结果,健康判断等保存到xlsx表中;
-3. 最后将xlsx表根据WORD文件模板生成健康检查报告
+
+
+## 主要特性总结
+
+1. **项目类型**: Oracle数据库和操作系统健康检查分析工具
+2. **主要功能**: 
+   - XML数据解析和结构化
+   - 基于规则的自动化分析
+   - 多格式报告生成（Excel + Word）
+3. **核心模块**:
+   - `readxml`: XML数据读取和解析
+   - `structs`: 数据结构定义
+   - `anadata`: 分析引擎核心
+   - `toxls`: Excel报告生成
+   - `todocx`: Word文档生成
+   - `utils`: 配置管理和工具函数
+4. **外部依赖**: 使用了etree、excelize、go-docx等专业库
+5. **配置驱动**: 通过rule.yaml文件定义检查规则和阈值
+
+这个项目采用了模块化设计，各个功能模块职责清晰，通过统一的数据结构进行数据传递，是一个结构良好的企业级健康检查工具
 
 
 # 项目架构:
@@ -17,20 +33,250 @@
 |
 |-readxml/readxml.go 读取给定的xml文件,遍历tag标签,提取出每个检查项目及内容,分类保存到infoshtp,osshtp,dbshtp三个struct中;
 |
-|-anadata/ana.go	建立分析函数,对struct中的检查项目及内容,对照rule.yaml中定义的检查项及健康判定规则进行数据分析,将健康判断分析结果再保存到structs中;
-|
-|-toxls/xlsx.go 将经过ana.go分析后的InfoSht,OsSht,DbSht三个structs内容,格式化写入到xlsx文件中;
+|-anadata /：
+|---anadata/analyzer.go：分析主入口，协调格式化、OS 和 DB 指标分析
+|---anadata/format.go：格式化 InfoSht 字段
+|---anadata/os_analyzer.go：OS 指标分析
+|---anadata/db_instance.go：实例状态和存储分析
+|---anadata/db_performance.go：性能和效率分析
+|---anadata/db_security.go：安全检查
+|---anadata/db_objects.go：数据库对象管理
+|---anadata/db_monitoring.go：错误监控、DataGuard、备份及杂项分析|
+|-toxls/xlsx.go 将经过anadata 包分析后的InfoSht,OsSht,DbSht三个structs内容,格式化写入到xlsx文件中;
 |
 |-utils/config.go 解析yaml文件获得检查项及健康判定规则;
 |
 |-rule.yaml  健康检查规则文件;
 |
-|-20230322_dcs0tdb6_apc2db.ALL.xml  xml样例文件;
+|-20240401_M001R01DG_lm0ora01_M001R011.xml样例文件;
 
+
+
+## 项目结构和依赖关系分析
+
+```mermaid
+graph TB
+    %% 主程序入口
+    Main[main.go<br/>主程序入口] --> ReadXML[readxml包<br/>XML数据读取]
+    Main --> Structs[structs包<br/>数据结构定义]
+    Main --> ToXLS[toxls包<br/>Excel报告生成]
+    Main --> ToDocx[todocx包<br/>Word文档生成]
+    
+    %% 配置和工具
+    Main --> Utils[utils包<br/>工具函数和配置]
+    Utils --> RuleYAML[rule.yaml<br/>检查规则配置]
+    Utils --> ConfigGo[config.go<br/>YAML配置解析]
+    Utils --> DBGo[db.go<br/>数据库操作]
+    Utils --> UtilsGo[utils.go<br/>通用工具函数]
+    
+    %% 数据分析模块
+    AnaData[anadata包<br/>数据分析引擎] --> Structs
+    AnaData --> Utils
+    AnaData --> Analyzer[analyzer.go<br/>分析协调器]
+    AnaData --> OSAnalyzer[os_analyzer.go<br/>OS指标分析]
+    AnaData --> DBAnalyzer[db_analyzer.go<br/>DB指标分析]
+    AnaData --> Format[format.go<br/>数据格式化]
+    AnaData --> Ana[ana.go<br/>核心分析逻辑]
+    
+    %% 数据结构
+    Structs --> InfoSht[InfoSht<br/>基础信息结构]
+    Structs --> OsSht[OsSht<br/>操作系统数据结构]
+    Structs --> DbSht[DbSht<br/>数据库数据结构]
+    Structs --> SummaryEntries[SummaryEntries<br/>汇总报告结构]
+    
+    %% XML读取模块
+    ReadXML --> ETree[github.com/beevik/etree<br/>XML解析库]
+    ReadXML --> Structs
+    
+    %% Excel生成模块
+    ToXLS --> Excelize[github.com/xuri/excelize/v2<br/>Excel操作库]
+    ToXLS --> Structs
+    ToXLS --> Utils
+    
+    %% Word文档生成模块
+    ToDocx --> GoDocx[github.com/lukasjarosch/go-docx<br/>Word文档库]
+    ToDocx --> Structs
+    
+    %% 外部依赖
+    Utils --> YAML[gopkg.in/yaml.v2<br/>YAML解析库]
+    Utils --> SQLite[github.com/mattn/go-sqlite3<br/>SQLite数据库]
+    
+    %% 输入输出文件
+    XMLFiles[*.ALL.xml<br/>输入XML文件] --> ReadXML
+    ToXLS --> ExcelFiles[*.Done.xlsx<br/>输出Excel报告]
+    ToDocx --> WordFiles[*.docx<br/>输出Word文档]
+    
+    %% 样式定义
+    classDef mainModule fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef dataModule fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef utilModule fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef outputModule fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef externalLib fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef fileType fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    
+    class Main mainModule
+    class Structs,ReadXML,AnaData dataModule
+    class Utils,ConfigGo,DBGo,UtilsGo utilModule
+    class ToXLS,ToDocx outputModule
+    class ETree,Excelize,GoDocx,YAML,SQLite externalLib
+    class XMLFiles,ExcelFiles,WordFiles,RuleYAML fileType
+```
+
+## 详细的模块依赖关系图
+
+```mermaid
+graph LR
+    subgraph "核心数据流"
+        A[XML输入文件] --> B[readxml模块]
+        B --> C[structs数据结构]
+        C --> D[anadata分析引擎]
+        D --> E[toxls Excel生成]
+        D --> F[todocx Word生成]
+        E --> G[Excel报告输出]
+        F --> H[Word文档输出]
+    end
+    
+    subgraph "配置管理"
+        I[rule.yaml] --> J[utils/config.go]
+        J --> D
+    end
+    
+    subgraph "外部依赖库"
+        K[etree XML解析]
+        L[excelize Excel操作]
+        M[go-docx Word操作]
+        N[yaml.v2 配置解析]
+        O[sqlite3 数据库]
+    end
+    
+    B -.-> K
+    E -.-> L
+    F -.-> M
+    J -.-> N
+    Utils -.-> O
+    
+    classDef coreFlow fill:#bbdefb,stroke:#1976d2,stroke-width:2px
+    classDef config fill:#c8e6c9,stroke:#388e3c,stroke-width:2px
+    classDef external fill:#ffcdd2,stroke:#d32f2f,stroke-width:2px
+    
+    class A,B,C,D,E,F,G,H coreFlow
+    class I,J config
+    class K,L,M,N,O external
+```
+
+## 项目功能架构图
+
+```mermaid
+flowchart TD
+    subgraph "输入层"
+        XML[XML健康检查数据<br/>*.ALL.xml]
+        YAML[检查规则配置<br/>rule.yaml]
+    end
+    
+    subgraph "数据处理层"
+        Parse[XML解析<br/>readxml包]
+        Struct[数据结构化<br/>structs包]
+        Config[规则配置<br/>utils/config]
+    end
+    
+    subgraph "分析引擎层"
+        OSAna[操作系统分析<br/>os_analyzer.go]
+        DBAna[数据库分析<br/>db_analyzer.go]
+        Format[数据格式化<br/>format.go]
+        Core[核心分析逻辑<br/>ana.go]
+    end
+    
+    subgraph "输出层"
+        Excel[Excel报告生成<br/>toxls包]
+        Word[Word文档生成<br/>todocx包]
+    end
+    
+    subgraph "输出文件"
+        XLSOut[*.Done.xlsx<br/>健康检查报告]
+        DocOut[*.docx<br/>检查文档]
+    end
+    
+    XML --> Parse
+    YAML --> Config
+    Parse --> Struct
+    Struct --> OSAna
+    Struct --> DBAna
+    Config --> OSAna
+    Config --> DBAna
+    OSAna --> Format
+    DBAna --> Format
+    Format --> Core
+    Core --> Excel
+    Core --> Word
+    Excel --> XLSOut
+    Word --> DocOut
+    
+    classDef input fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef process fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef analysis fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef output fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    classDef file fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    
+    class XML,YAML input
+    class Parse,Struct,Config process
+    class OSAna,DBAna,Format,Core analysis
+    class Excel,Word output
+    class XLSOut,DocOut file
+```
+
+
+
+###  Sheet "HealthReport" 映射表
+
+| **区域**          | **字段名**              | **单元格位置** | **数据来源**                         | **备注**                                                     |
+| ----------------- | ----------------------- | -------------- | ------------------------------------ | ------------------------------------------------------------ |
+| **标题**          | 健康检查报告            | C1             | 固定文本                             | 无需填充，直接保留模板中的文本                               |
+| **标题**          | Health Report           | G1             | 固定文本                             | 无需填充，直接保留模板中的文本                               |
+| **Server Info**   | 主机名                  | F4             | InfoSht.HostName                     | 从 XML 的 <HOSTNAME> 提取                                    |
+| **Server Info**   | IP地址                  | F5             | InfoSht.Ipaddr                       | 从 XML 的 <IPADDR> 提取，多地址用换行符连接                  |
+| **Server Info**   | 系统平台                | F6             | InfoSht.Os                           | 从 XML 的 <OS> 提取                                          |
+| **Server Info**   | 操作系统补丁            | F7             | InfoSht.Relver                       | 从 XML 的 <RELVER> 提取                                      |
+| **Server Info**   | CPU核数                 | F8             | InfoSht.CpuCount                     | 从 XML 的 <CPUCOUNT> 提取                                    |
+| **Server Info**   | CPU频率                 | F9             | InfoSht.CpuMHZ                       | 从 XML 的 <CPUMHZ> 提取                                      |
+| **Server Info**   | 内存                    | F10            | InfoSht.MemTotal                     | 从 XML 的 <MEMTOTAL> 提取，单位转换为 MB（如 kB 除以 1024）  |
+| **DataBase Info** | 数据库名                | K4             | InfoSht.DbName                       | 从 XML 的 <DBNAME> 提取                                      |
+| **DataBase Info** | 数据库版本              | K5             | InfoSht.DbVer                        | 从 XML 的 <DBVER> 提取                                       |
+| **DataBase Info** | 数据库架构              | K6             | InfoSht.DbMaa                        | 从 XML 的 <DBMAA> 提取                                       |
+| **DataBase Info** | 主备库角色              | K7             | InfoSht.DbRole                       | 从 XML 的 <DBROLE> 提取                                      |
+| **DataBase Info** | 是否开启归档            | K8             | InfoSht.LogMode                      | 从 XML 的 <LOGMODE> 提取                                     |
+| **DataBase Info** | 数据库字符集            | K9             | InfoSht.DbLang                       | 从 XML 的 <DBLANG> 提取                                      |
+| **DataBase Info** | 数据库总大小GB          | K10            | InfoSht.DbTotalsize                  | 从 XML 的 <DBTOTALSIZE> 提取，保留单位 GB                    |
+| **DataBase Info** | 数据库表数量            | K11            | InfoSht.DbTblcount                   | 从 XML 的 <DBTBLCOUNT> 提取，修正单位为个数（而非 GB）       |
+| **Issue Summary** | 标题                    | B13            | 固定文本 "Issue summary"             | 无需填充，直接保留模板中的文本                               |
+| **Issue Summary** | 重要                    | C14            | 固定文本                             | 无需填充，直接保留模板中的文本                               |
+| **Issue Summary** | 普通                    | D14            | 固定文本                             | 无需填充，直接保留模板中的文本                               |
+| **Issue Summary** | 轻微                    | E14            | 固定文本                             | 无需填充，直接保留模板中的文本                               |
+| **Issue Summary** | 主机系统分析            | D15:F15        | SummaryEntries                       | 统计 Category="主机系统分析" 的 Severe/Moderate/Minor 数量   |
+| **Issue Summary** | 数据库实例分析          | D16:F16        | SummaryEntries                       | 统计 Category="数据库实例分析" 的 Severe/Moderate/Minor 数量 |
+| **Issue Summary** | 数据库集群检查          | D17:F17        | SummaryEntries                       | 统计 Category="数据库集群检查" 的 Severe/Moderate/Minor 数量 |
+| **Issue Summary** | DataGuard检查           | D18:F18        | SummaryEntries                       | 统计 Category="DataGuard检查" 的 Severe/Moderate/Minor 数量  |
+| **Issue Summary** | 数据库备份检查          | D19:F19        | SummaryEntries                       | 统计 Category="数据库备份检查" 的 Severe/Moderate/Minor 数量 |
+| **Issue Summary** | 数据库安全检查          | D20:F20        | SummaryEntries                       | 统计 Category="数据库安全检查" 的 Severe/Moderate/Minor 数量 |
+| **Issue Summary** | 软件使用分析            | D21:F21        | SummaryEntries                       | 统计 Category="软件使用分析" 的 Severe/Moderate/Minor 数量   |
+| **Issue Summary** | 其他项检查              | D22:F22        | SummaryEntries                       | 统计其他未分类的 Severe/Moderate/Minor 数量                  |
+| **Issue List**    | 标题                    | B23            | 固定文本 "Issue list"                | 无需填充，直接保留模板中的文本                               |
+| **Issue List**    | No.                     | B24            | 固定文本                             | 无需填充，直接保留模板中的文本                               |
+| **Issue List**    | 问题类别                | C24            | 固定文本                             | 无需填充，直接保留模板中的文本                               |
+| **Issue List**    | 检查项                  | D24            | 固定文本                             | 无需填充，直接保留模板中的文本                               |
+| **Issue List**    | 结果                    | E24            | 固定文本                             | 无需填充，直接保留模板中的文本                               |
+| **Issue List**    | 影响                    | F24            | 固定文本                             | 无需填充，直接保留模板中的文本                               |
+| **Issue List**    | 问题描述及建议          | G24            | 固定文本                             | 无需填充，直接保留模板中的文本                               |
+| **Issue List**    | 动态行 (No.)            | B25+           | 自增序号（从 1 开始）                | 根据 SummaryEntries 中的问题数量动态生成                     |
+| **Issue List**    | 动态行 (问题类别)       | C25+           | SummaryEntries.Category              | 直接从分析结果提取                                           |
+| **Issue List**    | 动态行 (检查项)         | D25+           | SummaryEntries.Title                 | 从 rule.yaml 或分析结果提取                                  |
+| **Issue List**    | 动态行 (结果)           | E25+           | 基于告警级别计算                     | R=0, B=5, G=8, 无告警=10                                     |
+| **Issue List**    | 动态行 (影响)           | F25+           | 基于告警级别计算                     | R="重要", B="普通", G="轻微", 无告警="PASS"                  |
+| **Issue List**    | 动态行 (问题描述及建议) | G25+           | SummaryEntries.Severe/Moderate/Minor | 从分析结果提取具体描述，若无告警则为空                       |
 
 
 
 # 程序实现:
+
 ##  使用 etree 解析复杂结构的 xml 文件
 参考如下
 https://godoc.org/github.com/beevik/etree
@@ -46,7 +292,8 @@ https://github.com/beevik/etree
 6. 如果是检查指标,在confg中添加检查规则名称, 要和yaml完全一致, 注意数据类型
 7. 在ana中添加指标分析函数Ana_xxx或者格式化输出函数Fmt_xxx
 
-## 程序说明
+# 程序说明
+
 ### main.go
 命令行参数处理：通过 flag 包处理 -s 参数，决定是否以单文件模式处理XML文件。
 清理旧文件：执行 ClearFile 函数来删除已完成的 .xlsx 文件，以准备新的输出。
@@ -136,7 +383,14 @@ readxml.go文件包含了 ReadXml 函数，这个函数用于读取 XML 文件�
 这个函数是系统中非常关键的一部分，因为它直接处理输入数据，并将这些数据转换成内部可以进一步处理的格式。
 
 ### anadata/ana.go
-ana.go 文件中包含的代码主要负责分析和格式化来自 XML 文件的数据，以及将这些数据与 rule.yaml 文件中定义的规则进行比较，以评估系统和数据库的健康状态。这里是对您提供的代码部分的解释和分析：
+
+anadata 包：提供 OS 和数据库指标分析功能,主要负责分析和格式化来自 XML 文件的数据，以及将这些数据与 rule.yaml 文件中定义的规则进行比较，以评估系统和数据库的健康状态
+- analyzer.go：分析主入口
+- format.go：格式化 InfoSht 字段
+- os_analyzer.go：OS 指标分析
+- db_analyzer.go：DB 指标分析
+utils 包：提供项目级公共工具函数
+- utils.go：字符串转换和包含检查
 
 功能概述
 数据转换：
@@ -153,7 +407,7 @@ Fmt_DbRole, Fmt_LogMode, Fmt_FlashBack, Fmt_DbTotalsize, Fmt_DbFilecount, Fmt_Db
 通常，这些函数从多行数据中提取第三行的信息（如果存在），并在必要时添加额外的文本（如添加 "GB" 单位）。
 主要分析逻辑
 在 Ana 函数中，首先尝试从 utils 包中获取规则，然后调用一系列函数来分析操作系统（OS）和数据库（DB）相关的数据。
-每个 Ana_ 前缀的函数都负责分析特定的系统或数据库指标，比如 Ana_Osparameter, Ana_Ulimit, Ana_DbTbs 等。
+每个 Ana_ 前缀的函数都负责分析特定的系统或数据库指标，比如 Ana_Osparameter, Ana_Ulimit, Ana_DBTbs 等。
 设计和实现考虑
 错误处理：在主分析函数中，当获取规则失败时，只是打印错误日志。这种处理方式可能需要根据应用的需求进一步优化，例如，可以考虑将错误返回到更高的调用层。
 代码复用：格式化数据的函数有类似的结构和逻辑，可能会考虑通过创建更通用的函数来减少代码重复。
@@ -181,7 +435,7 @@ Ana_Ulimit
 
 第三部分的 ana.go 文件中继续展示了一系列的函数，用于分析数据库相关的健康指标。这些函数利用正则表达式和字符串操作来解析提供的数据，并根据 rule.yaml 中的规则设置警报级别。以下是对您提供的函数的详细分析：
 
-Ana_DbTbs (数据库表空间使用率检查)
+Ana_DBTbs (数据库表空间使用率检查)
 主要逻辑：遍历每一行数据，检查表空间使用率，如果达到预设的告警阈值，则设置相应的告警等级并中断循环。
 警报逻辑：
 使用率大于等于 90% 且剩余空间小于 4GB 设置为 "R"（红色警报）。
@@ -255,6 +509,6 @@ net.ipv4.ip_local_port_range = 9000 65500，增加可用端口范围。
 
 
 
-## Bug List
+# Bug List
 关于3.3.18序列最大值使用检查这一块的，当MAXVALUE为0时查询语句select sequence_owner,sequence_name, max_value,last_number,cache_size,round(last_number/max_value ,2) percent_use from dba_sequences 
 where  last_number/max_value >0.8 and  cycle_flag='N'会报错ORA-01476: divisor is equal to zero，看看要不要加上max_value<>0

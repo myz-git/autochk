@@ -5,31 +5,22 @@ import (
 	"fmt"
 	"strings"
 
-	// "hlchk/utils"
 	"github.com/xuri/excelize/v2"
-	// "github.com/myz-git/excelize"
-	// "github.com/qax-os/excelize"
 )
 
 func Xlsx(infstp *structs.InfoSht, osshtp *structs.OsSht, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries, xlsnm string, colcnt int, sglf bool) {
-
-	//open xlsx
+	// 确定输出文件名
 	var newfnm string
 	if sglf {
 		newfnm = xlsnm + ".Done.xlsx"
 	} else {
-		// 保存为一个xlsx ,每个xml为一列
-		newfnm = "HelthCheckReport.ALLDone.xlsx"
+		newfnm = "HealthCheckReport.ALLDone.xlsx"
 	}
 
-	if colcnt == 1 { //第一次则新建文件
-		NewXlsx(newfnm)
-	}
-
-	f, err := excelize.OpenFile(newfnm)
-
+	// 加载模板文件
+	f, err := excelize.OpenFile("HealthReport.xlsx")
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("打开模板文件失败:", err)
 		return
 	}
 	defer func() {
@@ -37,627 +28,458 @@ func Xlsx(infstp *structs.InfoSht, osshtp *structs.OsSht, dbshtp *structs.DbSht,
 			fmt.Println(err)
 		}
 	}()
-	// log.Println("打开文件->", newfnm)
-	//初始化工作表
-	// InitSheet(f)
 
-	///---sss---///
-
+	// 填充 HealthReport Sheet 的 Server Info 和 DataBase Info
 	PutSht_INFO(f, infstp, colcnt)
 
-	//编辑工作表(OS)
+	// 填充 OS Sheet
 	PutSht_OS(f, infstp, osshtp, colcnt)
 
-	//编辑工作表(DB)
+	// 填充 DB Sheet
 	PutSht_DB(f, infstp, dbshtp, colcnt)
 
-	// Add Summary sheet
+	// 填充 HealthReport Sheet 的 Issue List
 	PutSht_Summary(f, summaryEntries)
 
-	//新文件名保留原来的fnm名字,后缀名为_new.xlsx
-	// newcsvfnm := strings.Replace(fnm, ".xlsx", "_done.xlsx", -1)
-
-	// //每一个xml使用保存一个xlsx
-	// nowTime := time.Now().Format("20060102")
-	// newcsvfnm := "_" + nowTime + ".xlsx"
-
-	f.SaveAs(newfnm)
-
-	///---eee---///
-
+	// 保存文件
+	if err := f.SaveAs(newfnm); err != nil {
+		fmt.Println("保存文件失败:", err)
+		return
+	}
 }
 
 func PutSht_INFO(f *excelize.File, infstp *structs.InfoSht, colcnt int) {
-	shnm := "INFO"
-	// log.Printf("开始编辑工作表:%v,请等待....", shnm)
+	shnm := "HealthReport"
 
-	//获取sheet有多少列
-	// cols, _ := f.GetRows(shnm)
-	// colnm := len(cols[0])
+	// 填充 Server Info
+	f.SetCellStr(shnm, "F4", infstp.HostName)
+	f.SetCellStr(shnm, "F5", infstp.Ipaddr)
+	f.SetCellStr(shnm, "F6", infstp.Os)
+	f.SetCellStr(shnm, "F7", infstp.Relver)
+	f.SetCellStr(shnm, "F8", infstp.CpuCount)
+	f.SetCellStr(shnm, "F9", infstp.CpuMHZ)
+	f.SetCellStr(shnm, "F10", infstp.MemTotal)
 
-	// log.Printf("colcnt-------->%v,", colcnt)
-
-	rows, _ := f.Rows(shnm) //按行的方式读取数据到二维数组中
-	//[A1],[B1],[C1],[D1]....
-	//[A2],[B2],[C2],[D2]....
-	//....
-	rowidx := 1       //行计数器
-	for rows.Next() { //遍历每一行
-		row, _ := rows.Columns() //将每一行赋值为一个一维数组row  :[A1],[B1],[C1],[D1]......
-		// log.Printf(row[0])
-		cellA := row[0] //row[0] 为每一行的第A列 , 如A1 ,A2,A3....
-		//需要写入的单元格
-		// v, h := excelize.CellNameToCoordinates(row[colcnt])
-		aixcell, _ := excelize.CoordinatesToCellName(colcnt+1, rowidx) //定位第colcnt+1列, 第J行单元格
-		// log.Println("aixcell--->", aixcell)
-		switch cellA {
-		case "数据库名称\nDB_UNIQUE_NAME":
-			f.SetCellStr(shnm, aixcell, infstp.DbName)
-		case "主机名":
-			f.SetCellStr(shnm, aixcell, infstp.HostName)
-		case "IP地址":
-			f.SetCellStr(shnm, aixcell, infstp.Ipaddr)
-		case "系统平台":
-			f.SetCellStr(shnm, aixcell, infstp.Os)
-		case "操作系统补丁":
-			f.SetCellStr(shnm, aixcell, infstp.Relver)
-		case "数据库版本":
-			f.SetCellStr(shnm, aixcell, infstp.DbVer)
-		case "数据库架构":
-			f.SetCellStr(shnm, aixcell, infstp.DbMaa)
-		case "主备库角色":
-			f.SetCellStr(shnm, aixcell, infstp.DbRole)
-		case "是否开启归档":
-			f.SetCellStr(shnm, aixcell, infstp.LogMode)
-		case "是否开启闪回":
-			f.SetCellStr(shnm, aixcell, infstp.FlashBack)
-		case "数据库总大小GB":
-			f.SetCellStr(shnm, aixcell, infstp.DbTotalsize)
-		case "数据库文件数":
-			f.SetCellStr(shnm, aixcell, infstp.DbFilecount)
-		case "数据库表数量":
-			f.SetCellStr(shnm, aixcell, infstp.DbTblcount)
-		case "数据库字符集":
-			f.SetCellStr(shnm, aixcell, infstp.DbLang)
-			// case "CORES\n(CPU)":
-			// 	f.SetCellStr(shnm, aixcell, infstp.Cores)
-		case "CPU核数":
-			f.SetCellStr(shnm, aixcell, infstp.CpuCount)
-		case "CPU频率":
-			f.SetCellStr(shnm, aixcell, infstp.CpuMHZ)
-		case "内存":
-			f.SetCellStr(shnm, aixcell, infstp.MemTotal)
-		case "交换分区":
-			f.SetCellStr(shnm, aixcell, infstp.SwapTotal)
-			// default:
-			// 	f.SetCellStr(shnm, aixcell, infstp.Others)
-		}
-		rowidx++
-	}
+	// 填充 DataBase Info
+	f.SetCellStr(shnm, "K4", infstp.DbName)
+	f.SetCellStr(shnm, "K5", infstp.DbVer)
+	f.SetCellStr(shnm, "K6", infstp.DbMaa)
+	f.SetCellStr(shnm, "K7", infstp.DbRole)
+	f.SetCellStr(shnm, "K8", infstp.LogMode)
+	f.SetCellStr(shnm, "K9", infstp.DbLang)
+	f.SetCellStr(shnm, "K10", infstp.DbTotalsize)
+	f.SetCellStr(shnm, "K11", infstp.DbTblcount)
 }
 
 func PutSht_OS(f *excelize.File, infstp *structs.InfoSht, ossht *structs.OsSht, colcnt int) {
-	//编辑工作表(OS)
 	shnm := "OS"
-	// log.Printf("开始编辑工作表:%v,请等待....", shnm)
 
-	//设置excel styleB  单元格标记为蓝色
+	// 定义单元格样式
 	styleB, _ := f.NewStyle(&excelize.Style{
-		// Fill:      excelize.Fill{Type: "pattern", Color: []string{"#A020F0"}, Pattern: 1},
 		Fill:      excelize.Fill{Type: "pattern", Color: []string{"#4876FF"}, Pattern: 1},
 		Alignment: &excelize.Alignment{Horizontal: "right", Vertical: "top", WrapText: true},
 	})
-
-	//设置excel styleR  单元格标记为红色
 	styleR, _ := f.NewStyle(&excelize.Style{
 		Fill:      excelize.Fill{Type: "pattern", Color: []string{"#FFAEB9"}, Pattern: 1},
 		Alignment: &excelize.Alignment{Horizontal: "right", Vertical: "top", WrapText: true},
 	})
 
-	rows, _ := f.Rows(shnm) //按行的方式读取数据到二维数组中
-	//[A1],[B1],[C1],[D1]....
-	//[A2],[B2],[C2],[D2]....
-	//....
-	rowidx := 1       //行计数器
-	for rows.Next() { //遍历每一行
-		row, _ := rows.Columns() //将每一行赋值为一个一维数组row  :[A1],[B1],[C1],[D1]......
-		// log.Printf(row[0])
-		cellA := row[0] //row[0] 为每一行的第A列 , 如A1 ,A2,A3....
-		//需要写入的单元格
-		// v, h := excelize.CellNameToCoordinates(row[colcnt])
-		aixcell, _ := excelize.CoordinatesToCellName(colcnt+1, rowidx) //定位第colcnt+1列, 第J行单元格
-		// log.Println("aixcell--->", aixcell)
-		switch cellA {
-		case "主机名":
-			f.SetCellStr(shnm, aixcell, infstp.HostName)
-		case "IP地址":
-			f.SetCellStr(shnm, aixcell, infstp.Ipaddr)
-		case "主机内核参数":
-			f.SetCellStr(shnm, aixcell, ossht.Osparameter.Contents)
-			switch ossht.Osparameter.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-				// log.Println("主机内核参数aixcell----------------------->", aixcell)
-			}
-		case "主机LIMIT资源限制":
-			f.SetCellStr(shnm, aixcell, ossht.Ulimit.Contents)
-			switch ossht.Ulimit.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-		case "文件系统使用率":
-			f.SetCellStr(shnm, aixcell, ossht.Filesystem.Contents)
-			switch ossht.Filesystem.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-			// log.Printf("Filesystem->\n%s", ossht.Filesystem.Contents)
-		case "索引资源节点使用率":
-			f.SetCellStr(shnm, aixcell, ossht.Inodeusage.Contents)
-			switch ossht.Inodeusage.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-		case "CPU负载":
-			f.SetCellStr(shnm, aixcell, ossht.Cpustat.Contents)
-			switch ossht.Cpustat.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-		case "内存使用":
-			f.SetCellStr(shnm, aixcell, ossht.Memstat.Contents)
-			switch ossht.Memstat.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-		case "磁盘IO负载检查":
-			f.SetCellStr(shnm, aixcell, ossht.Iostat.Contents)
-			switch ossht.Iostat.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-		case "透明大页开启检查":
-			f.SetCellStr(shnm, aixcell, ossht.Thpstat.Contents)
-			switch ossht.Thpstat.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-		case "主机大页使用检查":
-			f.SetCellStr(shnm, aixcell, ossht.Hugpage.Contents)
-			switch ossht.Hugpage.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-		case "NUMA使用检查":
-			f.SetCellStr(shnm, aixcell, ossht.Numa.Contents)
-			switch ossht.Numa.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-		case "NTP时钟同步检查":
-			f.SetCellStr(shnm, aixcell, ossht.Ntp.Contents)
-			switch ossht.Ntp.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-			// default:
-			// 	f.SetCellStr(shnm, aixcell, infstp.Others)
-
-		}
-		rowidx++
+	// 填充 OS Sheet
+	f.SetCellStr(shnm, "B1", infstp.HostName)
+	f.SetCellStr(shnm, "B2", infstp.Ipaddr)
+	f.SetCellStr(shnm, "B3", ossht.Osparameter.Contents)
+	if ossht.Osparameter.Alarm == "R" {
+		f.SetCellStyle(shnm, "B3", "B3", styleR)
+	} else if ossht.Osparameter.Alarm == "B" {
+		f.SetCellStyle(shnm, "B3", "B3", styleB)
 	}
-
+	f.SetCellStr(shnm, "B4", ossht.Ulimit.Contents)
+	if ossht.Ulimit.Alarm == "R" {
+		f.SetCellStyle(shnm, "B4", "B4", styleR)
+	} else if ossht.Ulimit.Alarm == "B" {
+		f.SetCellStyle(shnm, "B4", "B4", styleB)
+	}
+	f.SetCellStr(shnm, "B5", ossht.Filesystem.Contents)
+	if ossht.Filesystem.Alarm == "R" {
+		f.SetCellStyle(shnm, "B5", "B5", styleR)
+	} else if ossht.Filesystem.Alarm == "B" {
+		f.SetCellStyle(shnm, "B5", "B5", styleB)
+	}
+	f.SetCellStr(shnm, "B6", ossht.Inodeusage.Contents)
+	if ossht.Inodeusage.Alarm == "R" {
+		f.SetCellStyle(shnm, "B6", "B6", styleR)
+	} else if ossht.Inodeusage.Alarm == "B" {
+		f.SetCellStyle(shnm, "B6", "B6", styleB)
+	}
+	f.SetCellStr(shnm, "B7", ossht.Cpustat.Contents)
+	if ossht.Cpustat.Alarm == "R" {
+		f.SetCellStyle(shnm, "B7", "B7", styleR)
+	} else if ossht.Cpustat.Alarm == "B" {
+		f.SetCellStyle(shnm, "B7", "B7", styleB)
+	}
+	f.SetCellStr(shnm, "B8", ossht.Memstat.Contents)
+	if ossht.Memstat.Alarm == "R" {
+		f.SetCellStyle(shnm, "B8", "B8", styleR)
+	} else if ossht.Memstat.Alarm == "B" {
+		f.SetCellStyle(shnm, "B8", "B8", styleB)
+	}
+	f.SetCellStr(shnm, "B9", ossht.Iostat.Contents)
+	if ossht.Iostat.Alarm == "R" {
+		f.SetCellStyle(shnm, "B9", "B9", styleR)
+	} else if ossht.Iostat.Alarm == "B" {
+		f.SetCellStyle(shnm, "B9", "B9", styleB)
+	}
+	f.SetCellStr(shnm, "B10", ossht.Thpstat.Contents)
+	if ossht.Thpstat.Alarm == "R" {
+		f.SetCellStyle(shnm, "B10", "B10", styleR)
+	} else if ossht.Thpstat.Alarm == "B" {
+		f.SetCellStyle(shnm, "B10", "B10", styleB)
+	}
+	f.SetCellStr(shnm, "B11", ossht.Hugpage.Contents)
+	if ossht.Hugpage.Alarm == "R" {
+		f.SetCellStyle(shnm, "B11", "B11", styleR)
+	} else if ossht.Hugpage.Alarm == "B" {
+		f.SetCellStyle(shnm, "B11", "B11", styleB)
+	}
+	f.SetCellStr(shnm, "B12", ossht.Numa.Contents)
+	if ossht.Numa.Alarm == "R" {
+		f.SetCellStyle(shnm, "B12", "B12", styleR)
+	} else if ossht.Numa.Alarm == "B" {
+		f.SetCellStyle(shnm, "B12", "B12", styleB)
+	}
+	f.SetCellStr(shnm, "B13", ossht.Ntp.Contents)
+	if ossht.Ntp.Alarm == "R" {
+		f.SetCellStyle(shnm, "B13", "B13", styleR)
+	} else if ossht.Ntp.Alarm == "B" {
+		f.SetCellStyle(shnm, "B13", "B13", styleB)
+	}
 }
 
 func PutSht_DB(f *excelize.File, infstp *structs.InfoSht, dbsht *structs.DbSht, colcnt int) {
-	//编辑工作表(OS)
 	shnm := "DB"
-	// log.Printf("开始编辑工作表:%v,请等待....", shnm)
 
-	//设置excel styleB  单元格标记为蓝色
+	// 定义单元格样式
 	styleB, _ := f.NewStyle(&excelize.Style{
-		// Fill:      excelize.Fill{Type: "pattern", Color: []string{"#A020F0"}, Pattern: 1},
 		Fill:      excelize.Fill{Type: "pattern", Color: []string{"#4876FF"}, Pattern: 1},
 		Alignment: &excelize.Alignment{Horizontal: "right", Vertical: "top", WrapText: true},
 	})
-
-	//设置excel styleR  单元格标记为红色
 	styleR, _ := f.NewStyle(&excelize.Style{
 		Fill:      excelize.Fill{Type: "pattern", Color: []string{"#FFAEB9"}, Pattern: 1},
 		Alignment: &excelize.Alignment{Horizontal: "right", Vertical: "top", WrapText: true},
 	})
-
-	//设置excel styleG  单元格标记为绿色
 	styleG, _ := f.NewStyle(&excelize.Style{
 		Fill:      excelize.Fill{Type: "pattern", Color: []string{"#00bf5f"}, Pattern: 1},
 		Alignment: &excelize.Alignment{Horizontal: "right", Vertical: "top", WrapText: true},
 	})
 
-	rows, _ := f.Rows(shnm) //按行的方式读取数据到二维数组中
-	//[A1],[B1],[C1],[D1]....
-	//[A2],[B2],[C2],[D2]....
-	//....
-	rowidx := 1       //行计数器
-	for rows.Next() { //遍历每一行
-		row, _ := rows.Columns() //将每一行赋值为一个一维数组row  :[A1],[B1],[C1],[D1]......
-		// log.Printf(row[0])
-		cellA := row[0] //row[0] 为每一行的第A列 , 如A1 ,A2,A3....
-		//需要写入的单元格
-		// v, h := excelize.CellNameToCoordinates(row[colcnt])
-		aixcell, _ := excelize.CoordinatesToCellName(colcnt+1, rowidx) //定位第colcnt+1列, 第J行单元格
-		// log.Println("aixcell--->", aixcell)
-		switch cellA {
-		case "数据库名称\nDB_UNIQUE_NAME":
-			f.SetCellStr(shnm, aixcell, infstp.DbName)
-		case "主机名":
-			f.SetCellStr(shnm, aixcell, infstp.HostName)
-		case "表空间使用率":
-			f.SetCellStr(shnm, aixcell, dbsht.DbTbsusage.Contents)
-			switch dbsht.DbTbsusage.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-		case "数据文件大小检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbdatafile.Contents)
-			switch dbsht.Dbdatafile.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-		case "控制文件检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbcontrolfile.Contents)
-			switch dbsht.Dbcontrolfile.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-		case "数据库用户大小":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbusersize.Contents)
-		case "REDO文件性能检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbredocheck.Contents)
-			switch dbsht.Dbredocheck.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-		case "归档切换检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbredoswitch.Contents)
-			switch dbsht.Dbredoswitch.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-
-		case "数据库资源使用限制检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbresource.Contents)
-			switch dbsht.Dbresource.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			}
-
-		case "数据库性能负载分析":
-			f.SetCellStr(shnm, aixcell, dbsht.Loadprofile.Contents)
-			switch dbsht.Loadprofile.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-
-		case "数据库性能运行效率":
-			f.SetCellStr(shnm, aixcell, dbsht.Instefficiency.Contents)
-			switch dbsht.Instefficiency.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-
-		case "数据库Top等待":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbtopevent.Contents)
-			switch dbsht.Dbtopevent.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-
-		case "数据库Top SQL(耗时)":
-			f.SetCellStr(shnm, aixcell, dbsht.DbtopSQL.Contents)
-			switch dbsht.DbtopSQL.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-
-		case "监听状态及日志检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dblsnrinfo.Contents)
-			switch dbsht.Dblsnrinfo.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-
-		case "并行度>1的表":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbtableparallel.Contents)
-			switch dbsht.Dbtableparallel.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-
-		case "并行度>1的索引":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbindexparallel.Contents)
-			switch dbsht.Dbindexparallel.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "无效索引检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbinvalidindex.Contents)
-			switch dbsht.Dbinvalidindex.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "Oracle序列检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbsequence.Contents)
-			switch dbsht.Dbsequence.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "闪回区配置":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbrecoverydest.Contents)
-			switch dbsht.Dbrecoverydest.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "FlashRecovery区使用情况":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbflashrecoveryuseage.Contents)
-			switch dbsht.Dbflashrecoveryuseage.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "数据库日志检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dberrlog.Contents)
-			switch dbsht.Dberrlog.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "数据库RMAN备份":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbrmancheck.Contents)
-			switch dbsht.Dbrmancheck.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "DBA权限用户检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbdbapriv.Contents)
-			switch dbsht.Dbdbapriv.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "SYSDBA权限用户检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbsysdba.Contents)
-			switch dbsht.Dbsysdba.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "数据库审计空间检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbauditsegment.Contents)
-			switch dbsht.Dbauditsegment.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "数据库审计对象检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbauditcont.Contents)
-			switch dbsht.Dbauditcont.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "业务对象存放系统表空间":
-			f.SetCellStr(shnm, aixcell, dbsht.Db_Nosys_In_System.Contents)
-			switch dbsht.Db_Nosys_In_System.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "错误口令登录锁定帐户PROFILE检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbproductuserfailedlogin.Contents)
-			switch dbsht.Dbproductuserfailedlogin.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "病毒勒索攻击检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbvirscheck.Contents)
-			switch dbsht.Dbvirscheck.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "SCNHealthCheck检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbscnhealthcheck.Contents)
-			switch dbsht.Dbscnhealthcheck.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "DataGuard同步延迟检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbdglagcheck.Contents)
-			switch dbsht.Dbdglagcheck.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "DataGuard同步报错检查":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbdgerrcheck.Contents)
-			switch dbsht.Dbdgerrcheck.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "RAC资源状态":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbcrscheck.Contents)
-			switch dbsht.Dbcrscheck.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-		case "ASM磁盘使用":
-			f.SetCellStr(shnm, aixcell, dbsht.Dbasmusage.Contents)
-			switch dbsht.Dbasmusage.Alarm {
-			case "R":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleR)
-			case "B":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleB)
-			case "G":
-				f.SetCellStyle(shnm, aixcell, aixcell, styleG)
-			}
-			// case end
-		}
-		rowidx++
+	// 填充 DB Sheet
+	f.SetCellStr(shnm, "B1", infstp.DbName)
+	f.SetCellStr(shnm, "B2", infstp.HostName)
+	f.SetCellStr(shnm, "B3", dbsht.DbTbsusage.Contents)
+	if dbsht.DbTbsusage.Alarm == "R" {
+		f.SetCellStyle(shnm, "B3", "B3", styleR)
+	} else if dbsht.DbTbsusage.Alarm == "B" {
+		f.SetCellStyle(shnm, "B3", "B3", styleB)
 	}
+	f.SetCellStr(shnm, "B4", dbsht.Dbdatafile.Contents)
+	if dbsht.Dbdatafile.Alarm == "R" {
+		f.SetCellStyle(shnm, "B4", "B4", styleR)
+	} else if dbsht.Dbdatafile.Alarm == "B" {
+		f.SetCellStyle(shnm, "B4", "B4", styleB)
+	}
+	f.SetCellStr(shnm, "B5", dbsht.Dbcontrolfile.Contents)
+	if dbsht.Dbcontrolfile.Alarm == "R" {
+		f.SetCellStyle(shnm, "B5", "B5", styleR)
+	} else if dbsht.Dbcontrolfile.Alarm == "B" {
+		f.SetCellStyle(shnm, "B5", "B5", styleB)
+	}
+	f.SetCellStr(shnm, "B6", dbsht.Dbusersize.Contents)
+	f.SetCellStr(shnm, "B7", dbsht.Dbredocheck.Contents)
+	if dbsht.Dbredocheck.Alarm == "R" {
+		f.SetCellStyle(shnm, "B7", "B7", styleR)
+	} else if dbsht.Dbredocheck.Alarm == "B" {
+		f.SetCellStyle(shnm, "B7", "B7", styleB)
+	}
+	f.SetCellStr(shnm, "B8", dbsht.Dbredoswitch.Contents)
+	if dbsht.Dbredoswitch.Alarm == "R" {
+		f.SetCellStyle(shnm, "B8", "B8", styleR)
+	} else if dbsht.Dbredoswitch.Alarm == "B" {
+		f.SetCellStyle(shnm, "B8", "B8", styleB)
+	}
+	f.SetCellStr(shnm, "B9", dbsht.Dbresource.Contents)
+	if dbsht.Dbresource.Alarm == "R" {
+		f.SetCellStyle(shnm, "B9", "B9", styleR)
+	} else if dbsht.Dbresource.Alarm == "B" {
+		f.SetCellStyle(shnm, "B9", "B9", styleB)
+	}
+	f.SetCellStr(shnm, "B10", dbsht.Loadprofile.Contents)
+	if dbsht.Loadprofile.Alarm == "R" {
+		f.SetCellStyle(shnm, "B10", "B10", styleR)
+	} else if dbsht.Loadprofile.Alarm == "B" {
+		f.SetCellStyle(shnm, "B10", "B10", styleB)
+	} else if dbsht.Loadprofile.Alarm == "G" {
+		f.SetCellStyle(shnm, "B10", "B10", styleG)
+	}
+	f.SetCellStr(shnm, "B11", dbsht.Instefficiency.Contents)
+	if dbsht.Instefficiency.Alarm == "R" {
+		f.SetCellStyle(shnm, "B11", "B11", styleR)
+	} else if dbsht.Instefficiency.Alarm == "B" {
+		f.SetCellStyle(shnm, "B11", "B11", styleB)
+	} else if dbsht.Instefficiency.Alarm == "G" {
+		f.SetCellStyle(shnm, "B11", "B11", styleG)
+	}
+	f.SetCellStr(shnm, "B12", dbsht.Dbtopevent.Contents)
+	if dbsht.Dbtopevent.Alarm == "R" {
+		f.SetCellStyle(shnm, "B12", "B12", styleR)
+	} else if dbsht.Dbtopevent.Alarm == "B" {
+		f.SetCellStyle(shnm, "B12", "B12", styleB)
+	} else if dbsht.Dbtopevent.Alarm == "G" {
+		f.SetCellStyle(shnm, "B12", "B12", styleG)
+	}
+	f.SetCellStr(shnm, "B13", dbsht.DbtopSQL.Contents)
+	if dbsht.DbtopSQL.Alarm == "R" {
+		f.SetCellStyle(shnm, "B13", "B13", styleR)
+	} else if dbsht.DbtopSQL.Alarm == "B" {
+		f.SetCellStyle(shnm, "B13", "B13", styleB)
+	} else if dbsht.DbtopSQL.Alarm == "G" {
+		f.SetCellStyle(shnm, "B13", "B13", styleG)
+	}
+	f.SetCellStr(shnm, "B14", dbsht.Dblsnrinfo.Contents)
+	if dbsht.Dblsnrinfo.Alarm == "R" {
+		f.SetCellStyle(shnm, "B14", "B14", styleR)
+	} else if dbsht.Dblsnrinfo.Alarm == "B" {
+		f.SetCellStyle(shnm, "B14", "B14", styleB)
+	} else if dbsht.Dblsnrinfo.Alarm == "G" {
+		f.SetCellStyle(shnm, "B14", "B14", styleG)
+	}
+	f.SetCellStr(shnm, "B15", dbsht.Dbtableparallel.Contents)
+	if dbsht.Dbtableparallel.Alarm == "R" {
+		f.SetCellStyle(shnm, "B15", "B15", styleR)
+	} else if dbsht.Dbtableparallel.Alarm == "B" {
+		f.SetCellStyle(shnm, "B15", "B15", styleB)
+	} else if dbsht.Dbtableparallel.Alarm == "G" {
+		f.SetCellStyle(shnm, "B15", "B15", styleG)
+	}
+	f.SetCellStr(shnm, "B16", dbsht.Dbindexparallel.Contents)
+	if dbsht.Dbindexparallel.Alarm == "R" {
+		f.SetCellStyle(shnm, "B16", "B16", styleR)
+	} else if dbsht.Dbindexparallel.Alarm == "B" {
+		f.SetCellStyle(shnm, "B16", "B16", styleB)
+	} else if dbsht.Dbindexparallel.Alarm == "G" {
+		f.SetCellStyle(shnm, "B16", "B16", styleG)
+	}
+	f.SetCellStr(shnm, "B17", dbsht.Dbinvalidindex.Contents)
+	if dbsht.Dbinvalidindex.Alarm == "R" {
+		f.SetCellStyle(shnm, "B17", "B17", styleR)
+	} else if dbsht.Dbinvalidindex.Alarm == "B" {
+		f.SetCellStyle(shnm, "B17", "B17", styleB)
+	} else if dbsht.Dbinvalidindex.Alarm == "G" {
+		f.SetCellStyle(shnm, "B17", "B17", styleG)
+	}
+	f.SetCellStr(shnm, "B18", dbsht.Dbsequence.Contents)
+	if dbsht.Dbsequence.Alarm == "R" {
+		f.SetCellStyle(shnm, "B18", "B18", styleR)
+	} else if dbsht.Dbsequence.Alarm == "B" {
+		f.SetCellStyle(shnm, "B18", "B18", styleB)
+	} else if dbsht.Dbsequence.Alarm == "G" {
+		f.SetCellStyle(shnm, "B18", "B18", styleG)
+	}
+	f.SetCellStr(shnm, "B19", dbsht.Dbrecoverydest.Contents)
+	if dbsht.Dbrecoverydest.Alarm == "R" {
+		f.SetCellStyle(shnm, "B19", "B19", styleR)
+	} else if dbsht.Dbrecoverydest.Alarm == "B" {
+		f.SetCellStyle(shnm, "B19", "B19", styleB)
+	} else if dbsht.Dbrecoverydest.Alarm == "G" {
+		f.SetCellStyle(shnm, "B19", "B19", styleG)
+	}
+	f.SetCellStr(shnm, "B20", dbsht.Dbflashrecoveryuseage.Contents)
+	if dbsht.Dbflashrecoveryuseage.Alarm == "R" {
+		f.SetCellStyle(shnm, "B20", "B20", styleR)
+	} else if dbsht.Dbflashrecoveryuseage.Alarm == "B" {
+		f.SetCellStyle(shnm, "B20", "B20", styleB)
+	} else if dbsht.Dbflashrecoveryuseage.Alarm == "G" {
+		f.SetCellStyle(shnm, "B20", "B20", styleG)
+	}
+	f.SetCellStr(shnm, "B21", dbsht.Dberrlog.Contents)
+	if dbsht.Dberrlog.Alarm == "R" {
+		f.SetCellStyle(shnm, "B21", "B21", styleR)
+	} else if dbsht.Dberrlog.Alarm == "B" {
+		f.SetCellStyle(shnm, "B21", "B21", styleB)
+	} else if dbsht.Dberrlog.Alarm == "G" {
+		f.SetCellStyle(shnm, "B21", "B21", styleG)
+	}
+	f.SetCellStr(shnm, "B22", dbsht.Dbrmancheck.Contents)
+	if dbsht.Dbrmancheck.Alarm == "R" {
+		f.SetCellStyle(shnm, "B22", "B22", styleR)
+	} else if dbsht.Dbrmancheck.Alarm == "B" {
+		f.SetCellStyle(shnm, "B22", "B22", styleB)
+	} else if dbsht.Dbrmancheck.Alarm == "G" {
+		f.SetCellStyle(shnm, "B22", "B22", styleG)
+	}
+	f.SetCellStr(shnm, "B23", dbsht.Dbdbapriv.Contents)
+	if dbsht.Dbdbapriv.Alarm == "R" {
+		f.SetCellStyle(shnm, "B23", "B23", styleR)
+	} else if dbsht.Dbdbapriv.Alarm == "B" {
+		f.SetCellStyle(shnm, "B23", "B23", styleB)
+	} else if dbsht.Dbdbapriv.Alarm == "G" {
+		f.SetCellStyle(shnm, "B23", "B23", styleG)
+	}
+	f.SetCellStr(shnm, "B24", dbsht.Dbsysdba.Contents)
+	if dbsht.Dbsysdba.Alarm == "R" {
+		f.SetCellStyle(shnm, "B24", "B24", styleR)
+	} else if dbsht.Dbsysdba.Alarm == "B" {
+		f.SetCellStyle(shnm, "B24", "B24", styleB)
+	} else if dbsht.Dbsysdba.Alarm == "G" {
+		f.SetCellStyle(shnm, "B24", "B24", styleG)
+	}
+	f.SetCellStr(shnm, "B25", dbsht.Dbauditsegment.Contents)
+	if dbsht.Dbauditsegment.Alarm == "R" {
+		f.SetCellStyle(shnm, "B25", "B25", styleR)
+	} else if dbsht.Dbauditsegment.Alarm == "B" {
+		f.SetCellStyle(shnm, "B25", "B25", styleB)
+	} else if dbsht.Dbauditsegment.Alarm == "G" {
+		f.SetCellStyle(shnm, "B25", "B25", styleG)
+	}
+	f.SetCellStr(shnm, "B26", dbsht.Dbauditcont.Contents)
+	if dbsht.Dbauditcont.Alarm == "R" {
+		f.SetCellStyle(shnm, "B26", "B26", styleR)
+	} else if dbsht.Dbauditcont.Alarm == "B" {
+		f.SetCellStyle(shnm, "B26", "B26", styleB)
+	} else if dbsht.Dbauditcont.Alarm == "G" {
+		f.SetCellStyle(shnm, "B26", "B26", styleG)
+	}
+	f.SetCellStr(shnm, "B27", dbsht.Db_Nosys_In_System.Contents)
+	if dbsht.Db_Nosys_In_System.Alarm == "R" {
+		f.SetCellStyle(shnm, "B27", "B27", styleR)
+	} else if dbsht.Db_Nosys_In_System.Alarm == "B" {
+		f.SetCellStyle(shnm, "B27", "B27", styleB)
+	} else if dbsht.Db_Nosys_In_System.Alarm == "G" {
+		f.SetCellStyle(shnm, "B27", "B27", styleG)
+	}
+	f.SetCellStr(shnm, "B28", dbsht.Dbproductuserfailedlogin.Contents)
+	if dbsht.Dbproductuserfailedlogin.Alarm == "R" {
+		f.SetCellStyle(shnm, "B28", "B28", styleR)
+	} else if dbsht.Dbproductuserfailedlogin.Alarm == "B" {
+		f.SetCellStyle(shnm, "B28", "B28", styleB)
+	} else if dbsht.Dbproductuserfailedlogin.Alarm == "G" {
+		f.SetCellStyle(shnm, "B28", "B28", styleG)
+	}
+	f.SetCellStr(shnm, "B29", dbsht.Dbvirscheck.Contents)
+	if dbsht.Dbvirscheck.Alarm == "R" {
+		f.SetCellStyle(shnm, "B29", "B29", styleR)
+	} else if dbsht.Dbvirscheck.Alarm == "B" {
+		f.SetCellStyle(shnm, "B29", "B29", styleB)
+	} else if dbsht.Dbvirscheck.Alarm == "G" {
+		f.SetCellStyle(shnm, "B29", "B29", styleG)
+	}
+	f.SetCellStr(shnm, "B30", dbsht.Dbscnhealthcheck.Contents)
+	if dbsht.Dbscnhealthcheck.Alarm == "R" {
+		f.SetCellStyle(shnm, "B30", "B30", styleR)
+	} else if dbsht.Dbscnhealthcheck.Alarm == "B" {
+		f.SetCellStyle(shnm, "B30", "B30", styleB)
+	} else if dbsht.Dbscnhealthcheck.Alarm == "G" {
+		f.SetCellStyle(shnm, "B30", "B30", styleG)
+	}
+	f.SetCellStr(shnm, "B31", dbsht.Dbdglagcheck.Contents)
+	if dbsht.Dbdglagcheck.Alarm == "R" {
+		f.SetCellStyle(shnm, "B31", "B31", styleR)
+	} else if dbsht.Dbdglagcheck.Alarm == "B" {
+		f.SetCellStyle(shnm, "B31", "B31", styleB)
+	} else if dbsht.Dbdglagcheck.Alarm == "G" {
+		f.SetCellStyle(shnm, "B31", "B31", styleG)
+	}
+	f.SetCellStr(shnm, "B32", dbsht.Dbdgerrcheck.Contents)
+	if dbsht.Dbdgerrcheck.Alarm == "R" {
+		f.SetCellStyle(shnm, "B32", "B32", styleR)
+	} else if dbsht.Dbdgerrcheck.Alarm == "B" {
+		f.SetCellStyle(shnm, "B32", "B32", styleB)
+	} else if dbsht.Dbdgerrcheck.Alarm == "G" {
+		f.SetCellStyle(shnm, "B32", "B32", styleG)
+	}
+}
 
+func PutSht_Summary(f *excelize.File, summaryEntries *structs.SummaryEntries) {
+	shnm := "HealthReport"
+
+	// 填充 Issue List（从 B25 开始）
+	rowIndex := 25
+	for i, entry := range summaryEntries.Entries {
+		// 计算告警级别和描述
+		var alarm, impact, desc string
+		if len(entry.Severe) > 0 {
+			alarm = "R"
+			impact = "重要"
+			desc = strings.Join(entry.Severe, "\n")
+		} else if len(entry.Moderate) > 0 {
+			alarm = "B"
+			impact = "普通"
+			desc = strings.Join(entry.Moderate, "\n")
+		} else if len(entry.Minor) > 0 {
+			alarm = "G"
+			impact = "轻微"
+			desc = strings.Join(entry.Minor, "\n")
+		} else {
+			alarm = ""
+			impact = "PASS"
+			desc = ""
+		}
+
+		var result int
+		switch alarm {
+		case "R":
+			result = 0
+		case "B":
+			result = 5
+		case "G":
+			result = 8
+		default:
+			result = 10
+		}
+
+		// 填充一行
+		f.SetCellInt(shnm, fmt.Sprintf("B%d", rowIndex), i+1)
+		f.SetCellStr(shnm, fmt.Sprintf("C%d", rowIndex), entry.Category)
+		f.SetCellStr(shnm, fmt.Sprintf("D%d", rowIndex), entry.Title)
+		f.SetCellInt(shnm, fmt.Sprintf("E%d", rowIndex), result)
+		f.SetCellStr(shnm, fmt.Sprintf("F%d", rowIndex), impact)
+		f.SetCellStr(shnm, fmt.Sprintf("G%d", rowIndex), desc)
+
+		rowIndex++
+	}
 }
 
 func NewXlsx(xlsnm string) {
-
 	f := excelize.NewFile()
-	f.NewSheet("Summary")
-	f.NewSheet("INFO")
+	f.NewSheet("HealthReport")
 	f.NewSheet("OS")
 	f.NewSheet("DB")
-	f.DeleteSheet("sheet1")
+	f.DeleteSheet("Sheet1")
 
-	shnm := "INFO"
-	//按行的方式写入数据到二维数组中,
-	f.SetCellStr(shnm, "A1", "数据库名称\nDB_UNIQUE_NAME")
-	f.SetCellStr(shnm, "A2", "主机名")
-	f.SetCellStr(shnm, "A3", "IP地址")
-	f.SetCellStr(shnm, "A4", "系统平台")
-	f.SetCellStr(shnm, "A5", "操作系统补丁")
-	f.SetCellStr(shnm, "A6", "数据库版本")
-	f.SetCellStr(shnm, "A7", "数据库架构")
-	f.SetCellStr(shnm, "A8", "主备库角色")
-	f.SetCellStr(shnm, "A9", "是否开启归档")
-	f.SetCellStr(shnm, "A10", "是否开启闪回")
-	f.SetCellStr(shnm, "A11", "数据库总大小GB")
-	f.SetCellStr(shnm, "A12", "数据库文件数")
-	f.SetCellStr(shnm, "A13", "数据库表数量")
-	f.SetCellStr(shnm, "A14", "数据库字符集")
-	f.SetCellStr(shnm, "A15", "CPU核数")
-	f.SetCellStr(shnm, "A16", "CPU频率")
-	f.SetCellStr(shnm, "A17", "内存")
-	f.SetCellStr(shnm, "A18", "交换分区")
+	// 初始化 HealthReport Sheet
+	shnm := "HealthReport"
+	f.SetCellStr(shnm, "C1", "健康检查报告")
+	f.SetCellStr(shnm, "G1", "Health Report")
+	f.SetCellStr(shnm, "B13", "Issue summary")
+	f.SetCellStr(shnm, "C14", "重要")
+	f.SetCellStr(shnm, "D14", "普通")
+	f.SetCellStr(shnm, "E14", "轻微")
+	f.SetCellStr(shnm, "B15", "主机系统分析")
+	f.SetCellStr(shnm, "B16", "数据库实例分析")
+	f.SetCellStr(shnm, "B17", "数据库集群检查")
+	f.SetCellStr(shnm, "B18", "DataGuard检查")
+	f.SetCellStr(shnm, "B19", "数据库备份检查")
+	f.SetCellStr(shnm, "B20", "数据库安全检查")
+	f.SetCellStr(shnm, "B21", "软件使用分析")
+	f.SetCellStr(shnm, "B22", "其他项检查")
+	f.SetCellStr(shnm, "B23", "Issue list")
+	f.SetCellStr(shnm, "B24", "No.")
+	f.SetCellStr(shnm, "C24", "问题类别")
+	f.SetCellStr(shnm, "D24", "检查项")
+	f.SetCellStr(shnm, "E24", "结果")
+	f.SetCellStr(shnm, "F24", "影响")
+	f.SetCellStr(shnm, "G24", "问题描述及建议")
 
+	// 初始化 OS Sheet
 	shnm = "OS"
 	f.SetCellStr(shnm, "A1", "主机名")
 	f.SetCellStr(shnm, "A2", "IP地址")
@@ -673,6 +495,7 @@ func NewXlsx(xlsnm string) {
 	f.SetCellStr(shnm, "A12", "NUMA使用检查")
 	f.SetCellStr(shnm, "A13", "NTP时钟同步检查")
 
+	// 初始化 DB Sheet
 	shnm = "DB"
 	f.SetCellStr(shnm, "A1", "数据库名称\nDB_UNIQUE_NAME")
 	f.SetCellStr(shnm, "A2", "主机名")
@@ -706,130 +529,63 @@ func NewXlsx(xlsnm string) {
 	f.SetCellStr(shnm, "A30", "SCNHealthCheck检查")
 	f.SetCellStr(shnm, "A31", "DataGuard同步延迟检查")
 	f.SetCellStr(shnm, "A32", "DataGuard同步报错检查")
-	// f.SetCellStr(shnm, "A33", "RAC资源状态")
-	// f.SetCellStr(shnm, "A34", "ASM磁盘使用")
-	f.SetCellStr(shnm, "A33", "----")
-	f.SetCellStr(shnm, "A34", "----")
 
-	//设定总体布局
-	sty_left, _ := f.NewStyle(&excelize.Style{
-		Border: []excelize.Border{
-			{
-				Type:  "right",   // top bottom left right diagonalDown diagonalUp 中的一个
-				Color: "#000000", // 十六进制的颜色编码
-				Style: 1,         // 0-13 有对应的样式
-			},
-			{
-				Type:  "left",
-				Color: "#000000",
-				Style: 1,
-			},
-			{
-				Type:  "top",
-				Color: "#000000",
-				Style: 1,
-			},
-			{
-				Type:  "bottom",
-				Color: "#000000",
-				Style: 1,
-			},
-		}, Fill: excelize.Fill{
-			Type:    "pattern",            // gradient 渐变色    pattern   填充图案
-			Pattern: 1,                    // 填充样式  当类型是 pattern 0-18 填充图案  1 实体填充
-			Color:   []string{"##555555"}, // 当Type = pattern 时，只有一个
-			// Color:   []string{"#00F700", "#00F700"},
-			Shading: 1, // 类型是 gradient 使用 0-5 横向(每种颜色横向分布) 纵向 对角向上 对角向下 有外向内 由内向外
-		}, Font: &excelize.Font{
-			Bold: true,
-			// Italic: false,
-			// Underline: "single",
-			Size: 11,
-			// Family: "宋体",
-			// Strike:    true, // 删除线
-			Color: "#E6E6FA",
-		}, Alignment: &excelize.Alignment{
-			Horizontal: "center", // 水平对齐方式 center left right fill(填充) justify(两端对齐)  centerContinuous(跨列居中) distributed(分散对齐)
-			Vertical:   "center", // 垂直对齐方式 center top  justify distributed
-			// Indent:     1,        // 缩进  只要有值就变成了左对齐 + 缩进
-			// TextRotation: 30, // 旋转
-			// RelativeIndent:  10,   // 好像没啥用
-			// ReadingOrder:    0,    // 不知道怎么设置
-			JustifyLastLine: true, // 两端分散对齐，只有 水平对齐 为 distributed 时 设置true 才有效
-			WrapText:        true, // 自动换行
-			ShrinkToFit:     true, // 缩小字体以填充单元格
-
-		}})
-
-	//设置excel style2  单元格自动行换
-
-	wrap_style, _ := f.NewStyle(&excelize.Style{
+	// 设置布局和样式
+	wrapStyle, _ := f.NewStyle(&excelize.Style{
 		Alignment: &excelize.Alignment{
 			Horizontal:      "right",
-			Indent:          1,
-			JustifyLastLine: true,
-			ReadingOrder:    0,
-			RelativeIndent:  1,
-			ShrinkToFit:     true,
 			Vertical:        "center",
 			WrapText:        true,
+			ShrinkToFit:     true,
+			JustifyLastLine: true,
 		},
 	})
+	styLeft, _ := f.NewStyle(&excelize.Style{
+		Border: []excelize.Border{
+			{Type: "right", Color: "#000000", Style: 1},
+			{Type: "left", Color: "#000000", Style: 1},
+			{Type: "top", Color: "#000000", Style: 1},
+			{Type: "bottom", Color: "#000000", Style: 1},
+		},
+		Fill: excelize.Fill{
+			Type:    "pattern",
+			Pattern: 1,
+			Color:   []string{"#555555"},
+		},
+		Font: &excelize.Font{
+			Bold:  true,
+			Size:  11,
+			Color: "#E6E6FA",
+		},
+		Alignment: &excelize.Alignment{
+			Horizontal: "center",
+			Vertical:   "center",
+			WrapText:   true,
+		},
+	})
+
 	shnms := f.GetSheetList()
 	for _, shnm := range shnms {
-		//设定第一列样式生效的范围
 		f.SetColWidth(shnm, "A", "A", 22)
-		f.SetColStyle(shnm, "B:Z", wrap_style)
+		f.SetColStyle(shnm, "B:Z", wrapStyle)
 		switch shnm {
-		case "INFO":
-			f.SetCellStyle(shnm, "A1", "A18", sty_left)
+		case "HealthReport":
+			f.SetCellStyle(shnm, "B1", "B24", styLeft)
 			f.SetColWidth(shnm, "B", "Z", 50)
 		case "OS":
-			f.SetCellStyle(shnm, "A1", "A13", sty_left)
+			f.SetCellStyle(shnm, "A1", "A13", styLeft)
 			f.SetColWidth(shnm, "B", "Z", 80)
 		case "DB":
-			f.SetCellStyle(shnm, "A1", "A34", sty_left)
+			f.SetCellStyle(shnm, "A1", "A32", styLeft)
 			f.SetColWidth(shnm, "B", "Z", 100)
 		}
-		//设置 首行首列冻结
 		f.SetPanes(shnm, &excelize.Panes{
 			Freeze:      true,
-			XSplit:      1,    //冻结首列
-			YSplit:      2,    //冻结首两行
-			TopLeftCell: "B3", //设置活动元格 (不能在冻结范围内)
+			XSplit:      1,
+			YSplit:      2,
+			TopLeftCell: "B3",
 			ActivePane:  "bottomLeft",
 		})
-		// // 设置首行高度
-		// f.SetRowHeight(shnm, 1, 30)
-		// f.SetRowHeight(shnm, 2, 80)
-		// for h := 3; h < 10; h++ {
-		// 	f.SetRowHeight(shnm, h, 180)
-		// }
-		// for h := 14; h < 18; h++ {
-		// 	f.SetRowHeight(shnm, h, 80)
-		// }
 	}
 	f.SaveAs(xlsnm)
-
-}
-
-func PutSht_Summary(f *excelize.File, summaryEntries *structs.SummaryEntries) {
-	shnm := "Summary"
-	// Define the headers for the Summary sheet
-	headers := []string{"检查类别", "检查项", "检查说明", "检查结果(严重)", "检查结果(一般),", "检查结果(轻微)"}
-	for i, header := range headers {
-		cell, _ := excelize.CoordinatesToCellName(i+1, 1)
-		f.SetCellStr(shnm, cell, header)
-	}
-
-	rowIndex := 2
-	for _, entry := range summaryEntries.Entries {
-		f.SetCellStr(shnm, fmt.Sprintf("A%d", rowIndex), entry.Category)
-		f.SetCellStr(shnm, fmt.Sprintf("B%d", rowIndex), entry.Nm)
-		f.SetCellStr(shnm, fmt.Sprintf("C%d", rowIndex), entry.Desc)
-		f.SetCellStr(shnm, fmt.Sprintf("D%d", rowIndex), strings.Join(entry.Severe, ", "))
-		f.SetCellStr(shnm, fmt.Sprintf("E%d", rowIndex), strings.Join(entry.Moderate, ", "))
-		f.SetCellStr(shnm, fmt.Sprintf("F%d", rowIndex), strings.Join(entry.Minor, ", "))
-		rowIndex++
-	}
 }
