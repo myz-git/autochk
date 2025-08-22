@@ -14,7 +14,7 @@ import (
 
 // Ana_DBExpirUser 分析用户密码过期情况
 func Ana_DBExpirUser(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
-	msgdata := dbshtp.Db_expir_user.Contents
+	msgdata := dbshtp.Dbproductuserfailedlogin.Contents
 	entry := structs.SummaryEntry{
 		Category: "数据库安全检查",
 		Nm:       rule.Dbrule.Db_expir_user.Nm,
@@ -34,8 +34,8 @@ Looop:
 			}
 			days, _ := strconv.Atoi(msgs[len(msgs)-1])
 			if days < 30 {
-				dbshtp.Db_expir_user.Alarm = "B"
-				entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,用户%s口令将在%d天后过期,建议提前处理密码更新", dbshtp.Dbname.Contents, msgs[0], days))
+				dbshtp.Dbproductuserfailedlogin.Alarm = "B"
+				entry.Moderate = append(entry.Moderate, fmt.Sprintf("用户 %s 口令将在 %d 天后过期，建议提前处理", msgs[0], days))
 				break Looop
 			}
 		}
@@ -64,7 +64,7 @@ Looop:
 		if rd.MatchString(value) {
 			dbshtp.Dbproductuserfailedlogin.Alarm = "B"
 			msgs := strings.Fields(value)
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,用户%s错误登录次数限制当前为%s,建议调整为有限值以增强安全性", dbshtp.Dbname.Contents, msgs[0], msgs[len(msgs)-1]))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("用户 %s 错误登录次数限制为 %s，建议调整为有限值", msgs[0], msgs[len(msgs)-1]))
 			break Looop
 		}
 	}
@@ -87,7 +87,7 @@ func Ana_DBDBAPRIV(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *
 	if value == "" || strings.Contains(value, rule.Dbrule.Dbdbapriv.ResultG) {
 		dbshtp.Dbdbapriv.Alarm = ""
 	} else {
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,存在具有DBA权限的业务账户,建议收回不必要的DBA权限以增强安全性", dbshtp.Dbname.Contents))
+		entry.Minor = append(entry.Minor, "存在具有 DBA 权限的业务账户，建议收回权限")
 	}
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
@@ -108,7 +108,7 @@ func Ana_DBSYSDBA(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *s
 	if value == "" || strings.Contains(value, rule.Dbrule.Dbsysdba.ResultB) {
 		dbshtp.Dbsysdba.Alarm = ""
 	} else {
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,存在非必要SYSDBA权限用户,建议检查并收回不必要的SYSDBA权限", dbshtp.Dbname.Contents))
+		entry.Moderate = append(entry.Moderate, "存在非必要 SYSDBA 权限用户，建议检查")
 	}
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
@@ -127,7 +127,6 @@ func Ana_DBAUDITSEGMENT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntr
 	}
 	if value != "" { //判断是否空, 为空正常, 非空则标记后退出
 		dbshtp.Dbauditsegment.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,审计段存在异常信息,建议检查审计配置", dbshtp.Dbname.Contents))
 	}
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
@@ -162,7 +161,6 @@ Looop:
 			if data >= rule.Dbrule.Dbauditcont.ResultG {
 				dbshtp.Dbauditcont.Alarm = "G"
 				log.Printf("!!Matched!! value [%v]", data)
-				entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,审计内容数量当前%d超过阈值%d,建议检查审计配置并清理历史审计数据", dbshtp.Dbname.Contents, data, rule.Dbrule.Dbauditcont.ResultG))
 				break Looop
 			}
 

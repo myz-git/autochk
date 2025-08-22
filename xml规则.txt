@@ -1,198 +1,243 @@
-请记录识别哪些xml是一个rac下需要合并的规则：
-我们可以通过xml的命名规则来识别，xml命名规则：yyyymmdd_dbname_hostname_instname.xml
-比如：20240401_M001R01DG_m0ora01_M001R011.xml, 其中M001R01DG是数据库名,lm0ora01是主机名,M001R011是实例名, 一套rac的yyyymmdd_dbname是一样的，不同节点的hostname和instname不一样；
+# 1. 通过文件名自动识别哪些XML需要合并
+xml命名规则：yyyymmdd_hostname_dbname_instname.xml
+比如：20240401_m0ora01_M001R01DG_M001R011.xml, 
+其中M001R01DG是数据库名,lm0ora01是主机名,M001R011是实例名,
+需要将yyyymmdd和dbname一样而主机名和实例名不一样(实例名最右侧两位的数字序号不同)的xml进行合并
+说明这几个XML是一套RAC下的不同节点的文件,可以合并为一个XML文件;
+合并后命名为: yyyymmdd_hostname1.hostname2_dbname_RAC.xml
+示例:
+如下三个是一套RAC，需要合并：
+20240401_m0ora01_M001R01DG_M001R011.xml，20240401_lm0ora02_M001R01DG_M001R012.xml，20240401_lm0ora03_M001R01DG_M001R013.xml
+合并后: 
+20240401_m0ora01.lm0ora02.lm0ora03_M001R01DG_RAC.xml
 
-我们需要找到相同yyyymmdd_dbname_前缀，不同hostname_instname的xml作为一套rac的数据库需要合并（instname的最后一位代表实例序号）
-比如如下三个是一组，需要合并：
-20240401_M001R01DG_lm0ora01_M001R011.xml，20240401_M001R01DG_lm0ora02_M001R012.xml，20240401_M001R01DG_lm0ora03_M001R013.xml
-如下两个是一组，需要合并：
-20240401_M003R02DG_lm0ora03_M003R021.xml，20240401_M003R02DG_lm0ora04_M003R022.xml
+如下二个是一套RAC，需要合并：
+20240401_lm0ora03_M003R02DG_M003R021.xml 和 20240401_lm0ora04_M003R02DG_M003R022.xml
+合并后:
+20240401_lm0ora03.lm0ora04_M003R02DG_RAC.xml
 
-接下来是根据我提供的xml内容确定如何合并；
+如下二个是一套RAC，需要合并
+20250606_myzrac11_racdb_racdb1.xml 和 20250606_myzrac12_racdb_racdb2.xml
+合并后:
+20250606_myzrac11.myzrac12_racdb_RAC.xml
 
-合并规则：
-<TAG0>是主机及RAC相关内容是需要保留的；
-<TAG1>是数据库级别通用信息，需要合并；
-<TAG2>是实例单独的信息，需要保留的；
+# 2. 合并规则:
 
-合并前结构如下：
+## 2.1合并前结构如下：
 <?xml version="1.0" encoding="UTF-8"?>
+<VER></VER>
 <EACHK>
-<TAG0>
-	<VER>
-	<HOSTNAME>
-	<OS>
-	<RELVER>
-	<CORES>
-	<CPUCOUNT>
-	<CPUMHZ>
-	<MEMTOTAL>
-	<SWAPTOTAL>
-	<OSPARAMETER>
-	<ULIMIT>
-	<IPADDR>
-	<DBMAA>
-	<OSLOG>
-	<FILESYSTEM>
-	<INODEUSAGE>
-	<CPUSTAT>
-	<MEMSTAT> 
-	<IOSTAT>
-	<THPSTAT>
-	<HUGPAGE>
-	<NUMA>
-	<NTP>
-	<TMZONE> 
-	<RPM_FIREFOX> 
-	<RPM_FREETYPE> 
-	<RPM_GHOSTSCRIPT>
-	<RPM_SAMBA> 
-	<RPM_OPENVMTOOLS>
-</TAG0>
-<TAG1>
-	<DBCRSCHECK>
-	<DBASMUSAGE>
-	<DBNAME>
-	<DBVER>
-	<DBOSINFO>
-	<LOGMODE>
-	<FLASHBACK>
-	<DBTOTALSIZE>
-	<DBFILECOUNT>
-	<DBTBLCOUNT>
-	<DBROLE>
-	<DBTBSUSAGE>
-	<DBDATAFILE>
-	<DATAFILE_SIZE>
-	<TMPFILE_SIZE>
-	<OWNER_SIZE>
-	<USER_INFO>
-	<TAB_INFO>
-	<DBUSERSIZE>
-	<DBREDOCHECK>
-	<DBRESOURCE>
-	<DBRMANCHECK>
-	<DBDGLAGCHECK>
-	<DBTABLEPARALLEL>
-	<DBINDEXPARALLEL>
-	<DBSEQUENCE>
-	<DB_SEQ_USAGE>
-	<DBSTATUS>
-	<DBOPTION>
-	<DBFEATURES>
-	<DBLANG>
-	<DBPARAMETER>
-	<DB_CURSORMEM>
-	<DB_EXPIR_USER>
-	<DB_PASSWORD_VERIF>
-	<DBDBAPRIV>
-	<DBSYSDBA>
-	<DBAUDITSEGMENT>
-	<DBAUDITCONT>
-	<DBINVALIDOBJECT>
-	<DBINVALIDINDEX>
-	<DBCONTROLFILE>
-	<DB_NOSYS_IN_SYSTEM>
-	<DBRECOVERYDEST>
-	<DBFLASHRECOVERYUSEAGE>
-	<DBPRODUCTUSERFAILEDLOGIN>
-	<DBVIRSCHECK>
-	<DBSCNHEALTHCHECK>
-	<DBPSU>
-	<DBPATCH>
-	<DBDGERRCHECK>
-	<DB_PARAMETER_FILE>
-</TAG1>
-<TAG2>
-	<DBREDOSWITCH>
-	<DB_SGA_SIZE>
-	<DB_SHP_SIZE>
-	<DB_SHP_PCT>
-	<DB_4031CHECK>
-	<LOADPROFILE>
-	<INSTEFFICIENCY>
-	<TOPEVENT>
-	<TOPSQLBYELAPSTIME>
-	<DBERRLOG>
-	<DBLSNRINFO>
-</TAG2>
+	<TAG0>
+		<NODE1>
+			<HOSTNAME></HOSTNAME>
+			<OS>
+			<RELVER>
+			<CORES>
+			<CPUCOUNT>
+			<CPUMHZ>
+			<MEMTOTAL>
+			<SWAPTOTAL>
+			<OSPARAMETER>
+			<ULIMIT>
+			<IPADDR>
+			<DBMAA>
+			<OSLOG>
+			<FILESYSTEM>
+			<INODEUSAGE>
+			<CPUSTAT>
+			<MEMSTAT> 
+			<IOSTAT>
+			<THPSTAT>
+			<HUGPAGE>
+			<NUMA>
+			<NTP>
+			<TMZONE> 
+			<RPM_FIREFOX> 
+			<RPM_FREETYPE> 
+			<RPM_GHOSTSCRIPT>
+			<RPM_SAMBA> 
+			<RPM_OPENVMTOOLS>
+			<DBCRSCHECK>
+			<DBASMUSAGE>
+		</NODE1>
+	</TAG0>
+	<TAG1>
+		<NODE1>
+			<DBNAME>
+			<DBVER>
+			<DBOSINFO>
+			<LOGMODE>
+			<FLASHBACK>
+			<DBTOTALSIZE>
+			<DBFILECOUNT>
+			<DBTBLCOUNT>
+			<DBROLE>
+			<DBTBSUSAGE>
+			<DBDATAFILE>
+			<DATAFILE_SIZE>
+			<TMPFILE_SIZE>
+			<OWNER_SIZE>
+			<USER_INFO>
+			<TAB_INFO>
+			<DBUSERSIZE>
+			<DBREDOCHECK>
+			<DBRESOURCE>
+			<DBRMANCHECK>
+			<DBDGLAGCHECK>
+			<DBTABLEPARALLEL>
+			<DBINDEXPARALLEL>
+			<DBSEQUENCE>
+			<DB_SEQ_USAGE>
+			<DBSTATUS>
+			<DBOPTION>
+			<DBFEATURES>
+			<DBLANG>
+			<DBPARAMETER>
+			<DB_CURSORMEM>
+			<DB_EXPIR_USER>
+			<DB_PASSWORD_VERIF>
+			<DBDBAPRIV>
+			<DBSYSDBA>
+			<DBAUDITSEGMENT>
+			<DBAUDITCONT>
+			<DBINVALIDOBJECT>
+			<DBINVALIDINDEX>
+			<DBCONTROLFILE>
+			<DB_NOSYS_IN_SYSTEM>
+			<DBRECOVERYDEST>
+			<DBFLASHRECOVERYUSEAGE>
+			<DBPRODUCTUSERFAILEDLOGIN>
+			<DBVIRSCHECK>
+			<DBSCNHEALTHCHECK>
+			<DBPSU>
+		</NODE1>
+	</TAG1>
+	<TAG2>
+		<NODE1>
+			<INSTNAME>
+			<DBREDOSWITCH>
+			<DB_SGA_SIZE>
+			<DB_SHP_SIZE>
+			<DB_SHP_PCT>
+			<DB_4031CHECK>
+			<LOADPROFILE>
+			<INSTEFFICIENCY>
+			<TOPEVENT>
+			<TOPSQLBYELAPSTIME>
+			<DBERRLOG>
+			<DBLSNRINFO>
+			<DBPATCH>
+			<DBDGERRCHECK>
+			<DB_PARAMETER_FILE>
+		</NODE1>
+	</TAG2>
 </EACHK>
 
+XML结构说明:
+<TAG0>是主机及RAC相关内容,每个XML文件中该部分信息是独立的,合并后需要保留;
+<TAG1>是数据库级别的信息，每个XML文件中该部分信息是相同的,可以合并为一份;
+<TAG2>是实例级别的信息，每个XML文件中该部分信息是独立的,合并后需要保留;
 
-合并方法：分别在 <TAG0>和<TAG2>下建立<NODE1> <NODE2>tag,用来存放两个节点xml中<TAG0>及<TAG2>内容 ，
-比如，合并后结构：
+##  合并方法
+以第一个XML为主(即实例名最右侧两位的数字序号小的XML,为NODE1),将其他多个xml文件中 <TAG0>下<NODE1>都移到主XML文件<TAG0>下, 按<NODE2>, <NODE3>依次命名;
+<TAG1> 中因为信息是相同的,就不变;
+将其他XML中<TAG2>下<NODE1>都移到主XML文件<TAG2>下, 按<NODE2>, <NODE3>依次命名;
+最后这个新的XML文件重命名为: 
+ yyyymmdd_hostname1.hostname2_dbname_RAC.xml
+
+
+# 3. 示例:
+合并前原文件:
+20250606_myzrac11_racdb_racdb1.xml 和 20250606_myzrac12_racdb_racdb2.xml
+
+#20250606_myzrac11_racdb_racdb1.xml
 <?xml version="1.0" encoding="UTF-8"?>
+<VER></VER>
 <EACHK>
-<TAG0>
-  <NODE1> 
-  ###这里取自20240401_M001R01DG_lm0ora01_M001R011.xml中<TAG0>中的内容作为NODE1的内容>###
-	<VER>
-	<HOSTNAME>
-	<OS>
-	<RELVER>
-	<CORES>
-	<CPUCOUNT>
-	<CPUMHZ>
-	<MEMTOTAL>
-	<SWAPTOTAL>
-	<OSPARAMETER>
-	....
-  </NODE1>
-  <NODE2>
-  ###这里取自20240401_M001R01DG_lm0ora02_M001R012.xml中<TAG0>中的内容作为NODE2的内容>###
-	<VER>
-	<HOSTNAME>
-	<OS>
-	<RELVER>
-	<CORES>
-	<CPUCOUNT>
-	<CPUMHZ>
-	<MEMTOTAL>
-	<SWAPTOTAL>
-	<OSPARAMETER>
-	....
-  </NODE2>
-</TAG0>
-<TAG1>
-###这里两个节点的<TAG1>内容一样，只需要保留第一份xml中的TAG1内容就可以###
-	<DBCRSCHECK>
-	<DBASMUSAGE>
-	<DBNAME>
-	<DBVER>
-	<DBOSINFO>
-	<LOGMODE>
-	<FLASHBACK>
-	...略...
-</TAG1>
-<TAG2>
-  <NODE1>
-  ###这里取自20240401_M001R01DG_lm0ora01_M001R011.xml中<TAG2>中的内容作为NODE1的内容>###
-	<DBREDOSWITCH>
-	<DB_SGA_SIZE>
-	<DB_SHP_SIZE>
-	<DB_SHP_PCT>
-	<DB_4031CHECK>
-	<LOADPROFILE>
-	<INSTEFFICIENCY>
-	<TOPEVENT>
-	<TOPSQLBYELAPSTIME>
-	<DBERRLOG>
-	<DBLSNRINFO>
- </NODE1>
- <NODE2>
- ###这里取自20240401_M001R01DG_lm0ora02_M001R012.xml中<TAG2>中的内容作为NODE1的内容>###
-	<DBREDOSWITCH>
-	<DB_SGA_SIZE>
-	<DB_SHP_SIZE>
-	<DB_SHP_PCT>
-	<DB_4031CHECK>
-	<LOADPROFILE>
-	<INSTEFFICIENCY>
-	<TOPEVENT>
-	<TOPSQLBYELAPSTIME>
-	<DBERRLOG>
-	<DBLSNRINFO>
-  </NODE2>
-</TAG2>
+	<TAG0>
+		<NODE1>
+			<HOSTNAME>myzrac11</HOSTNAME>
+			<OS>aaa</OS>
+			....
+		</NODE1>
+	</TAG0>
+	<TAG1>
+		<NODE1>
+			<DBNAME>racdb</DBNAME>
+			<DBVER>19.11</DBVER>
+			...
+		</NODE1>
+	</TAG1>
+	<TAG2>
+		<NODE1>
+			<INSTNAME>racdb1</INSTNAME>
+			<DBREDOSWITCH>aaaaa</DBREDOSWITCH>
+			...
+		</NODE1>
+	</TAG2>
 </EACHK>
 
+#20250606_myzrac12_racdb_racdb2.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<VER></VER>
+<EACHK>
+	<TAG0>
+		<NODE1>
+			<HOSTNAME>myzrac12</HOSTNAME>
+			<OS>bbb</OS>
+			....
+		</NODE1>
+	</TAG0>
+	<TAG1>
+		<NODE1>
+			<DBNAME>racdb</DBNAME>
+			<DBVER>19.11</DBVER>
+			...
+		</NODE1>
+	</TAG1>
+	<TAG2>
+		<NODE1>
+			<INSTNAME>racdb2</INSTNAME>
+			<DBREDOSWITCH>bbbb</DBREDOSWITCH>
+			...
+		</NODE1>
+	</TAG2>
+</EACHK>
+
+合并后:
+#20250606_myzrac12_racdb_racdb2.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<VER></VER>
+<EACHK>
+	<TAG0>
+		<NODE1>
+			<HOSTNAME>myzrac11</HOSTNAME>
+			<OS>aaa</OS>
+			....
+		</NODE1>	
+		<NODE2>
+			<HOSTNAME>myzrac12</HOSTNAME>
+			<OS>bbb</OS>
+			....
+		</NODE2>		
+	</TAG0>
+	<TAG1>
+		<NODE1>
+			<DBNAME>racdb</DBNAME>
+			<DBVER>19.11</DBVER>
+			...
+		</NODE1>
+	</TAG1>
+	<TAG2>
+		<NODE1>
+			<INSTNAME>racdb1</INSTNAME>
+			<DBREDOSWITCH>aaaaa</DBREDOSWITCH>
+			...
+		</NODE1>
+		<NODE2>
+			<INSTNAME>racdb2</INSTNAME>
+			<DBREDOSWITCH>bbbb</DBREDOSWITCH>
+			...
+		</NODE2>	
+	</TAG2>
+</EACHK>

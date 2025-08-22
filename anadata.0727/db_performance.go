@@ -12,8 +12,8 @@ import (
 
 // db_performance.go 包含与数据库性能和效率相关的分析函数
 // Ana_DB4031check 分析 ORA-4031 错误
-func Ana_DB4031check(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := instshtp.Dberrlog.Contents
+func Ana_DB4031check(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Dberrlog.Contents
 	entry := structs.SummaryEntry{
 		Category: "数据库实例分析",
 		Nm:       rule.Dbrule.Db_4031check.Nm,
@@ -21,8 +21,8 @@ func Ana_DB4031check(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEn
 		Desc:     rule.Dbrule.Db_4031check.Desc,
 	}
 	if strings.Contains(msgdata, "ORA-4031") {
-		instshtp.Dberrlog.Alarm = "R"
-		entry.Severe = append(entry.Severe, fmt.Sprintf("%s实例,检测到ORA-4031共享池内存不足错误,建议调整共享池大小或清理LRU列表", instshtp.Instname.Contents))
+		dbshtp.Dberrlog.Alarm = "R"
+		entry.Severe = append(entry.Severe, "检测到 ORA-4031 错误，需调整共享池或清理 LRU 列表")
 	}
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
@@ -30,8 +30,8 @@ func Ana_DB4031check(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEn
 }
 
 // Ana_RESOURCE 分析数据库资源使用情况
-func Ana_RESOURCE(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := instshtp.Dbresource.Contents
+func Ana_RESOURCE(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Dbresource.Contents
 	entry := structs.SummaryEntry{
 		Category: "数据库实例分析",
 		Nm:       rule.Dbrule.Dbresource.Nm,
@@ -59,8 +59,8 @@ Looop:
 				log.Fatal(err)
 			}
 			if data1 >= data2*rule.Dbrule.Dbresource.Res_use_ge1/100 && data2 != 0 {
-				instshtp.Dbresource.Alarm = "R"
-				entry.Severe = append(entry.Severe, fmt.Sprintf("%s实例,资源%s使用率当前%d接近限制值%d,建议优化资源使用或增加资源限制", instshtp.Instname.Contents, msgs[1], data1, data2))
+				dbshtp.Dbresource.Alarm = "R"
+				entry.Severe = append(entry.Severe, fmt.Sprintf("资源 %s 使用率 %d 接近限制值 %d，需优化", msgs[1], data1, data2))
 				break Looop
 			}
 		}
@@ -71,8 +71,8 @@ Looop:
 }
 
 // Ana_LOADPROFILE 分析数据库负载性能
-func Ana_LOADPROFILE(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := instshtp.Loadprofile.Contents
+func Ana_LOADPROFILE(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Loadprofile.Contents
 	entry := structs.SummaryEntry{
 		Category: "数据库实例分析",
 		Nm:       rule.Dbrule.Loadprofile.Nm,
@@ -98,11 +98,11 @@ Looop:
 				log.Fatal(err)
 			}
 			if msgs[0] == "Redo size (bytes)" && data >= rule.Dbrule.Loadprofile.Redosize_ge1*1024*1024 {
-				instshtp.Loadprofile.Alarm = "G"
+				dbshtp.Loadprofile.Alarm = "G"
 				entry.Minor = append(entry.Minor, fmt.Sprintf("Redo size %.2f bytes 超过 %f MB，建议优化", data, rule.Dbrule.Loadprofile.Redosize_ge1))
 			}
 			if msgs[0] == "Logons" && data >= rule.Dbrule.Loadprofile.Logons_ge1 {
-				instshtp.Loadprofile.Alarm = "B"
+				dbshtp.Loadprofile.Alarm = "B"
 				entry.Moderate = append(entry.Moderate, fmt.Sprintf("登录数 %.2f 超过 %f，建议优化连接管理", data, rule.Dbrule.Loadprofile.Logons_ge1))
 				break Looop
 			}
@@ -114,8 +114,8 @@ Looop:
 }
 
 // Ana_INSTEFFICIENCY 分析数据库实例效率
-func Ana_INSTEFFICIENCY(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := instshtp.Instefficiency.Contents
+func Ana_INSTEFFICIENCY(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Instefficiency.Contents
 	entry := structs.SummaryEntry{
 		Category: "数据库实例分析",
 		Nm:       rule.Dbrule.Instefficiency.Nm,
@@ -142,7 +142,7 @@ Looop:
 						log.Fatal(err)
 					}
 					if data < rule.Dbrule.Instefficiency.Buffer_hit {
-						instshtp.Instefficiency.Alarm = "G"
+						dbshtp.Instefficiency.Alarm = "G"
 						entry.Minor = append(entry.Minor, fmt.Sprintf("Buffer Hit 命中率 %.2f%% 小于 %f%%，建议优化", data, rule.Dbrule.Instefficiency.Buffer_hit))
 						break Looop
 					}
@@ -153,7 +153,7 @@ Looop:
 						log.Fatal(err)
 					}
 					if data < rule.Dbrule.Instefficiency.Library_hit {
-						instshtp.Instefficiency.Alarm = "G"
+						dbshtp.Instefficiency.Alarm = "G"
 						entry.Minor = append(entry.Minor, fmt.Sprintf("Library Hit 命中率 %.2f%% 小于 %f%%，建议优化", data, rule.Dbrule.Instefficiency.Library_hit))
 						break Looop
 					}
@@ -164,7 +164,7 @@ Looop:
 						log.Fatal(err)
 					}
 					if data < rule.Dbrule.Instefficiency.Soft_parse {
-						instshtp.Instefficiency.Alarm = "G"
+						dbshtp.Instefficiency.Alarm = "G"
 						entry.Minor = append(entry.Minor, fmt.Sprintf("Soft Parse 命中率 %.2f%% 小于 %f%%，建议优化", data, rule.Dbrule.Instefficiency.Soft_parse))
 						break Looop
 					}
@@ -178,8 +178,8 @@ Looop:
 }
 
 // Ana_DBtopevent 分析顶部等待事件
-func Ana_DBtopevent(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := instshtp.Topevent.Contents
+func Ana_DBtopevent(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Dbtopevent.Contents
 	entry := structs.SummaryEntry{
 		Category: "数据库实例分析",
 		Nm:       rule.Dbrule.Topevent.Nm,
@@ -200,7 +200,7 @@ Looop:
 			executions, _ := strconv.Atoi(msgs[1])
 			avgTime, _ := strconv.ParseFloat(msgs[2], 64)
 			if executions > 1000 && avgTime > 2 {
-				instshtp.Topevent.Alarm = "B"
+				dbshtp.DbtopSQL.Alarm = "B"
 				entry.Moderate = append(entry.Moderate, fmt.Sprintf("SQL 执行次数 %d 次，平均耗时 %.2f 秒，建议优化", executions, avgTime))
 				break Looop
 			}
@@ -212,8 +212,8 @@ Looop:
 }
 
 // Ana_DBtopSQL 分析顶部 SQL 性能
-func Ana_DBtopSQL(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := instshtp.Topsqlbyelapstime.Contents
+func Ana_DBtopSQL(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.DbtopSQL.Contents
 	entry := structs.SummaryEntry{
 		Category: "数据库实例分析",
 		Nm:       rule.Dbrule.Topsqlbyelapstime.Nm,
@@ -234,7 +234,7 @@ Looop:
 			executions, _ := strconv.Atoi(msgs[1])
 			avgTime, _ := strconv.ParseFloat(msgs[2], 64)
 			if executions > 1000 && avgTime > 2 {
-				instshtp.Topsqlbyelapstime.Alarm = "B"
+				dbshtp.DbtopSQL.Alarm = "B"
 				entry.Moderate = append(entry.Moderate, fmt.Sprintf("SQL 执行次数 %d 次，平均耗时 %.2f 秒，建议优化", executions, avgTime))
 				break Looop
 			}

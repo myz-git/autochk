@@ -1,77 +1,107 @@
 package structs
 
-type InfoSht struct {
-	DbName      string
-	DbVer       string
-	DbRole      string
-	LogMode     string
-	FlashBack   string
-	DbTotalsize string
-	DbFilecount string
-	DbTblcount  string
-	DbLang      string
-	DbMaa       string
-	HostName    string
-	Ipaddr      string
-	Os          string
-	Relver      string
-	Cores       string
-	CpuCount    string
-	CpuMHZ      string
-	MemTotal    string
-	SwapTotal   string
-
-	Others string
+// OsShts 用于存储TAG0中每个NODE的OS相关数据
+type OsShts struct {
+	NodeID           string // 节点ID，如"NODE1","NODE2","NODE3"等
+	Hostname         Tpstrc
+	Ipaddr           Tpstrc
+	Os               Tpstrc
+	Relver           Tpstrc
+	Cores            Tpstrc
+	Cpucount         Tpstrc
+	Cpumhz           Tpstrc
+	Memtotal         Tpstrc
+	Swaptotal        Tpstrc
+	Osparameter      Tpstrc
+	Ulimit           Tpstrc
+	Oslog            Tpstrc
+	Filesystem       Tpstrc
+	Inodeusage       Tpstrc
+	Cpustat          Tpstrc
+	Memstat          Tpstrc
+	Iostat           Tpstrc
+	Thpstat          Tpstrc
+	Hugpage          Tpstrc
+	Numa             Tpstrc
+	Ntp              Tpstrc
+	Tmzone           Tpstrc
+	Selinux          Tpstrc
+	Firewall         Tpstrc
+	Nsswitch         Tpstrc
+	Lo_mtu           Tpstrc
+	Machine_platform Tpstrc
+	CPU_PERF_MODE    Tpstrc
+	NOZEROCONF       Tpstrc
+	RPM_PACKAGES     Tpstrc
 }
 
-type OsSht struct {
-	Osparameter Tpstrc
-	Ulimit      Tpstrc
-	Filesystem  Tpstrc
-	Inodeusage  Tpstrc
-	Cpustat     Tpstrc
-	Memstat     Tpstrc
-	Iostat      Tpstrc
-	Thpstat     Tpstrc
-	Hugpage     Tpstrc
-	Numa        Tpstrc
-	Ntp         Tpstrc
-}
-
+// DbSht 用于存储TAG1中NODE1的DATABASE相关信息
 type DbSht struct {
-	DbTbsusage               Tpstrc
-	Dbdatafile               Tpstrc
-	Dbcontrolfile            Tpstrc
-	Dbusersize               Tpstrc
+	NodeID                   string // 节点ID，只有一个"NODE1"
+	Dbname                   Tpstrc
+	Dbmaa                    Tpstrc
+	Dbver                    Tpstrc
+	Dbstatus                 Tpstrc
+	Dblang                   Tpstrc
+	Logmode                  Tpstrc
+	Flashback                Tpstrc
+	Dbcursize                Tpstrc
+	Dbf_size                 Tpstrc
+	Dbf_cnt                  Tpstrc
+	Dbf_stat                 Tpstrc
+	Tmpfile_size             Tpstrc
+	Dbtblcount               Tpstrc
+	Dbrole                   Tpstrc
+	Dbtbsusage               Tpstrc
 	Dbredocheck              Tpstrc
-	Dbredoswitch             Tpstrc
-	Dbresource               Tpstrc
-	Loadprofile              Tpstrc
-	Instefficiency           Tpstrc
-	Dbtopevent               Tpstrc
-	DbtopSQL                 Tpstrc
-	Dblsnrinfo               Tpstrc
-	Dbtableparallel          Tpstrc
-	Dbindexparallel          Tpstrc
-	Dbinvalidindex           Tpstrc
+	Dbcontrolfile            Tpstrc
+	User_info                Tpstrc
+	User_size                Tpstrc
+	Tab_info                 Tpstrc
+	Tab_parallel             Tpstrc
+	Inx_parallel             Tpstrc
+	Invalid_obj              Tpstrc
+	Invalid_inx              Tpstrc
 	Dbsequence               Tpstrc
 	Db_seq_usage             Tpstrc
-	Dbrecoverydest           Tpstrc
-	Dbflashrecoveryuseage    Tpstrc
-	Dberrlog                 Tpstrc
-	Dbproductuserfailedlogin Tpstrc
-	Dbdglagcheck             Tpstrc
-	Dbdgerrcheck             Tpstrc
-	Dbrmancheck              Tpstrc
+	Dboption                 Tpstrc
+	Dbfeatures               Tpstrc
+	Db_expir_user            Tpstrc
+	Db_password_verif        Tpstrc
 	Dbdbapriv                Tpstrc
 	Dbsysdba                 Tpstrc
 	Dbauditsegment           Tpstrc
 	Dbauditcont              Tpstrc
-	Db_Nosys_In_System       Tpstrc
+	Db_nosys_in_system       Tpstrc
+	Dbrecoverydest           Tpstrc
+	Dbflashrecoveryuseage    Tpstrc
+	Dbproductuserfailedlogin Tpstrc
 	Dbvirscheck              Tpstrc
 	Dbscnhealthcheck         Tpstrc
+	Dbrmancheck              Tpstrc
 	Dbcrscheck               Tpstrc
 	Dbasmusage               Tpstrc
+}
+
+// InstShts 用于存储TAG2中每个NODE的实例、日志、监听等相关数据
+type InstShts struct {
+	NodeID            string
+	Instname          Tpstrc
+	Loadprofile       Tpstrc
+	Instefficiency    Tpstrc
+	Db_cursormem      Tpstrc
+	Topevent          Tpstrc
+	Topsqlbyelapstime Tpstrc
+	Dbresource        Tpstrc
+	Dbpsu             Tpstrc
+	Dbpatch           Tpstrc
+	Dblsnrinfo        Tpstrc
+	Dbparameter       Tpstrc
+	Db_parameter_file Tpstrc
+	Dbredoswitch      Tpstrc
+	Dberrlog          Tpstrc
+	Dbdglagcheck      Tpstrc
+	Dbdgerrcheck      Tpstrc
 }
 
 type Tpstrc struct {

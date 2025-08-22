@@ -1,0 +1,1095 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VER>chk198</VER>
+<EACHK>
+<TAG0>
+<HOSTNAME>myzrac11</HOSTNAME>
+<OS>Linux</OS>
+<RELVER> Linux.Red Hat Enterprise Linux Server release 6.8 (Santiago) </RELVER>
+<CORES> 12th Gen Intel(R) Core(TM) i5-12400F 2 </CORES>
+<CPUCOUNT>2</CPUCOUNT>
+<CPUMHZ> 2495.998</CPUMHZ>
+<MEMTOTAL> 3006020 kB</MEMTOTAL>
+<SWAPTOTAL> 2097148 kB</SWAPTOTAL>
+<OSPARAMETER>
+*************system parameter*************
+kernel.shmmax = 68719476736
+kernel.shmall = 4294967296
+fs.file-max = 6815744
+	#kernel.shmall = 2097152
+	#kernel.shmmax = 536870912
+kernel.shmmni = 4096
+kernel.sem = 250 32000 100 128
+net.ipv4.ip_local_port_range = 9000 65500
+net.core.rmem_default=4194304
+net.core.rmem_max=4194304
+net.core.wmem_default=262144
+net.core.wmem_max=1048586
+*************limit *************
+* soft nproc 16384
+* hard nproc 16384
+* soft nofile 65536
+* hard nofile 65536</OSPARAMETER>
+<ULIMIT>
+core file size          (blocks, -c) 0
+data seg size           (kbytes, -d) unlimited
+scheduling priority             (-e) 0
+file size               (blocks, -f) unlimited
+pending signals                 (-i) 11540
+max locked memory       (kbytes, -l) 64
+max memory size         (kbytes, -m) unlimited
+open files                      (-n) 65536
+pipe size            (512 bytes, -p) 8
+POSIX message queues     (bytes, -q) 819200
+real-time priority              (-r) 0
+stack size              (kbytes, -s) 8192
+cpu time               (seconds, -t) unlimited
+max user processes              (-u) 16384
+virtual memory          (kbytes, -v) unlimited
+file locks                      (-x) unlimited
+</ULIMIT>
+<IPADDR>
+addr:1.1.1.11
+addr:1.1.1.10
+addr:1.1.1.13
+addr:2.2.2.11
+addr:169.254.228.56
+</IPADDR>
+<DBMAA> RAC </DBMAA>
+<OSLOG><![CDATA[
+]]></OSLOG>
+<FILESYSTEM>
+Filesystem           Type   Size  Used Avail Use% Mounted on
+/dev/mapper/vg_myzrac11-lv_root
+                     ext4    47G   30G   15G  68% /
+tmpfs                tmpfs  1.5G  137M  1.3G  10% /dev/shm
+/dev/sda1            ext4   477M   81M  367M  19% /boot
+</FILESYSTEM>
+<INODEUSAGE>
+Filesystem           Inodes IUsed IFree IUse% Mounted on
+/dev/mapper/vg_myzrac11-lv_root
+                       3.0M  2.3M  716K   77% /
+tmpfs                  367K   276  367K    1% /dev/shm
+/dev/sda1              126K    45  125K    1% /boot
+</INODEUSAGE>
+<CPUSTAT>
+procs -----------memory---------- ---swap-- -----io---- --system-- -----cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ 0  0    182     63     63   1104    0    0    98    65   77  357  2  1 92  5  0	
+ 0  1    182     63     63   1104    0    0    67   190 3007 5962  0  1 91  8  0	
+ 0  0    182     63     63   1104    0    0    51    18 3171 5882  1  2 85 13  0	
+ 0  1    182     63     63   1104    0    0    83    34 3672 5672  2  1 93  4  0	
+ 0  0    182     63     63   1104    0    0    35    18 3838 6057  1  1 95  3  0	
+</CPUSTAT>
+<MEMSTAT>
+free -m
+             total       used       free     shared    buffers     cached
+Mem:          2935       2874         60        648         60       1053
+-/+ buffers/cache:       1761       1173
+Swap:         2047        173       1874
+</MEMSTAT>
+<IOSTAT>
+sar -d 3 2
+Linux 4.1.12-37.4.1.el6uek.x86_64 (myzrac11) 	06/06/2025 	_x86_64_	(2 CPU)
+
+12:58:29 AM       DEV       tps  rd_sec/s  wr_sec/s  avgrq-sz  avgqu-sz     await     svctm     %util
+12:58:32 AM    dev8-0      1.02      0.00     65.53     64.00      0.00      4.00      4.00      0.41
+12:58:32 AM   dev8-16      4.10     54.61      3.75     14.25      0.02      4.33      4.33      1.77
+12:58:32 AM   dev8-32      1.02     32.76      0.00     32.00      0.00      0.33      0.33      0.03
+12:58:32 AM   dev8-48      2.39     21.84     32.76     22.86      0.00      1.71      1.71      0.41
+12:58:32 AM   dev8-64      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+12:58:32 AM   dev8-96      3.75      2.05      3.75      1.55      0.02      4.27      4.27      1.60
+12:58:32 AM  dev8-112      3.75      2.05      3.75      1.55      0.01      3.00      3.00      1.13
+12:58:32 AM   dev8-80      3.75      2.05      3.75      1.55      0.02      4.09      4.09      1.54
+12:58:32 AM  dev251-0      8.19      0.00     65.53      8.00      0.00      0.50      0.50      0.41
+12:58:32 AM  dev251-1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+
+12:58:32 AM       DEV       tps  rd_sec/s  wr_sec/s  avgrq-sz  avgqu-sz     await     svctm     %util
+12:58:35 AM    dev8-0     36.99      0.00    805.48     21.78      0.09      2.47      1.68      6.20
+12:58:35 AM   dev8-16      5.82     65.75      4.45     12.06      0.04      7.18      7.18      4.18
+12:58:35 AM   dev8-32      0.68     21.92      0.00     32.00      0.00      0.50      0.50      0.03
+12:58:35 AM   dev8-48      2.05     10.96     21.92     16.00      0.02      8.00      8.00      1.64
+12:58:35 AM   dev8-64      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+12:58:35 AM   dev8-96      3.77      2.05      3.77      1.55      0.01      3.09      3.09      1.16
+12:58:35 AM  dev8-112      3.77      2.05      3.77      1.55      0.02      4.55      4.55      1.71
+12:58:35 AM   dev8-80      3.77      2.05      3.77      1.55      0.02      5.00      5.00      1.88
+12:58:35 AM  dev251-0     49.66      0.00    805.48     16.22      0.10      2.00      1.25      6.20
+12:58:35 AM  dev251-1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+
+Average:          DEV       tps  rd_sec/s  wr_sec/s  avgrq-sz  avgqu-sz     await     svctm     %util
+Average:       dev8-0     18.97      0.00    434.87     22.92      0.05      2.51      1.74      3.30
+Average:      dev8-16      4.96     60.17      4.10     12.97      0.03      6.00      6.00      2.97
+Average:      dev8-32      0.85     27.35      0.00     32.00      0.00      0.40      0.40      0.03
+Average:      dev8-48      2.22     16.41     27.35     19.69      0.01      4.62      4.62      1.03
+Average:      dev8-64      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:      dev8-96      3.76      2.05      3.76      1.55      0.01      3.68      3.68      1.38
+Average:     dev8-112      3.76      2.05      3.76      1.55      0.01      3.77      3.77      1.42
+Average:      dev8-80      3.76      2.05      3.76      1.55      0.02      4.55      4.55      1.71
+Average:     dev251-0     28.89      0.00    434.87     15.05      0.05      1.79      1.14      3.30
+Average:     dev251-1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+</IOSTAT>
+<THPSTAT>
+AnonHugePages:         0 kB
+always madvise [never]
+</THPSTAT>
+<HUGPAGE>
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+</HUGPAGE>
+<NUMA>
+[    0.000000] No NUMA configuration found
+</NUMA>
+<NTP>
+</NTP>
+<TMZONE>
+</TMZONE>
+<RPM_FIREFOX>
+firefox-45.0.1-1.0.2.el6.x86_64
+</RPM_FIREFOX>
+<RPM_FREETYPE>
+freetype-devel-2.3.11-17.el6.x86_64
+freetype-2.3.11-17.el6.x86_64
+</RPM_FREETYPE>
+<RPM_GHOSTSCRIPT>
+ghostscript-fonts-5.50-23.2.el6.noarch
+ghostscript-8.70-21.el6.x86_64
+</RPM_GHOSTSCRIPT>
+<RPM_SAMBA>
+samba-client-3.6.23-33.0.1.el6.x86_64
+samba-winbind-3.6.23-33.0.1.el6.x86_64
+samba-winbind-clients-3.6.23-33.0.1.el6.x86_64
+samba-common-3.6.23-33.0.1.el6.x86_64
+samba4-libs-4.2.10-6.el6_7.x86_64
+libsmbclient-3.6.23-33.0.1.el6.x86_64
+</RPM_SAMBA>
+<RPM_OPENVMTOOLS>
+</RPM_OPENVMTOOLS>
+<DBCRSCHECK>
+--------------------------------------------------------------------------------
+NAME           TARGET  STATE        SERVER                   STATE_DETAILS       
+--------------------------------------------------------------------------------
+Local Resources
+--------------------------------------------------------------------------------
+ora.DATA.dg
+               ONLINE  ONLINE       myzrac11                                     
+               ONLINE  ONLINE       myzrac12                                     
+ora.LISTENER.lsnr
+               ONLINE  ONLINE       myzrac11                                     
+               ONLINE  ONLINE       myzrac12                                     
+ora.OCR.dg
+               ONLINE  ONLINE       myzrac11                                     
+               ONLINE  ONLINE       myzrac12                                     
+ora.asm
+               ONLINE  ONLINE       myzrac11                 Started             
+               ONLINE  ONLINE       myzrac12                 Started             
+ora.gsd
+               OFFLINE OFFLINE      myzrac11                                     
+               OFFLINE OFFLINE      myzrac12                                     
+ora.net1.network
+               ONLINE  ONLINE       myzrac11                                     
+               ONLINE  ONLINE       myzrac12                                     
+ora.ons
+               ONLINE  ONLINE       myzrac11                                     
+               ONLINE  ONLINE       myzrac12                                     
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.LISTENER_SCAN1.lsnr
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.cvu
+      1        OFFLINE OFFLINE                                                   
+ora.myzrac11.vip
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.myzrac12.vip
+      1        ONLINE  ONLINE       myzrac12                                     
+ora.oc4j
+      1        OFFLINE OFFLINE                                                   
+ora.racdb.db
+      1        ONLINE  ONLINE       myzrac11                 Open                
+      2        ONLINE  ONLINE       myzrac12                 Open                
+ora.racdb.rac1.svc
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.racdb.rac2.svc
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.racdb.svcplan.svc
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.racdb.svctaf.svc
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.racdb.svctmp.svc
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.scan1.vip
+      1        ONLINE  ONLINE       myzrac11                                     
+--------------------------------------------------------------------------------
+NAME           TARGET  STATE        SERVER                   STATE_DETAILS       
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.asm
+      1        ONLINE  ONLINE       myzrac11                 Started             
+ora.cluster_interconnect.haip
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.crf
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.crsd
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.cssd
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.cssdmonitor
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.ctssd
+      1        ONLINE  ONLINE       myzrac11                 OBSERVER            
+ora.diskmon
+      1        OFFLINE OFFLINE                                                   
+ora.evmd
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.gipcd
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.gpnpd
+      1        ONLINE  ONLINE       myzrac11                                     
+ora.mdnsd
+      1        ONLINE  ONLINE       myzrac11                                     
+myzrac11
+myzrac12
+Status of Oracle Cluster Registry is as follows :
+	 Version                  :          3
+	 Total space (kbytes)     :     262120
+	 Used space (kbytes)      :       3424
+	 Available space (kbytes) :     258696
+	 ID                       : 1721655215
+	 Device/File Name         :       +OCR
+                                    Device/File integrity check succeeded
+
+                                    Device/File not configured
+
+                                    Device/File not configured
+
+                                    Device/File not configured
+
+                                    Device/File not configured
+
+	 Cluster registry integrity check succeeded
+
+	 Logical corruption check bypassed due to non-privileged user
+
+
+myzrac11     2025/06/05 21:55:42     /u01/app/11.2.0/grid/cdata/myzrac-cluster/backup00.ocr
+
+myzrac11     2025/01/08 22:00:40     /u01/app/11.2.0/grid/cdata/myzrac-cluster/backup01.ocr
+
+myzrac11     2024/06/04 18:24:54     /u01/app/11.2.0/grid/cdata/myzrac-cluster/backup02.ocr
+
+myzrac11     2025/06/05 21:55:42     /u01/app/11.2.0/grid/cdata/myzrac-cluster/day.ocr
+
+myzrac11     2025/06/05 21:55:42     /u01/app/11.2.0/grid/cdata/myzrac-cluster/week.ocr
+
+myzrac11     2020/11/21 02:46:48     /u01/app/11.2.0/grid/cdata/myzrac-cluster/backup_20201121_024648.ocr
+
+myzrac11     2020/11/21 00:09:21     /u01/app/11.2.0/grid/cdata/myzrac-cluster/backup_20201121_000921.ocr
+##  STATE    File Universal Id                File Name Disk group
+--  -----    -----------------                --------- ---------
+ 1. ONLINE   77f7c95e9afd4f0abff1ec6d99a4813b (/dev/asm-diske) [OCR]
+ 2. ONLINE   0e1db1dc1adb4f81bfc511e27fe98bd2 (/dev/asm-diskf) [OCR]
+ 3. ONLINE   4ad8c2a1e8c84fa7bf63704a82b649f8 (/dev/asm-diskg) [OCR]
+Located 3 voting disk(s).
+CRS-4678: Successful get misscount 30 for Cluster Synchronization Services.
+CRS-4678: Successful get disktimeout 200 for Cluster Synchronization Services.
+</DBCRSCHECK>
+<DBASMUSAGE>
+
+NAME         TOTAL_MB    FREE_MB PCT_USED_RATE(%)
+---------- ---------- ---------- ----------------
+DATA            30708      12105            60.58
+OCR              3057       2131            30.29
+
+</DBASMUSAGE>
+</TAG0>
+<TAG1>
+<racdb1>
+
+Session altered.
+
+<DBVER>
+
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+
+1 row selected.
+
+</DBVER>
+<DBOSINFO><![CDATA[
+
+       2
+
+1 row selected.
+
+
+	    2
+
+1 row selected.
+
+
+       2.867
+
+1 row selected.
+
+]]></DBOSINFO>
+<LOGMODE>
+
+ARCHIVELOG
+
+1 row selected.
+
+</LOGMODE>
+<FLASHBACK>
+
+NO
+
+1 row selected.
+
+</FLASHBACK>
+<DBTOTALSIZE><![CDATA[
+
+      7.86
+
+1 row selected.
+
+]]></DBTOTALSIZE>
+<DBFILECOUNT><![CDATA[
+
+	 8
+
+1 row selected.
+
+]]></DBFILECOUNT>
+<DBTBLCOUNT><![CDATA[
+
+      2974
+
+1 row selected.
+
+]]></DBTBLCOUNT>
+<DBROLE><![CDATA[
+
+PRIMARY,MAXIMUM PERFORMANCE
+
+1 row selected.
+
+]]></DBROLE>
+<DBTBSUSAGE><![CDATA[
+
+TABLESPACE_NAME      MAXEXTEND(GB) ALLOCATED(GB)   USED(GB)   Free(GB) USED_RATE(%)
+-------------------- ------------- ------------- ---------- ---------- ------------
+SYSAUX                          32          1.25      .8633      .3867          2.7
+UNDOTBS1                        32        1.3477      .2484     1.0993          .78
+UNDOTBS2                        32         .1465      .0173      .1292          .05
+SYSTEM                          32        1.0547     1.0535      .0012         3.29
+EXAMPLE                         32         .3381      .3029      .0352          .95
+USERS                           33             2      .5057     1.4943         1.53
+
+6 rows selected.
+
+]]></DBTBSUSAGE>
+<DBDATAFILE><![CDATA[
+
+FILE_NAME                                                                        STATUS         CUR_GB AUT     MAX_GB
+-------------------------------------------------------------------------------- ---------- ---------- --- ----------
++DATA/racdb/datafile/example.264.943369605                                       AVAILABLE         .34 YES         32
++DATA/racdb/datafile/sysaux.257.943369487                                        AVAILABLE        1.25 YES         32
++DATA/racdb/datafile/system.256.943369487                                        AVAILABLE        1.05 YES         32
++DATA/racdb/datafile/undotbs1.258.943369487                                      AVAILABLE        1.35 YES         32
++DATA/racdb/datafile/undotbs2.265.943369777                                      AVAILABLE         .15 YES         32
++DATA/racdb/datafile/users.259.943369487                                         AVAILABLE           1 YES         32
++DATA/racdb/datafile/users.436.966642729                                         AVAILABLE           1 NO           0
+
+7 rows selected.
+
+]]></DBDATAFILE>
+<DATAFILE_SIZE><![CDATA[
+
+   DBF_CNT         GB
+---------- ----------
+         7 6.13696289
+
+1 row selected.
+
+]]></DATAFILE_SIZE>
+<TMPFILE_SIZE><![CDATA[
+
+   TMP_CNT         GB
+---------- ----------
+         1     .15625
+
+1 row selected.
+
+]]></TMPFILE_SIZE>
+<OWNER_SIZE><![CDATA[
+
+OWNER                        GB
+-------------------- ----------
+APEX_030200                 .08
+CTXSYS                        0
+DBSNMP                        0
+EAUSER                      .07
+EXFSYS                        0
+HR                            0
+IX                            0
+JASON                       .43
+MDSYS                       .07
+OE                          .01
+OLAPSYS                     .01
+ORDDATA                     .01
+ORDSYS                        0
+OUTLN                         0
+PM                          .01
+SCOTT                         0
+SH                          .28
+SYS                        1.79
+SYSMAN                      .04
+SYSTEM                      .03
+WMSYS                         0
+XDB                         .12
+
+22 rows selected.
+
+]]></OWNER_SIZE>
+<USER_INFO> <![CDATA[
+
+USERNAME             ACCOUNT_STATUS       DEFAULT_TABLESPACE   TEMPORARY_TABLESPACE PROFILE
+-------------------- -------------------- -------------------- -------------------- ---------------
+DBSNMP               EXPIRED              SYSAUX               TEMP                 MONITORING_PROF
+                                                                                    ILE
+
+ANONYMOUS            EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+APEX_030200          EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+APEX_PUBLIC_USER     EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+APPQOSSYS            EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+BI                   EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+CTXSYS               EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+DIP                  EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+EXFSYS               EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+FLOWS_FILES          EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+HR                   EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+IX                   EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+MDDATA               EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+MDSYS                EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+MGMT_VIEW            EXPIRED & LOCKED     SYSTEM               TEMP                 DEFAULT
+OE                   EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+OLAPSYS              EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+ORACLE_OCM           EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+ORDDATA              EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+ORDPLUGINS           EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+ORDSYS               EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+OUTLN                EXPIRED & LOCKED     SYSTEM               TEMP                 DEFAULT
+OWBSYS               EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+OWBSYS_AUDIT         EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+PM                   EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+SCOTT                EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+SH                   EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+SI_INFORMTN_SCHEMA   EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+SPATIAL_CSW_ADMIN_US EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+R
+
+SPATIAL_WFS_ADMIN_US EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+R
+
+SYSMAN               EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+WMSYS                EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+XDB                  EXPIRED & LOCKED     SYSAUX               TEMP                 DEFAULT
+XS$NULL              EXPIRED & LOCKED     USERS                TEMP                 DEFAULT
+JASON                EXPIRED(GRACE)       USERS                TEMP                 DEFAULT
+EAUSER               OPEN                 USERS                TEMP                 DEFAULT
+SYS                  OPEN                 SYSTEM               TEMP                 DEFAULT
+SYSTEM               OPEN                 SYSTEM               TEMP                 DEFAULT
+
+38 rows selected.
+
+
+]]></USER_INFO>
+<TAB_INFO><![CDATA[
+
+OWNER                 TABLE_CNT
+-------------------- ----------
+EAUSER                        5
+JASON                         8
+
+2 rows selected.
+
+]]></TAB_INFO>
+<DBUSERSIZE><![CDATA[
+
+OWNER                USER_SIZE_GB
+-------------------- ------------
+APEX_030200                   .08
+CTXSYS                        .00
+DBSNMP                        .00
+EAUSER                        .07
+EXFSYS                        .00
+HR                            .00
+IX                            .00
+JASON                         .43
+MDSYS                         .07
+OE                            .01
+OLAPSYS                       .01
+ORDDATA                       .01
+ORDSYS                        .00
+OUTLN                         .00
+PM                            .01
+SCOTT                         .00
+SH                            .28
+SYS                          1.79
+SYSMAN                        .04
+SYSTEM                        .03
+WMSYS                         .00
+XDB                           .12
+
+22 rows selected.
+
+]]></DBUSERSIZE>
+
+Session altered.
+
+<DBREDOCHECK><![CDATA[
+
+    GROUP#    THREAD#  SEQUENCE#         MB ARC STATUS
+---------- ---------- ---------- ---------- --- ----------
+       101          1        780        200 YES INACTIVE
+       102          1        781        200 NO  CURRENT
+       103          1        779        200 YES INACTIVE
+       104          1        778        200 YES INACTIVE
+       201          2        409        200 NO  CURRENT
+       202          2        406        200 YES INACTIVE
+       203          2        407        200 YES INACTIVE
+       204          2        408        200 YES INACTIVE
+
+8 rows selected.
+
+]]></DBREDOCHECK>
+<DBRESOURCE><![CDATA[
+
+INST_ID RESOURCE_NAME                  CURRENT_UTILIZATION MAX_UTILIZATION LIMIT_VALUE
+------- ------------------------------ ------------------- --------------- ---------------
+      1 processes                                       59              74        300
+      1 sessions                                        73              94        472
+      1 ges_procs                                       55              68        320
+      1 ges_rsv_msgs                                     0               0        600
+      1 parallel_max_servers                             1               2       3600
+      2 processes                                       53              58        300
+      2 sessions                                        66              71        472
+      2 ges_procs                                       49              53        320
+      2 ges_rsv_msgs                                     0               0        601
+      2 parallel_max_servers                             1               1       3600
+
+10 rows selected.
+
+]]></DBRESOURCE>
+
+Session altered.
+
+<DBRMANCHECK><![CDATA[
+
+no rows selected
+
+]]></DBRMANCHECK>
+
+Session altered.
+
+<DBDGLAGCHECK><![CDATA[
+
+no rows selected
+
+
+   THREAD# Last Primary Seq Generated
+---------- --------------------------
+         1                        780
+         2                        408
+
+2 rows selected.
+
+]]></DBDGLAGCHECK>
+<DBTABLEPARALLEL><![CDATA[
+
+no rows selected
+
+]]></DBTABLEPARALLEL>
+<DBINDEXPARALLEL><![CDATA[
+
+no rows selected
+
+]]></DBINDEXPARALLEL>
+<DBSEQUENCE><![CDATA[
+
+SEQUENCE_OWNER  CNT_LESS_200
+--------------- ------------
+JASON                      1
+
+1 row selected.
+
+]]></DBSEQUENCE>
+<DB_SEQ_USAGE><![CDATA[
+
+no rows selected
+
+]]></DB_SEQ_USAGE>
+<DBSTATUS>
+
+DB_UNIQUE_NAME       OPEN_MODE            LOG_MODE     PROTECTION_LEVEL     DATABASE_ROLE        SWITCHOVER_STATUS
+-------------------- -------------------- ------------ -------------------- -------------------- --------------------
+racdb                READ WRITE           ARCHIVELOG   MAXIMUM PERFORMANCE  PRIMARY              FAILED DESTINATION
+
+1 row selected.
+
+</DBSTATUS>
+<DBOPTION><![CDATA[
+
+OPTION
+--------------------------------------------------
+Partitioning
+Objects
+Real Application Clusters
+Advanced replication
+Bit-mapped indexes
+Connection multiplexing
+Connection pooling
+Database queuing
+Incremental backup and recovery
+Instead-of triggers
+Parallel backup and recovery
+Parallel execution
+Parallel load
+Point-in-time tablespace recovery
+Fine-grained access control
+Proxy authentication/authorization
+Change Data Capture
+Plan Stability
+Online Index Build
+Coalesce Index
+Managed Standby
+Materialized view rewrite
+Database resource manager
+Spatial
+Automatic Storage Management
+Export transportable tablespaces
+Transparent Application Failover
+Fast-Start Fault Recovery
+Sample Scan
+Duplexed backups
+Java
+OLAP Window Functions
+Block Media Recovery
+Fine-grained Auditing
+Application Role
+Enterprise User Security
+Oracle Data Guard
+Oracle Label Security
+OLAP
+Basic Compression
+Join index
+Trial Recovery
+Data Mining
+Online Redefinition
+Streams Capture
+File Mapping
+Block Change Tracking
+Flashback Table
+Flashback Database
+Transparent Data Encryption
+Backup Encryption
+Unused Block Compression
+Oracle Database Vault
+Result Cache
+SQL Plan Management
+SecureFiles Encryption
+Real Application Testing
+Flashback Data Archive
+DICOM
+Active Data Guard
+Server Flash Cache
+Advanced Compression
+XStream
+Deferred Segment Creation
+Data Redaction
+
+65 rows selected.
+
+]]></DBOPTION>
+<DBFEATURES><![CDATA[
+
+NAME                           VERSION         LAST_USAGE_DATE      DESCRIPTION
+------------------------------ --------------- -------------------- ----------------------------------------
+Services                       11.2.0.4.0      2025-06-05 18:41:25  Oracle Services.
+SecureFiles (user)             11.2.0.4.0      2025-06-05 18:41:25  SecureFiles is being used
+SecureFiles (system)           11.2.0.4.0      2025-06-05 18:41:25  SecureFiles is being used by system user
+                                                                    s
+
+Oracle Java Virtual Machine (s 11.2.0.4.0      2025-06-05 18:41:25  OJVM default system users
+ystem)
+
+Automatic SGA Tuning           11.2.0.4.0      2025-06-05 18:41:25  Automatic SGA Tuning is enabled.
+Automatic Segment Space Manage 11.2.0.4.0      2025-06-05 18:41:25  Extents of locally managed tablespaces a
+ment (system)                                                       re managed automatically by Oracle.
+
+Automatic Storage Management   11.2.0.4.0      2025-06-05 18:41:25  Automatic Storage Management has been en
+                                                                    abled
+
+Automatic Undo Management      11.2.0.4.0      2025-06-05 18:41:25  Oracle automatically manages undo data u
+                                                                    sing an UNDO tablespace.
+
+Deferred Segment Creation      11.2.0.4.0      2025-06-05 18:41:25  Deferred Segment Creation is being used
+Partitioning (user)            11.2.0.4.0      2025-06-05 18:41:25  Oracle Partitioning option is being used
+                                                                     - there is at least one user partitione
+                                                                    d object created.
+
+Job Scheduler                  11.2.0.4.0      2025-06-05 18:41:25  Job Scheduler feature is being used.
+Audit Options                  11.2.0.4.0      2025-06-05 18:41:25  Audit options in use.
+Automatic Maintenance - Optimi 11.2.0.4.0      2025-06-05 18:41:25  Automatic initiation of Optimizer Statis
+zer Statistics Gathering                                            tics Collection
+
+Automatic Maintenance - Space  11.2.0.4.0      2025-06-05 18:41:25  Automatic initiation of Space Advisor
+Advisor
+
+Automatic Maintenance - SQL Tu 11.2.0.4.0      2025-06-05 18:41:25  Automatic initiation of SQL Tuning Advis
+ning Advisor                                                        or
+
+Automatic SQL Execution Memory 11.2.0.4.0      2025-06-05 18:41:25  Sizing of work areas for all dedicated s
+                                                                    essions (PGA) is automatic.
+
+Character Set                  11.2.0.4.0      2025-06-05 18:41:25  Character set is used in Oracle Database
+Locally Managed Tablespaces (s 11.2.0.4.0      2025-06-05 18:41:25  There exists tablespaces that are locall
+ystem)                                                              y managed in the database.
+
+Locally Managed Tablespaces (u 11.2.0.4.0      2025-06-05 18:41:25  There exists user tablespaces that are l
+ser)                                                                ocally managed in the database.
+
+Partitioning (system)          11.2.0.4.0      2025-06-05 18:41:25  Oracle Partitioning option is being used
+                                                                     - there is at least one partitioned obj
+                                                                    ect created.
+
+Real Application Clusters (RAC 11.2.0.4.0      2025-06-05 18:41:25  Real Application Clusters (RAC) is confi
+)                                                                   gured.
+
+Server Parameter File          11.2.0.4.0      2025-06-05 18:41:25  The server parameter file (SPFILE) was u
+                                                                    sed to startup the database.
+
+Virtual Private Database (VPD) 11.2.0.4.0      2025-06-05 18:41:25  Virtual Private Database (VPD) policies
+                                                                    are being used.
+
+
+23 rows selected.
+
+]]></DBFEATURES>
+<DBLANG>
+
+AMERICAN_AMERICA.AL32UTF8
+
+1 row selected.
+
+</DBLANG>
+<DBREDOSWITCH>
+
+DT         DY      Total  h0  h1  h2  h3  h4  h5  h6  h7  h8  h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23
+---------- ------- ----- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+2025-06-05 Thu         2   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   2   0   0   0   0   0   0
+2025-06-06 Fri         2   2   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+
+2 rows selected.
+
+</DBREDOSWITCH>
+<DBPARAMETER><![CDATA[
+
+NAME                                          VALUE
+--------------------------------------------- ------------------------------------------------------------
+_smu_debug_mode                               0
+background_dump_dest                          /u01/app/oracle/diag/rdbms/racdb/racdb1/trace
+control_file_record_keep_time                 7
+db_cache_size                                 1073741824
+db_file_name_convert                          /u01/app11/oracle/oradata/racdb_std/, +data/racdb/datafile/,
+                                               /u01/app11/oracle/oradata/racdb_rmt/, +data/racdb/datafile/
+
+db_files                                      200
+deferred_segment_creation                     FALSE
+event
+fal_server                                    racdb_std,racdb_rmt
+log_archive_config                            DG_CONFIG =(racdb,racdb_std,racdb_rmt)
+log_archive_dest_1                            location=+data/arch
+log_archive_dest_2                            SERVICE=racdb_std LGWR ASYNC NOAFFIRM VALID_FOR=(ONLINE_LOGF
+                                              ILES,PRIMARY_ROLE) DB_UNIQUE_NAME=racdb_std
+
+log_archive_dest_3                            SERVICE=racdb_rmt LGWR ASYNC NOAFFIRM VALID_FOR=(ONLINE_LOGF
+                                              ILES,PRIMARY_ROLE) DB_UNIQUE_NAME=racdb_rmt
+
+log_archive_dest_4
+log_archive_dest_state_1                      enable
+log_archive_dest_state_2                      ENABLE
+log_archive_dest_state_3                      enable
+log_archive_dest_state_4                      enable
+log_file_name_convert                         /u01/app11/oracle/oradata/racdb_std/, +data/racdb/onlinelog/
+                                              , /u01/app11/oracle/oradata/racdb_rmt/, +data/racdb/onlinelo
+                                              g/
+
+max_dump_file_size                            unlimited
+memory_max_target                             0
+memory_target                                 0
+parallel_force_local                          FALSE
+parallel_max_servers                          80
+pga_aggregate_target                          536870912
+processes                                     300
+session_cached_cursors                        50
+sga_max_size                                  1677721600
+sga_target                                    1677721600
+shared_pool_size                              0
+streams_pool_size                             0
+undo_retention                                900
+user_dump_dest                                /u01/app/oracle/diag/rdbms/racdb/racdb1/trace
+
+33 rows selected.
+
+]]></DBPARAMETER>
+<DB_SGA_SIZE><![CDATA[
+
+SGA_SIZE_MB
+-----------
+       1593
+
+1 row selected.
+
+]]></DB_SGA_SIZE>
+<DB_SHP_SIZE><![CDATA[
+
+SGA_MAX_SIZE(M) SGA_TARGET SHARED_POOL_SIZE(M) SHARED_POOL_FREE(M) DB_CACHE_CURRENT_SIZE
+--------------- ---------- ------------------- ------------------- ---------------------
+           1600       1600                 352                  37                  1184
+
+1 row selected.
+
+]]></DB_SHP_SIZE>
+<DB_SHP_PCT><![CDATA[
+
+SHARED_POOL_USAGE_PCT(%)
+------------------------
+                      65
+
+1 row selected.
+
+]]></DB_SHP_PCT>
+<DB_4031CHECK><![CDATA[
+
+TOTAL_SHARED_POOL_USAGE(MB) ABORTED_REQUESTS
+--------------------------- ----------------
+                        315                0
+
+1 row selected.
+
+]]></DB_4031CHECK>
+<DB_CURSORMEM><![CDATA[
+
+no rows selected
+
+]]></DB_CURSORMEM>
+<DB_EXPIR_USER><![CDATA[
+
+USERNAME             EXPIRY_DATE
+-------------------- -------------------
+EAUSER               2021-03-02 00:06:43
+
+1 row selected.
+
+]]></DB_EXPIR_USER>
+<DB_PASSWORD_VERIF><![CDATA[
+
+PROFILE              LIMIT
+-------------------- ------------------------------
+DEFAULT              NULL
+
+1 row selected.
+
+]]></DB_PASSWORD_VERIF>
+<DBDBAPRIV><![CDATA[
+
+GRANTEE                        GRANTED_ROLE    ADMIN_OPTION
+------------------------------ --------------- --------------------
+JASON                          DBA             NO
+
+1 row selected.
+
+]]></DBDBAPRIV>
+<DBSYSDBA><![CDATA[
+
+no rows selected
+
+]]></DBSYSDBA>
+<DBAUDITSEGMENT><![CDATA[
+
+SEGMENT_NAME    SIZE_IN_MEGABYTES TABLESPACE_NAME
+--------------- ----------------- ------------------------------
+AUD$                       296.00 SYSTEM
+
+1 row selected.
+
+]]></DBAUDITSEGMENT>
+<DBAUDITCONT><![CDATA[
+
+PL/SQL procedure successfully completed.
+
+
+    AUDCNT
+----------
+   1387298
+
+]]></DBAUDITCONT>
+<DBINVALIDOBJECT><![CDATA[
+
+no rows selected
+
+]]></DBINVALIDOBJECT>
+<DBINVALIDINDEX><![CDATA[
+
+no rows selected
+
+]]></DBINVALIDINDEX>
+<DBCONTROLFILE><![CDATA[
+
++DATA/racdb/controlfile/current.260.943369559
+
+1 row selected.
+
+]]></DBCONTROLFILE>
+<DB_NOSYS_IN_SYSTEM><![CDATA[
+
+no rows selected
+
+]]></DB_NOSYS_IN_SYSTEM>
+<DBRECOVERYDEST><![CDATA[
+
+no rows selected
+
+]]></DBRECOVERYDEST>
+<DBFLASHRECOVERYUSEAGE><![CDATA[
+
+no rows selected
+
+]]></DBFLASHRECOVERYUSEAGE>
+<DBPRODUCTUSERFAILEDLOGIN><![CDATA[
+
+USERNAME                       PROFILE              RESOURCE_NAME                  RESOURCE_T LIMIT
+------------------------------ -------------------- ------------------------------ ---------- ------------------------------
+JASON                          DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   10
+EAUSER                         DEFAULT              FAILED_LOGIN_ATTEMPTS          PASSWORD   10
+
+2 rows selected.
+
+]]></DBPRODUCTUSERFAILEDLOGIN>
+<DBVIRSCHECK><![CDATA[
+
+no rows selected
+
+]]></DBVIRSCHECK>
+<DBSCNHEALTHCHECK><![CDATA[
+--------------------------------------------------------------
+ScnHealthCheck
+--------------------------------------------------------------
+Current Date: 2025/06/06 00:58:57
+Current SCN:   59580484
+Version:       11.2.0.4.0
+--------------------------------------------------------------
+Result: A - SCN Headroom is good
+Apply the latest recommended patches
+based on your maintenance schedule
+For further information review MOS document id 1393363.1
+--------------------------------------------------------------
+
+PL/SQL procedure successfully completed.
+
+]]></DBSCNHEALTHCHECK>
+<DBNAME><![CDATA[racdb]]></DBNAME>
+<LOADPROFILE>
+</LOADPROFILE>
+<INSTEFFICIENCY>
+</INSTEFFICIENCY>
+<TOPEVENT><![CDATA[
+]]></TOPEVENT>
+<TOPSQLBYELAPSTIME><![CDATA[
+]]></TOPSQLBYELAPSTIME>
+<DBERRLOG><![CDATA[
+
+no rows selected
+
+]]></DBERRLOG>
+<DBPSU><![CDATA[
+DBPSU:[ 
+ACTION_TIME			    ACTION     NAMESPACE       VERSION			ID COMMENTS					      BUNDLE_SER
+----------------------------------- ---------- --------------- ---------------------- ---- -------------------------------------------------- ----------
+24-AUG-13 12.03.45.119862 PM	    APPLY      SERVER	       11.2.0.4 		 0 Patchset 11.2.0.2.0				      PSU
+07-MAY-17 03.10.22.347518 PM	    APPLY      SERVER	       11.2.0.4 		 0 Patchset 11.2.0.2.0				      PSU
+13-AUG-17 08.02.21.717240 PM	    APPLY      SERVER	       11.2.0.4 	      #### PSU 11.2.0.4.160719				      PSU
+13-AUG-17 08.35.40.744226 PM	    APPLY      SERVER	       11.2.0.4 	      #### PSU 11.2.0.4.160719				      PSU
+13-AUG-17 09.08.48.775878 PM	    APPLY      SERVER	       11.2.0.4 	      #### PSU 11.2.0.4.161018				      PSU ]
+]]></DBPSU>
+<DBPATCH><![CDATA[
+24732075;Database Patch Set Update : 11.2.0.4.170418 (24732075)
+
+OPatch succeeded.
+]]></DBPATCH>
+<DBDGERRCHECK><![CDATA[
+]]></DBDGERRCHECK>
+<DBLSNRINFO><![CDATA[
+grid      4854     1  0 Jun05 ?        00:00:00 /u01/app/11.2.0/grid/bin/tnslsnr LISTENER_SCAN1 -inherit
+grid      4864     1  0 Jun05 ?        00:00:01 /u01/app/11.2.0/grid/bin/tnslsnr LISTENER -inherit
+
+LSNRCTL for Linux: Version 11.2.0.4.0 - Production on 06-JUN-2025 00:59:27
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+TNS-01101: Could not find service name LISTENER_SCAN1
+
+LSNRCTL for Linux: Version 11.2.0.4.0 - Production on 06-JUN-2025 01:01:58
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+Connecting to (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1521))
+STATUS of the LISTENER
+------------------------
+Alias                     LISTENER
+Version                   TNSLSNR for Linux: Version 11.2.0.4.0 - Production
+Start Date                05-JUN-2025 17:41:04
+Uptime                    0 days 7 hr. 20 min. 54 sec
+Trace Level               off
+Security                  ON: Local OS Authentication
+SNMP                      OFF
+Listener Parameter File   /u01/app/11.2.0/grid/network/admin/listener.ora
+Listener Log File         /u01/app/grid/diag/tnslsnr/myzrac11/listener/alert/log.xml
+Listening Endpoints Summary...
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=ipc)(KEY=LISTENER)))
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=1.1.1.11)(PORT=1521)))
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=1.1.1.13)(PORT=1521)))
+Services Summary...
+Service "+ASM" has 1 instance(s).
+  Instance "+ASM1", status READY, has 1 handler(s) for this service...
+Service "rac1" has 1 instance(s).
+  Instance "racdb1", status READY, has 1 handler(s) for this service...
+Service "rac2" has 1 instance(s).
+  Instance "racdb1", status READY, has 1 handler(s) for this service...
+Service "racdb" has 1 instance(s).
+  Instance "racdb1", status READY, has 1 handler(s) for this service...
+Service "racdbXDB" has 1 instance(s).
+  Instance "racdb1", status READY, has 1 handler(s) for this service...
+Service "svc1" has 1 instance(s).
+  Instance "racdb1", status READY, has 1 handler(s) for this service...
+Service "svcdb" has 1 instance(s).
+  Instance "racdb1", status READY, has 1 handler(s) for this service...
+Service "svcplan" has 1 instance(s).
+  Instance "racdb1", status READY, has 1 handler(s) for this service...
+Service "svctaf" has 1 instance(s).
+  Instance "racdb1", status READY, has 1 handler(s) for this service...
+Service "svctmp" has 1 instance(s).
+  Instance "racdb1", status READY, has 1 handler(s) for this service...
+The command completed successfully
+2750325 502512 -rw-r-----   1 grid     oinstall 514431264 Jun  6 01:01 /u01/app/oracle/../grid/diag/tnslsnr/myzrac11/listener/trace/listener.log
+2754120    8 -rw-r-----   1 grid     oinstall     6620 Nov 19  2017 /u01/app/oracle/../grid/diag/tnslsnr/myzrac11/listener_scan1/trace/listener_scan1.log
+]]></DBLSNRINFO>
+<DB_PARAMETER_FILE><![CDATA[
+/tmp/ea/20250606.myzrac11/20250606.myzrac11.racdb1.ora
+]]></DB_PARAMETER_FILE>
+</racdb1>
+</TAG1>
+</EACHK>

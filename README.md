@@ -283,14 +283,6 @@ https://godoc.org/github.com/beevik/etree
 https://pkg.go.dev/github.com/beevik/etree?tab=doc
 https://github.com/beevik/etree
 
-## 填加指标步骤:
-1. 在stucts.go中填加type
-2. 在xlsx.NewXlsx 写入初始化值, 并相应修改sheet下的style单元格生效范围
-3. 在xlsx.PutSht_INFO(或PutSht_OS,PutSht_DB)中 switch rowCell 添加相应case 中文要和newxlsx中一致;
-4. 在readXml.go tag0或tag1相应位置添加解析
-5. 如果是检查指标,在rule.yaml中设定检查规则 (le ge ne lt gt 分别对应 <=  >= !=  <  >  1,2代表级别),注意":"后要有空格如  nm: value
-6. 如果是检查指标,在confg中添加检查规则名称, 要和yaml完全一致, 注意数据类型
-7. 在ana中添加指标分析函数Ana_xxx或者格式化输出函数Fmt_xxx
 
 # 程序说明
 
@@ -507,7 +499,28 @@ net.ipv4.ip_local_port_range = 9000 65500，增加可用端口范围。
 注 : 达到SOFT限制应用也会报错,因此SOFT和HARD都需要检查
 ');
 
+## 修改
+### 调整指标标签XML的位置(如从tag1移到tag2):
+需要修改 shell , structs.go ,excel, toxls.go,ana/*.go
 
+## 填加指标步骤:
+1. 确定标签, chk shell增加收集命令
+2. rule.yaml 增加指标说明和阀值
+3. 在config.go中填加yaml的解析映射 (2处)
+4. 在stucts.go中填加type 
+5. 在xlsx模板中填入指标标签
+6. ##在xlsx.NewXlsx() 写入初始化值, 并相应修改sheet下的style单元格生效范围
+7. 在xlsx.PutSht_INFO|PutSht_OS|PutSht_DB (2处)
+8. 在readXml.go processTag0Node或processTag1Node相应位置添加解析 (2处)
+9. 在分析函数中增加指标分析,在analyzer中添加调用
+
+说明:
+
+1. 部分rule.yaml检查规则 (le ge ne lt gt 分别对应 <=  >= !=  <  >  1,2代表级别),注意":"后要有空格如  nm: value
+
+2. 如果是检查指标,在confg中添加检查规则名称, 要和yaml完全一致, 注意数据类型
+
+   
 
 # Bug List
 关于3.3.18序列最大值使用检查这一块的，当MAXVALUE为0时查询语句select sequence_owner,sequence_name, max_value,last_number,cache_size,round(last_number/max_value ,2) percent_use from dba_sequences 

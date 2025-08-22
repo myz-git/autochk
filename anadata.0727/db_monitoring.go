@@ -15,8 +15,8 @@ import (
 // 错误监控
 
 // Ana_DBERRLOG 分析数据库错误日志
-func Ana_DBERRLOG(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := instshtp.Dberrlog.Contents
+func Ana_DBERRLOG(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Dberrlog.Contents
 	value := strings.TrimSpace(msgdata)
 	entry := structs.SummaryEntry{
 		Category: "数据库实例分析",
@@ -24,11 +24,11 @@ func Ana_DBERRLOG(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntri
 		Title:    rule.Dbrule.Dberrlog.Title,
 		Desc:     rule.Dbrule.Dberrlog.Desc,
 	}
-	instshtp.Dberrlog.Alarm = "B"
+	dbshtp.Dberrlog.Alarm = "B"
 	if value == "" || strings.Contains(value, rule.Dbrule.Dberrlog.ResultB) {
-		instshtp.Dberrlog.Alarm = ""
+		dbshtp.Dberrlog.Alarm = ""
 	} else {
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,数据库日志存在重要报错信息,建议检查并处理相关错误", instshtp.Instname.Contents))
+		entry.Moderate = append(entry.Moderate, "数据库日志存在重要报错，建议检查")
 	}
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
@@ -36,8 +36,8 @@ func Ana_DBERRLOG(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntri
 }
 
 // Ana_DBLSNRINFO 分析监听日志文件大小
-func Ana_DBLSNRINFO(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := instshtp.Dblsnrinfo.Contents
+func Ana_DBLSNRINFO(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Dblsnrinfo.Contents
 	entry := structs.SummaryEntry{
 		Category: "数据库实例分析",
 		Nm:       rule.Dbrule.Dblsnrinfo.Nm,
@@ -62,8 +62,8 @@ Looop:
 				if rd2.MatchString(msgs[k]) && rd3.MatchString(msgs[k-1]) {
 					data, _ := strconv.Atoi(msgs[k-1])
 					if data >= rule.Dbrule.Dblsnrinfo.Log_size {
-						instshtp.Dblsnrinfo.Alarm = "G"
-						entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,监听日志文件%s当前大小%d bytes超过阈值%d bytes,建议定期清理日志文件", instshtp.Instname.Contents, msgs[0], data, rule.Dbrule.Dblsnrinfo.Log_size))
+						dbshtp.Dblsnrinfo.Alarm = "G"
+						entry.Minor = append(entry.Minor, fmt.Sprintf("监听日志文件 %s 大小 %d bytes 超过 %d bytes，建议定期清理", msgs[0], data, rule.Dbrule.Dblsnrinfo.Log_size))
 						break Looop
 					}
 				}
@@ -78,14 +78,14 @@ Looop:
 // DataGuard 和备份
 
 // Ana_DBDGLAGCHECK 分析 DataGuard 同步延迟
-func Ana_DBDGLAGCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	if strings.Contains(dbshtp.Dbrole.Contents, "PRIMARY") {
+func Ana_DBDGLAGCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, infstp *structs.InfoSht, summaryEntries *structs.SummaryEntries) {
+	if strings.Contains(infstp.DbRole, "PRIMARY") {
 		return
 	}
-	msgdata := instshtp.Dbdglagcheck.Contents
+	msgdata := dbshtp.Dbdglagcheck.Contents
 	rdok := regexp.MustCompile(`^apply lag(.*)\+00 00:00:00$`)
 	rd := regexp.MustCompile(`^apply lag(.*)\+(.*):\d+$`)
-	instshtp.Dbdglagcheck.Alarm = "G"
+	dbshtp.Dbdglagcheck.Alarm = "G"
 	entry := structs.SummaryEntry{
 		Category: "DataGuard检查",
 		Nm:       rule.Dbrule.Dbdglagcheck.Nm,
@@ -96,7 +96,7 @@ Looop:
 	for _, row := range strings.Split(msgdata, "\n") {
 		row = strings.TrimSpace(row)
 		if rdok.MatchString(row) {
-			instshtp.Dbdglagcheck.Alarm = ""
+			dbshtp.Dbdglagcheck.Alarm = ""
 			break Looop
 		}
 		if rd.MatchString(row) {
@@ -104,8 +104,8 @@ Looop:
 			values2 := strings.Fields(values1[1])
 			vDay, _ := strconv.Atoi(values2[0])
 			if vDay >= rule.Dbrule.Dbdglagcheck.ResultB {
-				instshtp.Dbdglagcheck.Alarm = "B"
-				entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,DataGuard同步延迟当前%d天超过阈值%d天,建议检查网络连接和主库性能", instshtp.Instname.Contents, vDay, rule.Dbrule.Dbdglagcheck.ResultB))
+				dbshtp.Dbdglagcheck.Alarm = "B"
+				entry.Moderate = append(entry.Moderate, fmt.Sprintf("DataGuard 同步延迟 %d 天，超过 %d 秒，建议检查", vDay*86400, rule.Dbrule.Dbdglagcheck.ResultB*86400))
 				break Looop
 			}
 		}
@@ -116,8 +116,8 @@ Looop:
 }
 
 // Ana_DBDGERRCHECK 分析 DataGuard 同步错误
-func Ana_DBDGERRCHECK(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := instshtp.Dbdgerrcheck.Contents
+func Ana_DBDGERRCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Dbdgerrcheck.Contents
 	value := strings.TrimSpace(msgdata)
 	entry := structs.SummaryEntry{
 		Category: "DataGuard检查",
@@ -126,8 +126,8 @@ func Ana_DBDGERRCHECK(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryE
 		Desc:     rule.Dbrule.Dbdgerrcheck.Desc,
 	}
 	if value != "" {
-		instshtp.Dbdgerrcheck.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,DataGuard日志存在同步错误信息,建议检查并处理相关错误", instshtp.Instname.Contents))
+		dbshtp.Dbdgerrcheck.Alarm = "G"
+		entry.Minor = append(entry.Minor, "DataGuard 日志存在同步错误，建议检查")
 	}
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
@@ -162,11 +162,11 @@ Looop:
 			}
 			if data >= rule.Dbrule.Dbflashrecoveryuseage.Useage1 {
 				dbshtp.Dbflashrecoveryuseage.Alarm = "B"
-				entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,闪回区使用率当前%.2f%%超过阈值%.0f%%,建议及时清理或扩容闪回区", dbshtp.Dbname.Contents, data, rule.Dbrule.Dbflashrecoveryuseage.Useage1))
+				entry.Moderate = append(entry.Moderate, fmt.Sprintf("闪回区使用率 %.2f%% 超过 %f%%，建议清理或扩容", data, rule.Dbrule.Dbflashrecoveryuseage.Useage1))
 			}
 			if data >= rule.Dbrule.Dbflashrecoveryuseage.Useage2 {
 				dbshtp.Dbflashrecoveryuseage.Alarm = "R"
-				entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,闪回区使用率当前%.2f%%超过严重阈值%.0f%%,需立即清理或扩容闪回区", dbshtp.Dbname.Contents, data, rule.Dbrule.Dbflashrecoveryuseage.Useage2))
+				entry.Severe = append(entry.Severe, fmt.Sprintf("闪回区使用率 %.2f%% 超过 %f%%，需立即清理或扩容", data, rule.Dbrule.Dbflashrecoveryuseage.Useage2))
 				break Looop
 			}
 		}
@@ -178,40 +178,18 @@ Looop:
 
 // 杂项检查
 
+// Ana_DBCRSCHECK 分析 CRS 配置
+func Ana_DBCRSCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+}
+
+// Ana_DBASMUSAGE 分析 ASM 使用情况
+func Ana_DBASMUSAGE(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+}
+
 // Ana_DBPSU 分析 PSU 使用情况
-func Ana_DBPSU(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := instshtp.Dbpsu.Contents
-	entry := structs.SummaryEntry{
-		Category: "软件使用分析",
-		Nm:       rule.Dbrule.Dbpsu.Nm,
-		Title:    rule.Dbrule.Dbpsu.Title,
-		Desc:     rule.Dbrule.Dbpsu.Desc,
-	}
-	// 实现PSU分析逻辑
-	if strings.TrimSpace(msgdata) != "" {
-		instshtp.Dbpsu.Alarm = "G"
-		entry.Minor = append(entry.Minor, "PSU补丁信息检查")
-	}
-	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
-		summaryEntries.Entries = append(summaryEntries.Entries, entry)
-	}
+func Ana_DBPSU(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 }
 
 // Ana_DBPATCH 分析补丁使用情况
-func Ana_DBPATCH(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := instshtp.Dbpatch.Contents
-	entry := structs.SummaryEntry{
-		Category: "软件使用分析",
-		Nm:       rule.Dbrule.Dbpatch.Nm,
-		Title:    rule.Dbrule.Dbpatch.Title,
-		Desc:     rule.Dbrule.Dbpatch.Desc,
-	}
-	// 实现补丁分析逻辑
-	if strings.TrimSpace(msgdata) != "" {
-		instshtp.Dbpatch.Alarm = "G"
-		entry.Minor = append(entry.Minor, "数据库补丁信息检查")
-	}
-	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
-		summaryEntries.Entries = append(summaryEntries.Entries, entry)
-	}
+func Ana_DBPATCH(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 }

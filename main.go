@@ -4,11 +4,12 @@ import (
 	"autochk/anadata"
 	"autochk/readxml"
 	"autochk/structs"
-	"autochk/todocx"
 	"autochk/toxls"
+	"autochk/xmlfile"
 	"flag"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -38,9 +39,13 @@ func main() {
 
 	log.Println("######---Start---######")
 
-	// //初始化表最后一列号
-	// colInxp := &utils.ColInx
-	// *colInxp = 0
+	// 首先执行XML文件合并
+	log.Println("开始执行XML文件合并...")
+	if err := xmlfile.MergeXMLFiles(); err != nil {
+		log.Printf("XML文件合并失败: %v", err)
+		return
+	}
+	log.Println("XML文件合并完成")
 
 	//删除*Done.xlsx文件
 	ClearFile(*singlefile)
@@ -49,28 +54,31 @@ func main() {
 	// 	toxls.NewXlsx("xxx", *singlefile)
 	// }
 
-	files := GetXMLS("ALL")
+	files := GetXMLS("R")
+	files = append(files, GetXMLS("S")...)
 	// colInxp := &utils.ColInx
 
-	//循环打开文件名为*.ALL.xml的文件
+	//循环打开文件名为*.R.xml或*.S.xml的文件
 	colcnt := 1
 	for _, fnm := range files {
 		if *singlefile {
 			colcnt = 1
 		}
 		log.Println("开始处理--->", fnm)
-		prex := strings.Replace(fnm, ".ALL.xml", "", -1)
+		fileName := filepath.Base(fnm)
+		prex := strings.Replace(fileName, ".R.xml", "", -1)
+		prex = strings.Replace(prex, ".S.xml", "", -1)
 
-		//初始化三个结构
-		infosht := structs.InfoSht{}
-		ossht := structs.OsSht{}
+		//初始化新的数据结构
+		var osshts []structs.OsShts
 		dbsht := structs.DbSht{}
+		var instshts []structs.InstShts
 		summaryEntries := &structs.SummaryEntries{}
 
-		readxml.ReadXml(fnm, &infosht, &ossht, &dbsht)
-		anadata.Ana(&infosht, &ossht, &dbsht, summaryEntries)
-		toxls.Xlsx(&infosht, &ossht, &dbsht, summaryEntries, prex, colcnt, *singlefile)
-		todocx.Todocx(&infosht, &ossht, &dbsht, prex, colcnt, *singlefile)
+		readxml.ReadXml(fnm, &osshts, &dbsht, &instshts)
+		anadata.Ana(&osshts, &dbsht, &instshts, summaryEntries)
+		toxls.Xlsx(&osshts, &dbsht, &instshts, summaryEntries, prex, colcnt, *singlefile)
+		// todocx.Todocx(&osshts, &dbsht, &instshts, prex, colcnt, *singlefile)
 		colcnt++
 	}
 	elapsed := time.Since(start)
@@ -81,24 +89,26 @@ func main() {
 }
 
 func GetXMLS(typ string) (xmlnms []string) {
-	//遍历打开当前路径下的指定后缀的xml文件
-	dirname := "."
+	//遍历打开xmlfile/output_xml路径下的指定后缀的xml文件
+	dirname := "xmlfile/output_xml"
 	//根据传入的类型来确定按什么样的后缀遍历文件 ,如  ".DB.xml" ".OS.xml"  ".AWR.xml"
 	xmltyp := "." + typ + ".xml"
 	f, err := os.Open(dirname)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("打开目录 %s 失败: %v", dirname, err)
+		return xmlnms
 	}
 	files, err := f.Readdir(-1)
 	f.Close()
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("读取目录 %s 失败: %v", dirname, err)
+		return xmlnms
 	}
 	for _, file := range files {
 		//但*AWR.xml及*OS.xml除外
 		// if strings.HasSuffix(file.Name(), "*.xml") && file.Name() != ".AWR.xml" && file.Name() != ".OS.xml" {
 		if strings.HasSuffix(file.Name(), xmltyp) {
-			xmlnms = append(xmlnms, file.Name())
+			xmlnms = append(xmlnms, filepath.Join(dirname, file.Name()))
 		}
 	}
 	return xmlnms

@@ -1,5 +1,19 @@
---2025.4.22
+- 2025.5.29
+如下分析函数还未实现:
+Ana_DBRECOVERYDEST
+Ana_DBCrsCheck
+Ana_DBAsmUsage
+Ana_DBPSU
+Ana_DBPatch
+Ana_DBNosysInSystem
+
+- 2025.4.22
 1.归档检查数值显示问题
 2.awr收集时间避开周末
 3.没查到数据不要空着，可以显示no rows select(比如并行表检查)
 
+关于3.3.18序列最大值使用检查这一块的，当MAXVALUE为0时查询语句select sequence_owner,sequence_name, max_value,last_number,cache_size,round(last_number/max_value ,2) percent_use from dba_sequences 
+where  last_number/max_value >0.8 and  cycle_flag='N'会报错ORA-01476: divisor is equal to zero，看看要不要加上max_value<>0
+
+-- 2025.8.5
+检查归档切换次时, 如果归档次数为3位数 ,显示###

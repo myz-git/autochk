@@ -19,16 +19,25 @@ type RuleInfo struct {
 
 // //*** Lv2***////
 type Osrule struct {
-	Osparameter Osparameter `yaml:"osparameter"`
-	Ulimit      Ulimit      `yaml:"ulimit"`
-	Filesystem  Filesystem  `yaml:"filesystem"`
-	Inodeusage  Inodeusage  `yaml:"inodeusage"`
-	Cpustat     Cpustat     `yaml:"cpustat"`
-	Memstat     Memstat     `yaml:"memstat"`
-	Iostat      Iostat      `yaml:"iostat"`
-	Thpstat     Thpstat     `yaml:"thpstat"`
-	Numa        Numa        `yaml:"numa"`
-	Ntp         Ntp         `yaml:"ntp"`
+	Osparameter      Osparameter      `yaml:"osparameter"`
+	Ulimit           Ulimit           `yaml:"ulimit"`
+	Filesystem       Filesystem       `yaml:"filesystem"`
+	Inodeusage       Inodeusage       `yaml:"inodeusage"`
+	Cpustat          Cpustat          `yaml:"cpustat"`
+	Memstat          Memstat          `yaml:"memstat"`
+	Iostat           Iostat           `yaml:"iostat"`
+	Thpstat          Thpstat          `yaml:"thpstat"`
+	Numa             Numa             `yaml:"numa"`
+	Ntp              Ntp              `yaml:"ntp"`
+	Tmzone           Tmzone           `yaml:"tmzone"`
+	Selinux          Selinux          `yaml:"selinux"`
+	Firewall         Firewall         `yaml:"firewall"`
+	Nsswitch         Nsswitch         `yaml:"nsswitch"`
+	Lo_mtu           Lo_mtu           `yaml:"lo_mtu"`
+	Machine_platform Machine_platform `yaml:"machine_platform"`
+	CPU_PERF_MODE    CPU_PERF_MODE    `yaml:"cpu_perf_mode"`
+	NOZEROCONF       NOZEROCONF       `yaml:"nozeroconf"`
+	RPM_PACKAGES     RPM_PACKAGES     `yaml:"rpm_packages"`
 }
 
 // //*** Lv2***////
@@ -36,9 +45,19 @@ type Dbrule struct {
 	// 数据库实例分析
 	Dbstatus          Dbstatus          `yaml:"dbstatus"`
 	Dbtbsusage        Dbtbsusage        `yaml:"dbtbsusage"`
-	Dbdatafile        Dbdatafile        `yaml:"dbdatafile"`
+	Dbcursize         Dbcursize         `yaml:"dbcursize"`
+	Dbf_size          Dbf_size          `yaml:"dbf_size"`
+	Dbf_cnt           Dbf_cnt           `yaml:"dbf_cnt"`
+	Dbf_stat          Dbf_stat          `yaml:"dbf_stat"`
+	Tmpfile_size      Tmpfile_size      `yaml:"tmpfile_size"`
 	Dbcontrolfile     Dbcontrolfile     `yaml:"dbcontrolfile"`
-	Dbusersize        Dbusersize        `yaml:"dbusersize"`
+	User_info         User_info         `yaml:"user_info"`
+	User_size         User_size         `yaml:"user_size"`
+	Tab_info          Tab_info          `yaml:"tab_info"`
+	Tab_parallel      Tab_parallel      `yaml:"tab_parallel"`
+	Inx_parallel      Inx_parallel      `yaml:"inx_parallel"`
+	Invalid_obj       Invalid_obj       `yaml:"invalid_obj"`
+	Invalid_inx       Invalid_inx       `yaml:"invalid_inx"`
 	Dbredocheck       Dbredocheck       `yaml:"dbredocheck"`
 	Dbredoswitch      Dbredoswitch      `yaml:"dbredoswitch"`
 	Dbparameter       Dbparameter       `yaml:"dbparameter"`
@@ -47,11 +66,8 @@ type Dbrule struct {
 	Db_shp_pct        Db_shp_pct        `yaml:"db_shp_pct"`
 
 	// 数据库对象分析
-	Dbtableparallel Dbtableparallel `yaml:"dbtableparallel"`
-	Dbindexparallel Dbindexparallel `yaml:"dbindexparallel"`
-	Dbinvalidindex  Dbinvalidindex  `yaml:"dbinvalidindex"`
-	Dbsequence      Dbsequence      `yaml:"dbsequence"`
-	Db_seq_usage    Db_seq_usage    `yaml:"db_seq_usage"`
+	Dbsequence   Dbsequence   `yaml:"dbsequence"`
+	Db_seq_usage Db_seq_usage `yaml:"db_seq_usage"`
 
 	// 数据库性能分析
 	Db_4031check      Db_4031check      `yaml:"db_4031check"`
@@ -73,7 +89,7 @@ type Dbrule struct {
 	Dbrmancheck              Dbrmancheck              `yaml:"dbrmancheck"`
 	Dbscnhealthcheck         Dbscnhealthcheck         `yaml:"dbscnhealthcheck"`
 
-	// 数据库监控、DataGuard、备份及杂项分析
+	// 日志、集群、DataGuard、备份及杂项分析
 	Dberrlog              Dberrlog              `yaml:"dberrlog"`
 	Dbdglagcheck          Dbdglagcheck          `yaml:"dbdglagcheck"`
 	Dbdgerrcheck          Dbdgerrcheck          `yaml:"dbdgerrcheck"`
@@ -91,20 +107,41 @@ type Osparameter struct {
 	Nm                        string   `yaml:"nm"`
 	Title                     string   `yaml:"title"`
 	Desc                      string   `yaml:"desc"`
-	L_nproc_ne                int      `yaml:"l_nproc_ne"`
-	L_nofile_ne               int      `yaml:"l_nofile_ne"`
-	L_randomize_va_space      int      `yaml:"l_randomize_va_space"`
-	L_panic_on_oops           int      `yaml:"l_panic_on_oops"`
-	L_min_free_kbytes         int      `yaml:"l_min_free_kbytes"`
-	S_disable_ism_large_pages []string `yaml:"s_disable_ism_large_pages,flow"` //返回字符串数组, flow为固定词
+	File_max                  int      `yaml:"file_max"`
+	Aio_max_nr                int      `yaml:"aio_max_nr"`
+	Shmmni                    int      `yaml:"shmmni"`
+	Shmmax                    int      `yaml:"shmmax"`
+	Shmall                    int      `yaml:"shmall"`
+	Sem                       []string `yaml:"sem,flow"`
+	Panic_on_oops             int      `yaml:"panic_on_oops"`
+	Randomize_va_space        int      `yaml:"randomize_va_space"`
+	Numa_balancing            int      `yaml:"numa_balancing"`
+	Min_free_kbytes           int      `yaml:"min_free_kbytes"`
+	Rp_filter_all             int      `yaml:"rp_filter_all"`
+	Rp_filter_default         int      `yaml:"rp_filter_default"`
+	Ip_local_port_range       []string `yaml:"ip_local_port_range,flow"`
+	Ipfrag_high_thresh        int      `yaml:"ipfrag_high_thresh"`
+	Ipfrag_low_thresh         int      `yaml:"ipfrag_low_thresh"`
+	Tcp_keepalive_time        int      `yaml:"tcp_keepalive_time"`
+	Rmem_default              int      `yaml:"rmem_default"`
+	Rmem_max                  int      `yaml:"rmem_max"`
+	Wmem_default              int      `yaml:"wmem_default"`
+	Wmem_max                  int      `yaml:"wmem_max"`
+	Swappiness                int      `yaml:"swappiness"`
+	Dirty_ratio               int      `yaml:"dirty_ratio"`
+	Dirty_background_ratio    int      `yaml:"dirty_background_ratio"`
+	Dirty_expire_centisecs    int      `yaml:"dirty_expire_centisecs"`
+	Dirty_writeback_centisecs int      `yaml:"dirty_writeback_centisecs"`
+	Disable_ism_large_pages   []string `yaml:"disable_ism_large_pages,flow"` //返回字符串数组, flow为固定词
 }
 
 type Ulimit struct {
-	Nm                   string `yaml:"nm"`
-	Title                string `yaml:"title"`
-	Desc                 string `yaml:"desc"`
-	Open_files_ne        int    `yaml:"open_files_ne"`
-	Max_user_rocesses_ne int    `yaml:"max_user_rocesses_ne"`
+	Nm                string `yaml:"nm"`
+	Title             string `yaml:"title"`
+	Desc              string `yaml:"desc"`
+	Memlock           int    `yaml:"memlock"`
+	Open_files        int    `yaml:"open_files"`
+	Max_user_rocesses int    `yaml:"max_user_rocesses"`
 }
 
 type Filesystem struct {
@@ -169,6 +206,60 @@ type Ntp struct {
 	Desc  string `yaml:"desc"`
 }
 
+type Tmzone struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Selinux struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Firewall struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Nsswitch struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Lo_mtu struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Machine_platform struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type CPU_PERF_MODE struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type NOZEROCONF struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type RPM_PACKAGES struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
 /////*** Lv3 os End***/////
 
 // /////解析rule.yaml中的数据库部份规则
@@ -178,7 +269,7 @@ type Dbstatus struct {
 	Nm     string `yaml:"nm"`
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
-	Result string `yaml:"result"`
+	Status string `yaml:"status"`
 }
 
 type Dbtbsusage struct {
@@ -191,11 +282,35 @@ type Dbtbsusage struct {
 	Freesize_le2 float64 `yaml:"freesize_le2"`
 }
 
-type Dbdatafile struct {
+type Dbcursize struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Dbf_size struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Dbf_cnt struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Dbf_stat struct {
 	Nm     string `yaml:"nm"`
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Status string `yaml:"status"`
+}
+
+type Tmpfile_size struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
 }
 
 type Dbcontrolfile struct {
@@ -204,6 +319,53 @@ type Dbcontrolfile struct {
 	Desc    string `yaml:"desc"`
 	Cnt_le1 int    `yaml:"cnt_le1"`
 }
+
+type User_info struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type User_size struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Tab_info struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Tab_parallel struct {
+	Nm     string `yaml:"nm"`
+	Title  string `yaml:"title"`
+	Desc   string `yaml:"desc"`
+	Result string `yaml:"result"`
+}
+
+type Inx_parallel struct {
+	Nm     string `yaml:"nm"`
+	Title  string `yaml:"title"`
+	Desc   string `yaml:"desc"`
+	Result string `yaml:"result"`
+}
+
+type Invalid_obj struct {
+	Nm     string `yaml:"nm"`
+	Title  string `yaml:"title"`
+	Desc   string `yaml:"desc"`
+	Result string `yaml:"result"`
+}
+
+type Invalid_inx struct {
+	Nm     string `yaml:"nm"`
+	Title  string `yaml:"title"`
+	Desc   string `yaml:"desc"`
+	Result string `yaml:"result"`
+}
+
 type Dbredocheck struct {
 	Nm           string  `yaml:"nm"`
 	Title        string  `yaml:"title"`
@@ -263,27 +425,6 @@ type Dblsnrinfo struct {
 	Title    string `yaml:"title"`
 	Desc     string `yaml:"desc"`
 	Log_size int    `yaml:"log_size"`
-}
-
-type Dbtableparallel struct {
-	Nm     string `yaml:"nm"`
-	Title  string `yaml:"title"`
-	Desc   string `yaml:"desc"`
-	Result string `yaml:"result"`
-}
-
-type Dbindexparallel struct {
-	Nm     string `yaml:"nm"`
-	Title  string `yaml:"title"`
-	Desc   string `yaml:"desc"`
-	Result string `yaml:"result"`
-}
-
-type Dbinvalidindex struct {
-	Nm     string `yaml:"nm"`
-	Title  string `yaml:"title"`
-	Desc   string `yaml:"desc"`
-	Result string `yaml:"result"`
 }
 
 type Dbsequence struct {
@@ -399,12 +540,6 @@ type Dbscnhealthcheck struct {
 	Resulta string `yaml:"resulta"`
 	Resultb string `yaml:"resultb"`
 	Resultc string `yaml:"resultc"`
-}
-
-type Dbusersize struct {
-	Nm    string `yaml:"nm"`
-	Title string `yaml:"title"`
-	Desc  string `yaml:"desc"`
 }
 
 type Dbparameter struct {

@@ -11,9 +11,9 @@ osrule:
   memstat: 
     nm: MEMSTAT
     title: "内存使用检查"
-    desc: "查看内存是否频繁使用换页SWAP"
-    available_le1:  2048
-    available_le2:  512
+    desc: "查看空闲内存是否足够,是否频繁使用换页SWAP"
+    available_le1:  4096
+    available_le2:  2048
   iostat: 
     nm: IOSTAT
     title: "磁盘IO负载检查"
@@ -36,22 +36,43 @@ osrule:
     nm: THPSTAT
     title: "主机透明大页检查"
     desc: "查看主机透明大页配置情况,为提升系统稳定性建议关闭透明在大页"
-    anpages_gt: 8192  
   osparameter: 
     nm: OSPARAMETER
     title: "内核参数"
     desc: "查看主机内核参数配置情况"
-    l_nproc_ne: 163849+999999999999999
-    l_randomize_va_space: 0
-    l_panic_on_oops: 1
-    l_min_free_kbytes: 102400
-    s_disable_ism_large_pages: [0xF4,0x74]
+    file-max: 6815744
+    aio-max-nr: 3145728
+    shmmni: 4096
+    #shmmax: 7882853580
+    #shmall: 2099481
+    sem: [250, 256000, 100, 1024]
+    panic_on_oops: 1
+    randomize_va_space: 0
+    numa_balancing: 0
+    rp_filter_all: 2
+    rp_filter_default: 2
+    ip_local_port_range: [9000, 65500]
+    ipfrag_high_thresh: 16777216
+    ipfrag_low_thresh: 15728640
+    tcp_keepalive_time: 300
+    rmem_default: 262144
+    rmem_max: 4194304
+    wmem_default: 262144
+    wmem_max: 1048576
+    swappiness: 1
+    min_free_kbytes: 67584
+    dirty_ratio: 10
+    dirty_background_ratio: 3
+    dirty_expire_centisecs: 500
+    dirty_writeback_centisecs: 100
+    disable_ism_large_pages: [0xF4,0x74]
   ulimit: 
     nm: ULIMIT
     title: "资源限制"
     desc: "查看用户主机资源限制配置情况"
-    open_files_ne: 65536
-    max_user_rocesses_ne: 16384
+    memlock: -1
+    open_files: 65536
+    max_user_rocesses: 16384
   numa: 
     nm: NUMA
     title: "NUMA使用检查"
@@ -60,9 +81,45 @@ osrule:
     flg2: "NUMA turned off"
   ntp: 
     nm: NTP
-    title: "NTP时间同步检查"
-    desc: "查看主机NTP时间同步状态,NTP时间同步状态为"
-
+    title: "时间同步检查"
+    desc: "查看主机NTP或chronyd时间同步服务是否启用"
+  tmzone: 
+    nm: TMZONE
+    title: "时区检查"
+    desc: "检查系统时区是否为东八区, 建议将系统时区设置为东八区"
+  selinux: 
+    nm: SELINUX
+    title: "SELinux状态检查"
+    desc: "检查SELinux状态, 建议关闭SELinux"
+  firewall: 
+    nm: FIREWALL
+    title: "防火墙状态检查"
+    desc: "检查防火墙状态, 建议关闭防火墙"
+  nsswitch: 
+    nm: NSSWITCH
+    title: "NSSwitch配置检查"
+    desc: "检查NSSwitch配置是否有NIS, 建议关闭NSSwitch中NIS配置"
+  lo_mtu: 
+    nm: LO_MTU
+    title: "lo网卡MTU检查"
+    desc: "检查LO网卡的默认MTU是否过大, 建议修改为16436"
+  machine_platform: 
+    nm: MACHINE_PLATFORM
+    title: "主机平台检查"
+    desc: "检查主机类型是否为物理服务器"
+  cpu_perf_mode: 
+    nm: CPU_PERF_MODE
+    title: "CPU性能模式检查"
+    desc: "检查CPU是否处于性能模式, 建议调整CPU为性能模式"
+  nozeroconf: 
+    nm: NOZEROCONF  
+    title: "ZEROCONF路由检查"
+    desc: "检查是否禁用ZEROCONF路由配置, 建议设置NOZEROCONF为yes"
+  rpm_packages: 
+    nm: RPM_PACKAGES
+    title: "安全漏洞RPM包检查"
+    desc: "检查主机是否安装了存在安全漏洞的RPM包, 建议卸载存在安全隐患的RPM包"
+    rpm_list: [firefox, freetype, ghostscript, open-vm-tools, libsmbclient, libwbclient, samba-client-libs, samba-common-libs]
 # 数据库规则
 dbrule: 
   # 数据库实例分析
@@ -70,6 +127,28 @@ dbrule:
     nm: DBSTATUS
     title: "数据库状态检查"
     desc: "数据库状态检查主要包括：数据库启动状态,Dataguard保护模式,保护级别,数据库角色等。"
+    status: READ
+  dbcursize: 
+    nm: DBCURSIZE
+    title: "数据库当前使用大小"
+    desc: "记录数据库当前实际使用大小(dba_segments)。"
+  dbf_size: 
+    nm: DBF_SIZE
+    title: "数据文件总大小"
+    desc: "记录数据库所有数据文件总大小(含TEMP及REDO文件)。"
+  dbf_cnt: 
+    nm: DBF_CNT
+    title: "数据文件数量检查"
+    desc: "检查数据文件数量是否接近db_files参数,如果接近时需要及时修改db_files参数(重启生效)。"
+  dbf_stat: 
+    nm: DBF_STAT
+    title: "数据文件状态检查"
+    desc: "检查数据库文件状态是否正常。"
+    status: AVAILABLE
+  tmpfile_size: 
+    nm: TMPFILE_SIZE
+    title: "临时表空间文件大小"
+    desc: "记录临时表空间数据文件大小。"
   dbtbsusage: 
     nm: DBTBSUSAGE
     title: "表空间使用率"
@@ -78,20 +157,46 @@ dbrule:
     tbsutil_ge2: 90
     freesize_le1: 8
     freesize_le2: 4
-  dbdatafile: 
-    nm: DBDATAFILE
-    title: "数据文件状态检查"
-    desc: "检查数据库文件状态;"  
-    status: AVAILABLE
   dbcontrolfile: 
     nm: DBCONTROLFILE
     title: "控制文件检查"
     desc: "检查控制文件路径信息:控制文件至少要有2路冗余,才符合安全配置要求,并建议检查是否放在在不同存储路径上。"  
     cnt_le1: 2
-  dbusersize: 
-    nm: DBUSERSIZE
+  user_info:
+    nm: USER_INFO
+    title: "用户信息"
+    desc: "记录数据库用户信息"
+  user_size: 
+    nm: USERSIZE
     title: "数据库用户大小"
-    desc: "仅记录,作为其它项分析参考"
+    desc: "记录数据库各个用户大小"
+  tab_info:
+    nm: TAB_INFO
+    title: "表信息"
+    desc: "记录数据库各个用户表数量"
+  tab_parallel:
+    nm: TAB_PARALLEL
+    title: "并行度>1的表"
+    desc: "OLTP系统建议所有对象并行度不应大于0"
+    result: "no rows selected"
+  inx_parallel:
+    nm: INX_PARALLEL
+    title: "并行度>1的索引"
+    desc: "OLTP系统建议所有对象并行度不应大于0"
+    result: "no rows selected"
+
+  invalid_obj: 
+    nm: INVALID_OBJ
+    title: "无效对象检查"
+    desc: "检查数据库是否存在大量无效对象"
+    result: 10
+
+  invalid_inx: 
+    nm: INVALID_INX
+    title: "无效索引检查"
+    desc: "如存在无效(不可用)索引,需要对索引进行重建或删除。"
+    result: "no rows selected"
+
   dbredoswitch: 
     nm: DBREDOSWITCH
     title: "归档切换检查"
@@ -110,7 +215,7 @@ dbrule:
   db_parameter_file: 
     nm: DB_PARAMETER_FILE
     title: "数据库初始化参数检查（详细）"
-    desc: "检查Oracle初始化参数,建议结合实际情况排查数据库重要参数设置是否合理。（详细）"
+    desc: "检查Oracle初始化参数,建议结合实际情况排查数据库重要参数设置是否合理。"
   db_shp_size: 
     nm: DB_SHP_SIZE
     title: "共享池使用率"
@@ -121,21 +226,7 @@ dbrule:
     desc: "检查共享池的使用占比,通常SHARED_POOL的使用率不应超过SGA_SIZE的60%"
   
   # 数据库对象分析
-  dbtableparallel: 
-    nm: DBTABLEPARALLEL
-    title: "并行度>1的表"
-    desc: "OLTP系统建议所有对象并行度不应大于0。"
-    result: "no rows selected"
-  dbindexparallel: 
-    nm: DBINDEXPARALLEL
-    title: "并行度>1的索引"
-    desc: "OLTP系统建议所有对象并行度不应大于0。"
-    result: "no rows selected"
-  dbinvalidindex: 
-    nm: DBINVALIDINDEX
-    title: "无效索引检查"
-    desc: "如存在无效(不可用)索引,需要对索引进行重建或删除。"
-    result: "no rows selected"
+
   dbsequence: 
     nm: DBSEQUENCE
     title: "SEQUENCE序列设置检查"
@@ -155,7 +246,7 @@ dbrule:
   dbresource: 
     nm: DBRESOURCE
     title: "最大资源使用限制检查"
-    desc: "8检查CURRENT_UTILIZATION的值和MAX_UTILIZATION的值要接近LIMIT_VALUE值。"
+    desc: "检查CURRENT_UTILIZATION的值和MAX_UTILIZATION的值要接近LIMIT_VALUE值。"
     res_use_ge1: 90
   loadprofile: 
     nm: LOADPROFILE
@@ -173,7 +264,7 @@ dbrule:
     title: "TOP等待事件检查"
     desc: "检查常见非空闲等待事件。"
   topsqlbyelapstime: 
-    nm:模版ll TOPSQLBYELAPSTIME
+    nm: 模版ll TOPSQLBYELAPSTIME
     title: "TOP SQL语句(最大消耗时间)"
     desc: "根据执行次数和单次执行时间综合检查,建议统计时间内(如2h),执行次数超过1000次,单次执行时间不超过2秒。"
   
