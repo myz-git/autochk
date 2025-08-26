@@ -15,7 +15,7 @@ import (
 func Ana_DB4031check(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := instshtp.Dberrlog.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "数据库性能",
 		Nm:       rule.Dbrule.Db_4031check.Nm,
 		Title:    rule.Dbrule.Db_4031check.Title,
 		Desc:     rule.Dbrule.Db_4031check.Desc,
@@ -33,7 +33,7 @@ func Ana_DB4031check(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEn
 func Ana_RESOURCE(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := instshtp.Dbresource.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "数据库性能",
 		Nm:       rule.Dbrule.Dbresource.Nm,
 		Title:    rule.Dbrule.Dbresource.Title,
 		Desc:     rule.Dbrule.Dbresource.Desc,
@@ -74,7 +74,7 @@ Looop:
 func Ana_LOADPROFILE(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := instshtp.Loadprofile.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "数据库性能",
 		Nm:       rule.Dbrule.Loadprofile.Nm,
 		Title:    rule.Dbrule.Loadprofile.Title,
 		Desc:     rule.Dbrule.Loadprofile.Desc,
@@ -117,7 +117,7 @@ Looop:
 func Ana_INSTEFFICIENCY(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := instshtp.Instefficiency.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "数据库性能",
 		Nm:       rule.Dbrule.Instefficiency.Nm,
 		Title:    rule.Dbrule.Instefficiency.Title,
 		Desc:     rule.Dbrule.Instefficiency.Desc,
@@ -181,7 +181,7 @@ Looop:
 func Ana_DBtopevent(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := instshtp.Topevent.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "数据库性能",
 		Nm:       rule.Dbrule.Topevent.Nm,
 		Title:    rule.Dbrule.Topevent.Title,
 		Desc:     rule.Dbrule.Topevent.Desc,
@@ -213,12 +213,12 @@ Looop:
 
 // Ana_DBtopSQL 分析顶部 SQL 性能
 func Ana_DBtopSQL(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := instshtp.Topsqlbyelapstime.Contents
+	msgdata := instshtp.Topsql_by_ela.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
-		Nm:       rule.Dbrule.Topsqlbyelapstime.Nm,
-		Title:    rule.Dbrule.Topsqlbyelapstime.Title,
-		Desc:     rule.Dbrule.Topsqlbyelapstime.Desc,
+		Category: "数据库性能",
+		Nm:       rule.Dbrule.Topsql_by_ela.Nm,
+		Title:    rule.Dbrule.Topsql_by_ela.Title,
+		Desc:     rule.Dbrule.Topsql_by_ela.Desc,
 	}
 	rd := regexp.MustCompile(`\d+$`)
 Looop:
@@ -231,11 +231,11 @@ Looop:
 			if len(msgs) < 3 {
 				continue
 			}
-			executions, _ := strconv.Atoi(msgs[1])
-			avgTime, _ := strconv.ParseFloat(msgs[2], 64)
-			if executions > 1000 && avgTime > 2 {
-				instshtp.Topsqlbyelapstime.Alarm = "B"
-				entry.Moderate = append(entry.Moderate, fmt.Sprintf("SQL 执行次数 %d 次，平均耗时 %.2f 秒，建议优化", executions, avgTime))
+			executions, _ := strconv.Atoi(msgs[2])
+			avgElaTime, _ := strconv.ParseFloat(msgs[4], 64)
+			if executions > 1000 && avgElaTime > 2 {
+				instshtp.Topsql_by_ela.Alarm = "G"
+				entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,SQL执行%d 次，平均耗时 %.2f 秒，建议优化", instshtp.Instname.Contents, executions, avgElaTime))
 				break Looop
 			}
 		}

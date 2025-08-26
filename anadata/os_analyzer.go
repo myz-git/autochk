@@ -23,7 +23,7 @@ func Ana_Osparameter(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntrie
 	log.Printf("OS参数内容: %s", msgdata)
 
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       rule.Osrule.Osparameter.Nm,
 		Title:    rule.Osrule.Osparameter.Title,
 		Desc:     rule.Osrule.Osparameter.Desc,
@@ -220,7 +220,7 @@ func Ana_Ulimit(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *st
 	msgdata := osshtp.Ulimit.Contents
 	oS := strings.ToUpper(osshtp.Os.Contents)
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       rule.Osrule.Ulimit.Nm,
 		Title:    rule.Osrule.Ulimit.Title,
 		Desc:     rule.Osrule.Ulimit.Desc,
@@ -315,7 +315,7 @@ func Ana_Filesystem(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries
 	log.Printf("文件系统内容长度: %d", len(msgdata))
 
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       rule.Osrule.Filesystem.Nm,
 		Title:    rule.Osrule.Filesystem.Title,
 		Desc:     rule.Osrule.Filesystem.Desc,
@@ -353,7 +353,7 @@ Looop:
 func Ana_Inodeusage(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.Inodeusage.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       rule.Osrule.Inodeusage.Nm,
 		Title:    rule.Osrule.Inodeusage.Title,
 		Desc:     rule.Osrule.Inodeusage.Desc,
@@ -385,7 +385,7 @@ Looop:
 func Ana_Cpustat(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.Cpustat.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       rule.Osrule.Cpustat.Nm,
 		Title:    rule.Osrule.Cpustat.Title,
 		Desc:     rule.Osrule.Cpustat.Desc,
@@ -430,7 +430,7 @@ func Ana_Memstat(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *s
 		return
 	}
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       rule.Osrule.Memstat.Nm,
 		Title:    rule.Osrule.Memstat.Title,
 		Desc:     rule.Osrule.Memstat.Desc,
@@ -505,7 +505,7 @@ func Ana_Iostat(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *st
 		return
 	}
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       rule.Osrule.Iostat.Nm,
 		Title:    rule.Osrule.Iostat.Title,
 		Desc:     rule.Osrule.Iostat.Desc,
@@ -542,7 +542,7 @@ Looop:
 func Ana_Thpstat(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.Thpstat.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       rule.Osrule.Thpstat.Nm,
 		Title:    rule.Osrule.Thpstat.Title,
 		Desc:     rule.Osrule.Thpstat.Desc,
@@ -579,7 +579,7 @@ func Ana_Thpstat(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *s
 func Ana_Hugpage(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.Hugpage.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       "HUGEPAGE",
 		Title:    "大页配置检查",
 		Desc:     "检查大页配置情况，如果配置了大页但使用率过低说明配置未生效",
@@ -632,7 +632,7 @@ func Ana_Hugpage(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *s
 func Ana_Numa(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.Numa.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       rule.Osrule.Numa.Nm,
 		Title:    rule.Osrule.Numa.Title,
 		Desc:     rule.Osrule.Numa.Desc,
@@ -664,7 +664,7 @@ func Ana_Ntp(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *struc
 	str := strings.Replace(msgdata, " ", "", -1)
 	str = strings.Replace(str, "\n", "", -1)
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       rule.Osrule.Ntp.Nm,
 		Title:    "时钟同步检查",
 		Desc:     "检查主机NTP 或chronyd 时钟同步服务是否启用",
@@ -682,7 +682,7 @@ func Ana_Ntp(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *struc
 func Ana_Selinux(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.Selinux.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       "SELINUX",
 		Title:    "SELinux状态检查",
 		Desc:     "检查SELinux安全模块是否已禁用",
@@ -717,7 +717,7 @@ func Ana_Selinux(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *s
 func Ana_Firewall(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.Firewall.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       "FIREWALL",
 		Title:    "防火墙状态检查",
 		Desc:     "检查防火墙服务是否已启用",
@@ -746,7 +746,7 @@ func Ana_Firewall(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *
 func Ana_Oslog(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.Oslog.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       "OSLOG",
 		Title:    "操作系统日志检查",
 		Desc:     "检查操作系统日志状态",
@@ -765,7 +765,7 @@ func Ana_Oslog(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *str
 func Ana_Tmzone(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.Tmzone.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       "TMZONE",
 		Title:    "时区配置检查",
 		Desc:     "检查主机时区配置是否为东八区",
@@ -790,7 +790,7 @@ func Ana_Tmzone(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *st
 func Ana_Nsswitch(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.Nsswitch.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       "NSSWITCH",
 		Title:    "NSSwitch配置检查",
 		Desc:     "检查NSSwitch配置是否包含NIS配置",
@@ -819,7 +819,7 @@ func Ana_Nsswitch(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *
 func Ana_Lo_mtu(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.Lo_mtu.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       "LO_MTU",
 		Title:    "LO网卡MTU配置检查",
 		Desc:     "检查LO网卡的MTU值是否超过16384",
@@ -863,7 +863,7 @@ func Ana_Lo_mtu(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *st
 func Ana_Machine_platform(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.Machine_platform.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       "MACHINE_PLATFORM",
 		Title:    "主机平台类型检查",
 		Desc:     "检查主机是物理机还是虚拟服务器",
@@ -893,7 +893,7 @@ func Ana_Machine_platform(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryE
 func Ana_CPU_PERF_MODE(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.CPU_PERF_MODE.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       "CPU_PERF_MODE",
 		Title:    "CPU性能模式检查",
 		Desc:     "检查CPU是否在高性能模式下运行",
@@ -930,7 +930,7 @@ func Ana_CPU_PERF_MODE(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntr
 func Ana_NOZEROCONF(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.NOZEROCONF.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       "NOZEROCONF",
 		Title:    "NOZEROCONF配置检查",
 		Desc:     "检查NOZEROCONF是否已正确配置",
@@ -960,7 +960,7 @@ func Ana_NOZEROCONF(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries
 func Ana_RPM_PACKAGES(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := osshtp.RPM_PACKAGES.Contents
 	entry := structs.SummaryEntry{
-		Category: "主机系统分析",
+		Category: "主机系统",
 		Nm:       "RPM_PACKAGES",
 		Title:    "RPM包安全检查",
 		Desc:     "检查是否安装了存在安全风险的RPM包",

@@ -19,7 +19,7 @@ func Ana_DBERRLOG(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntri
 	msgdata := instshtp.Dberrlog.Contents
 	value := strings.TrimSpace(msgdata)
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "实例分析",
 		Nm:       rule.Dbrule.Dberrlog.Nm,
 		Title:    rule.Dbrule.Dberrlog.Title,
 		Desc:     rule.Dbrule.Dberrlog.Desc,
@@ -39,7 +39,7 @@ func Ana_DBERRLOG(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntri
 func Ana_DBLSNRINFO(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := instshtp.Dblsnrinfo.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "实例分析",
 		Nm:       rule.Dbrule.Dblsnrinfo.Nm,
 		Title:    rule.Dbrule.Dblsnrinfo.Title,
 		Desc:     rule.Dbrule.Dblsnrinfo.Desc,
@@ -87,7 +87,7 @@ func Ana_DBDGLAGCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, instshtp *str
 	rd := regexp.MustCompile(`^apply lag(.*)\+(.*):\d+$`)
 	instshtp.Dbdglagcheck.Alarm = "G"
 	entry := structs.SummaryEntry{
-		Category: "DataGuard检查",
+		Category: "DataGuard",
 		Nm:       rule.Dbrule.Dbdglagcheck.Nm,
 		Title:    rule.Dbrule.Dbdglagcheck.Title,
 		Desc:     rule.Dbrule.Dbdglagcheck.Desc,
@@ -120,7 +120,7 @@ func Ana_DBDGERRCHECK(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryE
 	msgdata := instshtp.Dbdgerrcheck.Contents
 	value := strings.TrimSpace(msgdata)
 	entry := structs.SummaryEntry{
-		Category: "DataGuard检查",
+		Category: "DataGuard",
 		Nm:       rule.Dbrule.Dbdgerrcheck.Nm,
 		Title:    rule.Dbrule.Dbdgerrcheck.Title,
 		Desc:     rule.Dbrule.Dbdgerrcheck.Desc,
@@ -142,7 +142,7 @@ func Ana_DBRECOVERYDEST(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntr
 func Ana_DBFLASHRECOVERYUSEAGE(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Dbflashrecoveryuseage.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库备份检查",
+		Category: "数据库备份",
 		Nm:       rule.Dbrule.Dbflashrecoveryuseage.Nm,
 		Title:    rule.Dbrule.Dbflashrecoveryuseage.Title,
 		Desc:     rule.Dbrule.Dbflashrecoveryuseage.Desc,
@@ -182,7 +182,7 @@ Looop:
 func Ana_DBPSU(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := instshtp.Dbpsu.Contents
 	entry := structs.SummaryEntry{
-		Category: "软件使用分析",
+		Category: "软件使用",
 		Nm:       rule.Dbrule.Dbpsu.Nm,
 		Title:    rule.Dbrule.Dbpsu.Title,
 		Desc:     rule.Dbrule.Dbpsu.Desc,
@@ -201,7 +201,7 @@ func Ana_DBPSU(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries 
 func Ana_DBPATCH(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := instshtp.Dbpatch.Contents
 	entry := structs.SummaryEntry{
-		Category: "软件使用分析",
+		Category: "软件使用",
 		Nm:       rule.Dbrule.Dbpatch.Nm,
 		Title:    rule.Dbrule.Dbpatch.Title,
 		Desc:     rule.Dbrule.Dbpatch.Desc,

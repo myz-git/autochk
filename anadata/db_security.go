@@ -45,11 +45,36 @@ Looop:
 	}
 }
 
+// Ana_DB_PASSWORD_VERIF 分析密码复杂性验证
+func Ana_DB_PASSWORD_VERIF(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Db_password_verif.Contents
+	entry := structs.SummaryEntry{
+		Category: "数据库安全检查",
+		Nm:       rule.Dbrule.Db_password_verif.Nm,
+		Title:    rule.Dbrule.Db_password_verif.Title,
+		Desc:     rule.Dbrule.Db_password_verif.Desc,
+	}
+
+	// 检查是否为空或包含"无记录"
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(msgdata, "no rows selected") {
+		// 正常情况，无告警
+		dbshtp.Db_password_verif.Alarm = ""
+	} else {
+		// 有记录说明存在未设置密码复杂性校验，设置为B级告警
+		dbshtp.Db_password_verif.Alarm = "B"
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,存在未设置密码复杂性校验的用户,建议启用密码复杂性验证以增强安全性", dbshtp.Dbname.Contents))
+	}
+
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
+}
+
 // Ana_DBPRODUCTUSERFAILEDLOGIN 分析用户登录失败限制
 func Ana_DBPRODUCTUSERFAILEDLOGIN(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Dbproductuserfailedlogin.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库安全检查",
+		Category: "数据库安全",
 		Nm:       rule.Dbrule.Dbproductuserfailedlogin.Nm,
 		Title:    rule.Dbrule.Dbproductuserfailedlogin.Title,
 		Desc:     rule.Dbrule.Dbproductuserfailedlogin.Desc,
@@ -78,7 +103,7 @@ func Ana_DBDBAPRIV(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *
 	msgdata := dbshtp.Dbdbapriv.Contents
 	value := strings.TrimSpace(msgdata)
 	entry := structs.SummaryEntry{
-		Category: "数据库安全检查",
+		Category: "数据库安全",
 		Nm:       rule.Dbrule.Dbdbapriv.Nm,
 		Title:    rule.Dbrule.Dbdbapriv.Title,
 		Desc:     rule.Dbrule.Dbdbapriv.Desc,
@@ -99,7 +124,7 @@ func Ana_DBSYSDBA(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *s
 	msgdata := dbshtp.Dbsysdba.Contents
 	value := strings.TrimSpace(msgdata)
 	entry := structs.SummaryEntry{
-		Category: "数据库安全检查",
+		Category: "数据库安全",
 		Nm:       rule.Dbrule.Dbsysdba.Nm,
 		Title:    rule.Dbrule.Dbsysdba.Title,
 		Desc:     rule.Dbrule.Dbsysdba.Desc,
@@ -120,7 +145,7 @@ func Ana_DBAUDITSEGMENT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntr
 	msgdata := dbshtp.Dbauditsegment.Contents
 	value := strings.TrimSpace(msgdata)
 	entry := structs.SummaryEntry{
-		Category: "数据库安全检查",
+		Category: "数据库安全",
 		Nm:       rule.Dbrule.Dbauditsegment.Nm,
 		Title:    rule.Dbrule.Dbauditsegment.Title,
 		Desc:     rule.Dbrule.Dbauditsegment.Desc,
@@ -140,7 +165,7 @@ func Ana_DBAUDITCONT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 	msgdata := strings.TrimSpace(dbshtp.Dbauditcont.Contents) //去除头尾空格及空行
 	rd := regexp.MustCompile(` \d+$`)                         //匹配以空格+数字结尾
 	entry := structs.SummaryEntry{
-		Category: "数据库安全检查",
+		Category: "数据库安全",
 		Nm:       rule.Dbrule.Dbauditcont.Nm,
 		Title:    rule.Dbrule.Dbauditcont.Title,
 		Desc:     rule.Dbrule.Dbauditcont.Desc,
@@ -183,7 +208,7 @@ func Ana_DBVIRSCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 	msgdata := dbshtp.Dbvirscheck.Contents
 	rd := regexp.MustCompile(` \d+$`) //匹配以空格+数字结尾
 	entry := structs.SummaryEntry{
-		Category: "数据库安全检查",
+		Category: "数据库安全",
 		Nm:       rule.Dbrule.Dbvirscheck.Nm,
 		Title:    rule.Dbrule.Dbvirscheck.Title,
 		Desc:     rule.Dbrule.Dbvirscheck.Desc,
@@ -212,7 +237,7 @@ func Ana_DBRMANCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 	// log.Println("rule.Dbrule.Dbrmancheck->", rule.Dbrule.Dbrmancheck)
 	msgdata := dbshtp.Dbrmancheck.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库安全检查",
+		Category: "数据库安全",
 		Nm:       rule.Dbrule.Dbrmancheck.Nm,
 		Title:    rule.Dbrule.Dbrmancheck.Title,
 		Desc:     rule.Dbrule.Dbrmancheck.Desc,
@@ -249,7 +274,7 @@ func Ana_DBSCNHEALTHCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEn
 	//log.Println("rule.Dbrule.Dbscnhealthcheck->", rule.Dbrule.Dbscnhealthcheck)
 	msgdata := dbshtp.Dbscnhealthcheck.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库安全检查",
+		Category: "数据库安全",
 		Nm:       rule.Dbrule.Dbscnhealthcheck.Nm,
 		Title:    rule.Dbrule.Dbscnhealthcheck.Title,
 		Desc:     rule.Dbrule.Dbscnhealthcheck.Desc,

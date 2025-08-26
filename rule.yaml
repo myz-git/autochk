@@ -128,6 +128,10 @@ dbrule:
     title: "数据库状态检查"
     desc: "数据库状态检查主要包括：数据库启动状态,Dataguard保护模式,保护级别,数据库角色等。"
     status: READ
+  db_lang: 
+    nm: DB_LANG
+    title: "数据库语言检查"
+    desc: "检查数据库语言设置,建议结合实际情况排查数据库语言设置是否合理。"
   dbcursize: 
     nm: DBCURSIZE
     title: "数据库当前使用大小"
@@ -197,36 +201,6 @@ dbrule:
     desc: "如存在无效(不可用)索引,需要对索引进行重建或删除。"
     result: "no rows selected"
 
-  dbredoswitch: 
-    nm: DBREDOSWITCH
-    title: "归档切换检查"
-    desc: "对Oracle数据库的归档切换次数进行检查,建议日平均15-20 分钟切换一次, 业务高峰期也尽量大于5分钟一次。"
-    sw_cnt_ge1: 12
-  dbredocheck: 
-    nm: DBREDOCHECK
-    title: "REDO文件性能检查"
-    desc: "检查REDO文件是否过小,建议生产环境每个redo文件在200M-4G之间。"
-    rdf_size_lt1: 200
-    rdf_status_list: [INACTIVE,ACTIVE,CURRENT]
-  dbparameter: 
-    nm: DBPARAMETER
-    title: "数据库初始化参数检查"
-    desc: "检查Oracle初始化参数,建议结合实际情况排查数据库重要参数设置是否合理。"  
-  db_parameter_file: 
-    nm: DB_PARAMETER_FILE
-    title: "数据库初始化参数检查（详细）"
-    desc: "检查Oracle初始化参数,建议结合实际情况排查数据库重要参数设置是否合理。"
-  db_shp_size: 
-    nm: DB_SHP_SIZE
-    title: "共享池使用率"
-    desc: "检查共享池的大小"
-  db_shp_pct: 
-    nm: DB_SHP_PCT
-    title: "共享池使用率"
-    desc: "检查共享池的使用占比,通常SHARED_POOL的使用率不应超过SGA_SIZE的60%"
-  
-  # 数据库对象分析
-
   dbsequence: 
     nm: DBSEQUENCE
     title: "SEQUENCE序列设置检查"
@@ -238,6 +212,36 @@ dbrule:
     desc: "检查SEQUENCE当前值是否接近最大值限制的80%, 当SEQUENCE接近最大值时,建议使用命令来修改最大值alter sequence <name> nomaxvalue。"
     result: "no rows selected"
   
+  dbredoswitch: 
+    nm: DBREDOSWITCH
+    title: "归档切换检查"
+    desc: "对Oracle数据库的归档切换次数进行检查,建议日平均15-20 分钟切换一次, 业务高峰期也尽量大于5分钟一次。"
+    sw_cnt_ge1: 12
+  dbredocheck: 
+    nm: DBREDOCHECK
+    title: "REDO文件性能检查"
+    desc: "检查REDO文件是否过小,建议生产环境每个redo文件在200M-4G之间。"
+    rdf_size_lt1: 200
+    rdf_status_list: [INACTIVE,ACTIVE,CURRENT]
+
+  db_shp_size: 
+    nm: DB_SHP_SIZE
+    title: "共享池使用率"
+    desc: "检查共享池的大小"
+  db_shp_pct: 
+    nm: DB_SHP_PCT
+    title: "共享池使用率"
+    desc: "检查共享池的使用占比,通常SHARED_POOL的使用率不应超过SGA_SIZE的60%"
+  dboption: 
+    nm: DBOPTION
+    title: "数据库选项功能启用状态"
+    desc: "查询数据库可选功能（Options/Features）的启用状态。"
+  dbfeatures: 
+    nm: DBFEATURES
+    title: "数据库选项功能使用情况"
+    desc: "查询数据库可选功能详细的使用情况统计信息。"
+
+
   # 数据库性能分析
   db_4031check: 
     nm: DB_4031CHECK
@@ -263,17 +267,42 @@ dbrule:
     nm: TOPEVENT
     title: "TOP等待事件检查"
     desc: "检查常见非空闲等待事件。"
-  topsqlbyelapstime: 
-    nm: 模版ll TOPSQLBYELAPSTIME
+  topsql_by_ela: 
+    nm: 模版ll TOPSQL_BY_ELA
     title: "TOP SQL语句(最大消耗时间)"
-    desc: "根据执行次数和单次执行时间综合检查,建议统计时间内(如2h),执行次数超过1000次,单次执行时间不超过2秒。"
+    desc: "根据执行次数和单次执行时间综合检查,建议对于高频执行的SQL语句单次执行时间不超过2秒。"
   
+    
+  #数据库实例分析
+  cursor_share_mem: 
+    nm: CURSOR_SHARE_MEM
+    title: "游标共享内存使用"
+    desc: "检查SQL游标共享内存的使用情况,对于游标共享内存使用>300M的SQL语句建议优化"
+    result: "no rows selected"
+  
+  dbparameter: 
+    nm: DBPARAMETER
+    title: "数据库初始化参数检查"
+    desc: "检查Oracle初始化参数,建议结合实际情况排查数据库重要参数设置是否合理。"  
+  db_parameter_file: 
+    nm: DB_PARAMETER_FILE
+    title: "数据库初始化参数检查（详细）"
+    desc: "检查Oracle初始化参数,建议结合实际情况排查数据库重要参数设置是否合理。"
+    
   # 数据库安全检查
   db_expir_user: 
     nm: DB_EXPIR_USER
     title: "数据库用户临期检查"
-    desc: "检查数据库用户口令过期时间小于30天,当达到口令过期时间用户将会被锁定,如果是业务用户未提前处理会造成业务中断。" 
+    desc: "检查数据库用户口令过期时间小于30天,当达到口令过期时间用户将会被锁定,业务用户未提前处理会造成业务中断。" 
     result: "no rows selected"  
+
+  db_password_verif: 
+    nm: DB_PASSWORD_VERIF
+    title: "检查是否设置密码复杂性验证"
+    desc: "用户未设置密码复杂性验证, 建议设置密码复杂性检查ALTER PROFILE <profile_name> LIMIT PASSWORD_VERIFY_FUNCTION <function_name>;"
+    result: "no rows selected"
+
+
   dbproductuserfailedlogin: 
     nm: DBPRODUCTUSERFAILEDLOGIN
     title: "数据库用户登录失败检查"
@@ -355,16 +384,7 @@ dbrule:
     desc: "检查闪回区使用率, 使用率较高时及时清理或增加闪回区大小"
     useage1: 80
     useage2: 90
-  dbcrscheck: 
-    nm: DBCRSCHECK
-    title: "RAC资源状态(含OCR)"
-    desc: "检查是否有UNKNOW状态(除GDS), 建议OCR使用nomal冗余。"
-    resultG: ""
-  dbasmusage: 
-    nm: DBASMUSAGE
-    title: "ASM磁盘使用"
-    desc: "FREE_MB为剩余空间,该值建议大于10G为正常。"
-    resultG: ""
+
   dbpsu: 
     nm: DBPSU
     title: "数据库PSU补丁集检查"
@@ -374,8 +394,42 @@ dbrule:
     title: "补丁集检查"
     desc: "记录数据库安装了哪些补丁, 供其他项分析参考。"
 
+  #集群检查
+  crs_stat: 
+    nm: CRS_STAT
+    title: "RAC资源状态"
+    desc: "检查是否有UNKNOW或target与state状态不一致(除GDS外)"
+    result: ""
 
- 
+  crs_stat2: 
+    nm: CRS_STAT2
+    title: "RAC资源状态"
+    desc: "查看RRAC资源状态"
+    result: ""
+
+  ocr_info:  
+    nm: OCR_INFO
+    title: "OCR状态"
+    desc: "查看OCR使用情况"
+    result: ""
+
+  ocr_bak_check: 
+    nm: OCR_BAK_CHECK
+    title: "OCR备份检查"
+    desc: "检查OCR备份是否正常"
+    result: ""
+
+  asm_usage: 
+    nm: ASM_USAGE
+    title: "ASM磁盘组使用率"
+    desc: "查看pct_used_usable是否>90%, 如果>90%建议及时扩容磁盘组"
+    result: ""
+
+  asm_offset: 
+    nm: ASM_OFFSET
+    title: "ASM磁盘偏移检查"
+    desc: "查看各个Asm磁盘使用是否一致,如果偏移>10%需要及时维护校准"
+    result: "no rows selected"
 
 
 

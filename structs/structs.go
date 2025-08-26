@@ -79,8 +79,12 @@ type DbSht struct {
 	Dbvirscheck              Tpstrc
 	Dbscnhealthcheck         Tpstrc
 	Dbrmancheck              Tpstrc
-	Dbcrscheck               Tpstrc
-	Dbasmusage               Tpstrc
+	Crs_stat                 Tpstrc
+	Crs_stat2                Tpstrc
+	Ocr_info                 Tpstrc
+	Ocr_bak_check            Tpstrc
+	Asm_usage                Tpstrc
+	Asm_offset               Tpstrc
 }
 
 // InstShts 用于存储TAG2中每个NODE的实例、日志、监听等相关数据
@@ -89,9 +93,9 @@ type InstShts struct {
 	Instname          Tpstrc
 	Loadprofile       Tpstrc
 	Instefficiency    Tpstrc
-	Db_cursormem      Tpstrc
 	Topevent          Tpstrc
-	Topsqlbyelapstime Tpstrc
+	Topsql_by_ela     Tpstrc
+	Cursor_share_mem  Tpstrc
 	Dbresource        Tpstrc
 	Dbpsu             Tpstrc
 	Dbpatch           Tpstrc

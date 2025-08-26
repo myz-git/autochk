@@ -16,7 +16,7 @@ func Ana_RDSW(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *
 	msgdata := instshtp.Dbredoswitch.Contents
 	rd := regexp.MustCompile(` \d+$`)
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "实例分析",
 		Nm:       rule.Dbrule.Dbredoswitch.Nm,
 		Title:    rule.Dbrule.Dbredoswitch.Title,
 		Desc:     rule.Dbrule.Dbredoswitch.Desc,
@@ -51,7 +51,7 @@ Looop:
 func Ana_RDF(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
 	msgdata := instshtp.Dbredoswitch.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "实例分析",
 		Nm:       rule.Dbrule.Dbredocheck.Nm,
 		Title:    rule.Dbrule.Dbredocheck.Title,
 		Desc:     rule.Dbrule.Dbredocheck.Desc,
@@ -90,7 +90,7 @@ Looop:
 func Ana_DBparameter(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Dbrecoverydest.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "实例分析",
 		Nm:       rule.Dbrule.Dbparameter.Nm,
 		Title:    rule.Dbrule.Dbparameter.Title,
 		Desc:     rule.Dbrule.Dbparameter.Desc,
@@ -108,7 +108,7 @@ func Ana_DBparameter(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 func Ana_DBParameterFile(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Dbrecoverydest.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "实例分析",
 		Nm:       rule.Dbrule.Db_parameter_file.Nm,
 		Title:    rule.Dbrule.Db_parameter_file.Title,
 		Desc:     rule.Dbrule.Db_parameter_file.Desc,
@@ -126,7 +126,7 @@ func Ana_DBParameterFile(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEnt
 func Ana_DBShpSize(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Dbrecoverydest.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "实例分析",
 		Nm:       rule.Dbrule.Db_shp_size.Nm,
 		Title:    rule.Dbrule.Db_shp_size.Title,
 		Desc:     rule.Dbrule.Db_shp_size.Desc,
@@ -150,7 +150,7 @@ func Ana_DBShpSize(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *
 func Ana_DBShpPct(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Dbrecoverydest.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "实例分析",
 		Nm:       rule.Dbrule.Db_shp_pct.Nm,
 		Title:    rule.Dbrule.Db_shp_pct.Title,
 		Desc:     rule.Dbrule.Db_shp_pct.Desc,

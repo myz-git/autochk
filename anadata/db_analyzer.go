@@ -185,7 +185,7 @@ func Ana_DBCTRF(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *str
 func Ana_Tab_parallel(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Tab_parallel.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "数据库分析",
 		Nm:       rule.Dbrule.Tab_parallel.Nm,
 		Title:    rule.Dbrule.Tab_parallel.Title,
 		Desc:     rule.Dbrule.Tab_parallel.Desc,
@@ -213,7 +213,7 @@ Looop:
 func Ana_Inx_parallel(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Inx_parallel.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "数据库分析",
 		Nm:       rule.Dbrule.Inx_parallel.Nm,
 		Title:    rule.Dbrule.Inx_parallel.Title,
 		Desc:     rule.Dbrule.Inx_parallel.Desc,
@@ -241,7 +241,7 @@ Looop:
 func Ana_Invalid_obj(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Invalid_obj.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "数据库分析",
 		Nm:       rule.Dbrule.Invalid_obj.Nm,
 		Title:    rule.Dbrule.Invalid_obj.Title,
 		Desc:     rule.Dbrule.Invalid_obj.Desc,
@@ -279,7 +279,7 @@ func Ana_Invalid_obj(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 func Ana_Invalid_inx(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Invalid_inx.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库实例分析",
+		Category: "数据库分析",
 		Nm:       rule.Dbrule.Invalid_inx.Nm,
 		Title:    rule.Dbrule.Invalid_inx.Title,
 		Desc:     rule.Dbrule.Invalid_inx.Desc,
@@ -295,6 +295,65 @@ Looop:
 			dbshtp.Invalid_inx.Alarm = "B"
 			msgs := strings.Fields(value)
 			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,索引%s当前状态为无效,建议重建或删除该索引", dbshtp.Dbname.Contents, msgs[2]))
+			break Looop
+		}
+	}
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
+}
+
+// Ana_DBSEQUENCE 分析序列配置
+func Ana_DBSEQUENCE(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Dbsequence.Contents
+	entry := structs.SummaryEntry{
+		Category: "数据库分析",
+		Nm:       rule.Dbrule.Dbsequence.Nm,
+		Title:    rule.Dbrule.Dbsequence.Title,
+		Desc:     rule.Dbrule.Dbsequence.Desc,
+	}
+	rd := regexp.MustCompile(` \d+$`)
+Looop:
+	for _, value := range strings.Split(msgdata, "\n") {
+		value = strings.TrimSpace(value)
+		if value == rule.Dbrule.Dbsequence.Result {
+			break Looop
+		}
+		if rd.MatchString(value) {
+			dbshtp.Dbsequence.Alarm = "G"
+			msgs := strings.Fields(value)
+			cache, _ := strconv.Atoi(msgs[1])
+			if cache < 400 {
+				entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,序列 %s cache %d 小于 400，建议设置为 400 或以上并使用 NOORDER", dbshtp.Dbname.Contents, msgs[0], cache))
+			}
+			break Looop
+		}
+	}
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
+}
+
+// Ana_DB_SEQ_USAGE 分析序列最大值使用情况
+func Ana_DB_SEQ_USAGE(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Dbsequence.Contents
+	entry := structs.SummaryEntry{
+		Category: "数据库分析",
+		Nm:       rule.Dbrule.Db_seq_usage.Nm,
+		Title:    rule.Dbrule.Db_seq_usage.Title,
+		Desc:     rule.Dbrule.Db_seq_usage.Desc,
+	}
+	rd := regexp.MustCompile(` \d+$`)
+Looop:
+	for _, value := range strings.Split(msgdata, "\n") {
+		value = strings.TrimSpace(value)
+		if value == rule.Dbrule.Db_seq_usage.Result {
+			break Looop
+		}
+		if rd.MatchString(value) {
+			dbshtp.Dbsequence.Alarm = "B"
+			msgs := strings.Fields(value)
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,SEQUENCE %s 当前值达到最大值限制的80%%,建议尽快修改", dbshtp.Dbname.Contents, msgs[0]))
 			break Looop
 		}
 	}

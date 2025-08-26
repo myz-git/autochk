@@ -356,8 +356,12 @@ func PutSht_DB(f *excelize.File, dbshtp *structs.DbSht, osshts *[]structs.OsShts
 		{"Dbvirscheck", 40},
 		{"Dbscnhealthcheck", 41},
 		{"Dbrmancheck", 42},
-		{"Dbcrscheck", 43},
-		{"Dbasmusage", 44},
+		{"Crs_stat", 43},
+		{"Crs_stat2", 44},
+		{"Ocr_info", 45},
+		{"Ocr_bak_check", 46},
+		{"Asm_usage", 47},
+		{"Asm_offset", 48},
 	}
 
 	// 填充每个字段
@@ -500,12 +504,30 @@ func PutSht_DB(f *excelize.File, dbshtp *structs.DbSht, osshts *[]structs.OsShts
 			case "Dbrmancheck":
 				content = dbshtp.Dbrmancheck.Contents
 				alarm = dbshtp.Dbrmancheck.Alarm
-			case "Dbcrscheck":
-				content = dbshtp.Dbcrscheck.Contents
-				alarm = dbshtp.Dbcrscheck.Alarm
-			case "Dbasmusage":
-				content = dbshtp.Dbasmusage.Contents
-				alarm = dbshtp.Dbasmusage.Alarm
+			case "Crs_stat":
+				content = dbshtp.Crs_stat.Contents
+				alarm = dbshtp.Crs_stat.Alarm
+				fmt.Printf("DEBUG: Crs_stat content: %s, alarm: %s\n", content, alarm)
+			case "Crs_stat2":
+				content = dbshtp.Crs_stat2.Contents
+				alarm = dbshtp.Crs_stat2.Alarm
+				fmt.Printf("DEBUG: Crs_stat2 content: %s, alarm: %s\n", content, alarm)
+			case "Ocr_info":
+				content = dbshtp.Ocr_info.Contents
+				alarm = dbshtp.Ocr_info.Alarm
+				fmt.Printf("DEBUG: Ocr_info content: %s, alarm: %s\n", content, alarm)
+			case "Ocr_bak_check":
+				content = dbshtp.Ocr_bak_check.Contents
+				alarm = dbshtp.Ocr_bak_check.Alarm
+				fmt.Printf("DEBUG: Ocr_bak_check content: %s, alarm: %s\n", content, alarm)
+			case "Asm_usage":
+				content = dbshtp.Asm_usage.Contents
+				alarm = dbshtp.Asm_usage.Alarm
+				fmt.Printf("DEBUG: Asm_usage content: %s, alarm: %s\n", content, alarm)
+			case "Asm_offset":
+				content = dbshtp.Asm_offset.Contents
+				alarm = dbshtp.Asm_offset.Alarm
+				fmt.Printf("DEBUG: Asm_offset content: %s, alarm: %s\n", content, alarm)
 			}
 
 			// 设置单元格内容
@@ -544,13 +566,15 @@ func PutSht_Summary(f *excelize.File, summaryEntries *structs.SummaryEntries) {
 
 	// 定义问题类型的顺序
 	categories := []string{
-		"主机系统分析",
-		"数据库实例分析",
-		"数据库集群检查",
-		"DataGuard检查",
-		"数据库备份检查",
-		"数据库安全检查",
-		"软件使用分析",
+		"主机系统",
+		"数据库分析",
+		"实例分析",
+		"数据库性能",
+		"数据库集群",
+		"DataGuard",
+		"数据库备份",
+		"数据库安全",
+		"软件使用",
 		"其他项检查",
 	}
 
@@ -599,13 +623,15 @@ func PutSht_Issuelist(f *excelize.File, summaryEntries *structs.SummaryEntries) 
 
 	// 按category分组和排序
 	categoryOrder := []string{
-		"主机系统分析",
-		"数据库实例分析",
-		"数据库集群检查",
-		"DataGuard检查",
-		"数据库备份检查",
-		"数据库安全检查",
-		"软件使用分析",
+		"主机系统",
+		"数据库分析",
+		"实例分析",
+		"数据库性能",
+		"数据库集群",
+		"DataGuard",
+		"数据库备份",
+		"数据库安全",
+		"软件使用",
 		"其他项检查",
 	}
 
@@ -697,9 +723,9 @@ func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts) {
 		{"Instname", 2},
 		{"Loadprofile", 3},
 		{"Instefficiency", 4},
-		{"Db_cursormem", 5},
-		{"Topevent", 6},
-		{"Topsqlbyelapstime", 7},
+		{"Topevent", 5},
+		{"Topsql_by_ela", 6},
+		{"Cursor_share_mem", 7},
 		{"Dbresource", 8},
 		{"Dbpsu", 9},
 		{"Dbpatch", 10},
@@ -737,15 +763,15 @@ func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts) {
 			case "Instefficiency":
 				content = instsht.Instefficiency.Contents
 				alarm = instsht.Instefficiency.Alarm
-			case "Db_cursormem":
-				content = instsht.Db_cursormem.Contents
-				alarm = instsht.Db_cursormem.Alarm
 			case "Topevent":
 				content = instsht.Topevent.Contents
 				alarm = instsht.Topevent.Alarm
-			case "Topsqlbyelapstime":
-				content = instsht.Topsqlbyelapstime.Contents
-				alarm = instsht.Topsqlbyelapstime.Alarm
+			case "Topsql_by_ela":
+				content = instsht.Topsql_by_ela.Contents
+				alarm = instsht.Topsql_by_ela.Alarm
+			case "Cursor_share_mem":
+				content = instsht.Cursor_share_mem.Contents
+				alarm = instsht.Cursor_share_mem.Alarm
 			case "Dbresource":
 				content = instsht.Dbresource.Contents
 				alarm = instsht.Dbresource.Alarm
@@ -827,72 +853,72 @@ func NewXlsx(xlsnm string) {
 
 	// 初始化 OS Sheet
 	shnm = "OS"
-	f.SetCellStr(shnm, "A1", "主机名")
-	f.SetCellStr(shnm, "A2", "IP地址")
-	f.SetCellStr(shnm, "A3", "主机内核参数")
-	f.SetCellStr(shnm, "A4", "主机资源限制")
-	f.SetCellStr(shnm, "A5", "文件系统使用率")
-	f.SetCellStr(shnm, "A6", "索引资源节点使用率")
-	f.SetCellStr(shnm, "A7", "CPU负载")
-	f.SetCellStr(shnm, "A8", "内存使用")
-	f.SetCellStr(shnm, "A9", "磁盘IO负载检查")
-	f.SetCellStr(shnm, "A10", "透明大页开启检查")
-	f.SetCellStr(shnm, "A11", "主机大页使用检查")
-	f.SetCellStr(shnm, "A12", "NUMA使用检查")
-	f.SetCellStr(shnm, "A13", "NTP时钟同步检查")
+	// f.SetCellStr(shnm, "A1", "主机名")
+	// f.SetCellStr(shnm, "A2", "IP地址")
+	// f.SetCellStr(shnm, "A3", "主机内核参数")
+	// f.SetCellStr(shnm, "A4", "主机资源限制")
+	// f.SetCellStr(shnm, "A5", "文件系统使用率")
+	// f.SetCellStr(shnm, "A6", "索引资源节点使用率")
+	// f.SetCellStr(shnm, "A7", "CPU负载")
+	// f.SetCellStr(shnm, "A8", "内存使用")
+	// f.SetCellStr(shnm, "A9", "磁盘IO负载检查")
+	// f.SetCellStr(shnm, "A10", "透明大页开启检查")
+	// f.SetCellStr(shnm, "A11", "主机大页使用检查")
+	// f.SetCellStr(shnm, "A12", "NUMA使用检查")
+	// f.SetCellStr(shnm, "A13", "NTP时钟同步检查")
 
 	// 初始化 DB Sheet
 	shnm = "DB"
-	f.SetCellStr(shnm, "A1", "数据库名称\nDB_UNIQUE_NAME")
-	f.SetCellStr(shnm, "A2", "主机名")
-	f.SetCellStr(shnm, "A3", "表空间使用率")
-	f.SetCellStr(shnm, "A4", "数据文件大小检查")
-	f.SetCellStr(shnm, "A5", "控制文件检查")
-	f.SetCellStr(shnm, "A6", "数据库用户大小")
-	f.SetCellStr(shnm, "A7", "REDO文件性能检查")
-	f.SetCellStr(shnm, "A8", "归档切换检查")
-	f.SetCellStr(shnm, "A9", "数据库资源使用限制检查")
-	f.SetCellStr(shnm, "A10", "数据库性能负载分析")
-	f.SetCellStr(shnm, "A11", "数据库性能运行效率")
-	f.SetCellStr(shnm, "A12", "数据库Top等待")
-	f.SetCellStr(shnm, "A13", "数据库Top SQL(耗时)")
-	f.SetCellStr(shnm, "A14", "监听状态及日志检查")
-	f.SetCellStr(shnm, "A15", "并行度>1的表")
-	f.SetCellStr(shnm, "A16", "并行度>1的索引")
-	f.SetCellStr(shnm, "A17", "无效索引检查")
-	f.SetCellStr(shnm, "A18", "Oracle序列检查")
-	f.SetCellStr(shnm, "A19", "闪回区配置")
-	f.SetCellStr(shnm, "A20", "FlashRecovery区使用情况")
-	f.SetCellStr(shnm, "A21", "数据库日志检查")
-	f.SetCellStr(shnm, "A22", "数据库RMAN备份")
-	f.SetCellStr(shnm, "A23", "DBA权限用户检查")
-	f.SetCellStr(shnm, "A24", "SYSDBA权限用户检查")
-	f.SetCellStr(shnm, "A25", "数据库审计空间检查")
-	f.SetCellStr(shnm, "A26", "数据库审计对象检查")
-	f.SetCellStr(shnm, "A27", "业务对象存放系统表空间")
-	f.SetCellStr(shnm, "A28", "错误口令登录锁定帐户PROFILE检查")
-	f.SetCellStr(shnm, "A29", "病毒勒索攻击检查")
-	f.SetCellStr(shnm, "A30", "SCNHealthCheck检查")
-	f.SetCellStr(shnm, "A31", "DataGuard同步延迟检查")
-	f.SetCellStr(shnm, "A32", "DataGuard同步报错检查")
+	// f.SetCellStr(shnm, "A1", "数据库名称\nDB_UNIQUE_NAME")
+	// f.SetCellStr(shnm, "A2", "主机名")
+	// f.SetCellStr(shnm, "A3", "表空间使用率")
+	// f.SetCellStr(shnm, "A4", "数据文件大小检查")
+	// f.SetCellStr(shnm, "A5", "控制文件检查")
+	// f.SetCellStr(shnm, "A6", "数据库用户大小")
+	// f.SetCellStr(shnm, "A7", "REDO文件性能检查")
+	// f.SetCellStr(shnm, "A8", "归档切换检查")
+	// f.SetCellStr(shnm, "A9", "数据库资源使用限制检查")
+	// f.SetCellStr(shnm, "A10", "数据库性能负载分析")
+	// f.SetCellStr(shnm, "A11", "数据库性能运行效率")
+	// f.SetCellStr(shnm, "A12", "数据库Top等待")
+	// f.SetCellStr(shnm, "A13", "数据库Top SQL(耗时)")
+	// f.SetCellStr(shnm, "A14", "监听状态及日志检查")
+	// f.SetCellStr(shnm, "A15", "并行度>1的表")
+	// f.SetCellStr(shnm, "A16", "并行度>1的索引")
+	// f.SetCellStr(shnm, "A17", "无效索引检查")
+	// f.SetCellStr(shnm, "A18", "Oracle序列检查")
+	// f.SetCellStr(shnm, "A19", "闪回区配置")
+	// f.SetCellStr(shnm, "A20", "FlashRecovery区使用情况")
+	// f.SetCellStr(shnm, "A21", "数据库日志检查")
+	// f.SetCellStr(shnm, "A22", "数据库RMAN备份")
+	// f.SetCellStr(shnm, "A23", "DBA权限用户检查")
+	// f.SetCellStr(shnm, "A24", "SYSDBA权限用户检查")
+	// f.SetCellStr(shnm, "A25", "数据库审计空间检查")
+	// f.SetCellStr(shnm, "A26", "数据库审计对象检查")
+	// f.SetCellStr(shnm, "A27", "业务对象存放系统表空间")
+	// f.SetCellStr(shnm, "A28", "错误口令登录锁定帐户PROFILE检查")
+	// f.SetCellStr(shnm, "A29", "病毒勒索攻击检查")
+	// f.SetCellStr(shnm, "A30", "SCNHealthCheck检查")
+	// f.SetCellStr(shnm, "A31", "DataGuard同步延迟检查")
+	// f.SetCellStr(shnm, "A32", "DataGuard同步报错检查")
 
 	// 初始化 Inst Sheet
 	shnm = "Inst"
-	f.SetCellStr(shnm, "A1", "节点ID")
-	f.SetCellStr(shnm, "A2", "实例名称")
-	f.SetCellStr(shnm, "A3", "负载分析")
-	f.SetCellStr(shnm, "A4", "实例效率")
-	f.SetCellStr(shnm, "A5", "游标内存使用")
-	f.SetCellStr(shnm, "A6", "Top等待事件")
-	f.SetCellStr(shnm, "A7", "Top SQL(耗时)")
-	f.SetCellStr(shnm, "A8", "数据库资源使用")
-	f.SetCellStr(shnm, "A9", "PSU补丁信息")
-	f.SetCellStr(shnm, "A10", "数据库补丁信息")
-	f.SetCellStr(shnm, "A11", "监听器信息")
-	f.SetCellStr(shnm, "A12", "数据库参数")
-	f.SetCellStr(shnm, "A13", "参数文件")
-	f.SetCellStr(shnm, "A14", "REDO切换")
-	f.SetCellStr(shnm, "A15", "错误日志")
+	// f.SetCellStr(shnm, "A1", "节点ID")
+	// f.SetCellStr(shnm, "A2", "实例名称")
+	// f.SetCellStr(shnm, "A3", "负载分析")
+	// f.SetCellStr(shnm, "A4", "实例效率")
+	// f.SetCellStr(shnm, "A5", "游标内存使用")
+	// f.SetCellStr(shnm, "A6", "Top等待事件")
+	// f.SetCellStr(shnm, "A7", "Top SQL(耗时)")
+	// f.SetCellStr(shnm, "A8", "数据库资源使用")
+	// f.SetCellStr(shnm, "A9", "PSU补丁信息")
+	// f.SetCellStr(shnm, "A10", "数据库补丁信息")
+	// f.SetCellStr(shnm, "A11", "监听器信息")
+	// f.SetCellStr(shnm, "A12", "数据库参数")
+	// f.SetCellStr(shnm, "A13", "参数文件")
+	// f.SetCellStr(shnm, "A14", "REDO切换")
+	// f.SetCellStr(shnm, "A15", "错误日志")
 
 	// 设置布局和样式
 	wrapStyle, _ := f.NewStyle(&excelize.Style{

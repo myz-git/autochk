@@ -42,22 +42,36 @@ type Osrule struct {
 
 // //*** Lv2***////
 type Dbrule struct {
+	// 数据库分析
+	Dbstatus      Dbstatus      `yaml:"dbstatus"`
+	Db_lang       Db_lang       `yaml:"db_lang"`
+	Dbtbsusage    Dbtbsusage    `yaml:"dbtbsusage"`
+	Dbcursize     Dbcursize     `yaml:"dbcursize"`
+	Dbf_size      Dbf_size      `yaml:"dbf_size"`
+	Dbf_cnt       Dbf_cnt       `yaml:"dbf_cnt"`
+	Dbf_stat      Dbf_stat      `yaml:"dbf_stat"`
+	Tmpfile_size  Tmpfile_size  `yaml:"tmpfile_size"`
+	Dbcontrolfile Dbcontrolfile `yaml:"dbcontrolfile"`
+	User_info     User_info     `yaml:"user_info"`
+	User_size     User_size     `yaml:"user_size"`
+	Tab_info      Tab_info      `yaml:"tab_info"`
+	Tab_parallel  Tab_parallel  `yaml:"tab_parallel"`
+	Inx_parallel  Inx_parallel  `yaml:"inx_parallel"`
+	Invalid_obj   Invalid_obj   `yaml:"invalid_obj"`
+	Invalid_inx   Invalid_inx   `yaml:"invalid_inx"`
+	Dbsequence    Dbsequence    `yaml:"dbsequence"`
+	Db_seq_usage  Db_seq_usage  `yaml:"db_seq_usage"`
+
+	// 数据库性能分析
+	Db_4031check   Db_4031check   `yaml:"db_4031check"`
+	Dbresource     Dbresource     `yaml:"dbresource"`
+	Loadprofile    Loadprofile    `yaml:"loadprofile"`
+	Instefficiency Instefficiency `yaml:"instefficiency"`
+	Topevent       Topevent       `yaml:"topevent"`
+	Topsql_by_ela  Topsql_by_ela  `yaml:"topsql_by_ela"`
+
 	// 数据库实例分析
-	Dbstatus          Dbstatus          `yaml:"dbstatus"`
-	Dbtbsusage        Dbtbsusage        `yaml:"dbtbsusage"`
-	Dbcursize         Dbcursize         `yaml:"dbcursize"`
-	Dbf_size          Dbf_size          `yaml:"dbf_size"`
-	Dbf_cnt           Dbf_cnt           `yaml:"dbf_cnt"`
-	Dbf_stat          Dbf_stat          `yaml:"dbf_stat"`
-	Tmpfile_size      Tmpfile_size      `yaml:"tmpfile_size"`
-	Dbcontrolfile     Dbcontrolfile     `yaml:"dbcontrolfile"`
-	User_info         User_info         `yaml:"user_info"`
-	User_size         User_size         `yaml:"user_size"`
-	Tab_info          Tab_info          `yaml:"tab_info"`
-	Tab_parallel      Tab_parallel      `yaml:"tab_parallel"`
-	Inx_parallel      Inx_parallel      `yaml:"inx_parallel"`
-	Invalid_obj       Invalid_obj       `yaml:"invalid_obj"`
-	Invalid_inx       Invalid_inx       `yaml:"invalid_inx"`
+	Cursor_share_mem  Cursor_share_mem  `yaml:"cursor_share_mem"`
 	Dbredocheck       Dbredocheck       `yaml:"dbredocheck"`
 	Dbredoswitch      Dbredoswitch      `yaml:"dbredoswitch"`
 	Dbparameter       Dbparameter       `yaml:"dbparameter"`
@@ -65,20 +79,9 @@ type Dbrule struct {
 	Db_shp_size       Db_shp_size       `yaml:"db_shp_size"`
 	Db_shp_pct        Db_shp_pct        `yaml:"db_shp_pct"`
 
-	// 数据库对象分析
-	Dbsequence   Dbsequence   `yaml:"dbsequence"`
-	Db_seq_usage Db_seq_usage `yaml:"db_seq_usage"`
-
-	// 数据库性能分析
-	Db_4031check      Db_4031check      `yaml:"db_4031check"`
-	Dbresource        Dbresource        `yaml:"dbresource"`
-	Loadprofile       Loadprofile       `yaml:"loadprofile"`
-	Instefficiency    Instefficiency    `yaml:"instefficiency"`
-	Topevent          Topevent          `yaml:"topevent"`
-	Topsqlbyelapstime Topsqlbyelapstime `yaml:"topsqlbyelapstime"`
-
 	// 数据库安全检查
 	Db_expir_user            Db_expir_user            `yaml:"db_expir_user"`
+	Db_password_verif        Db_password_verif        `yaml:"db_password_verif"`
 	Dbproductuserfailedlogin Dbproductuserfailedlogin `yaml:"dbproductuserfailedlogin"`
 	Dbdbapriv                Dbdbapriv                `yaml:"dbdbapriv"`
 	Dbsysdba                 Dbsysdba                 `yaml:"dbsysdba"`
@@ -89,17 +92,27 @@ type Dbrule struct {
 	Dbrmancheck              Dbrmancheck              `yaml:"dbrmancheck"`
 	Dbscnhealthcheck         Dbscnhealthcheck         `yaml:"dbscnhealthcheck"`
 
+	//软件使用
+	Dboption   Dboption   `yaml:"dboption"`
+	Dbfeatures Dbfeatures `yaml:"dbfeatures"`
+	Dbpsu      Dbpsu      `yaml:"dbpsu"`
+	Dbpatch    Dbpatch    `yaml:"dbpatch"`
+
 	// 日志、集群、DataGuard、备份及杂项分析
 	Dberrlog              Dberrlog              `yaml:"dberrlog"`
 	Dbdglagcheck          Dbdglagcheck          `yaml:"dbdglagcheck"`
 	Dbdgerrcheck          Dbdgerrcheck          `yaml:"dbdgerrcheck"`
-	Dbcrscheck            Dbcrscheck            `yaml:"dbcrscheck"`
-	Dbasmusage            Dbasmusage            `yaml:"dbasmusage"`
 	Dblsnrinfo            Dblsnrinfo            `yaml:"dblsnrinfo"`
 	Dbrecoverydest        Dbrecoverydest        `yaml:"dbrecoverydest"`
 	Dbflashrecoveryuseage Dbflashrecoveryuseage `yaml:"dbflashrecoveryuseage"`
-	Dbpsu                 Dbpsu                 `yaml:"dbpsu"`
-	Dbpatch               Dbpatch               `yaml:"dbpatch"`
+
+	// 集群检查
+	Crs_stat      Crs_stat      `yaml:"crs_stat"`
+	Crs_stat2     Crs_stat2     `yaml:"crs_stat2"`
+	Ocr_info      Ocr_info      `yaml:"ocr_info"`
+	Ocr_bak_check Ocr_bak_check `yaml:"ocr_bak_check"`
+	Asm_usage     Asm_usage     `yaml:"asm_usage"`
+	Asm_offset    Asm_offset    `yaml:"asm_offset"`
 }
 
 // ///*** Lv3 OS Start***/////
@@ -413,11 +426,17 @@ type Topevent struct {
 	Result string `yaml:"result"`
 }
 
-type Topsqlbyelapstime struct {
+type Topsql_by_ela struct {
 	Nm     string `yaml:"nm"`
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+}
+
+type Cursor_share_mem struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
 }
 
 type Dblsnrinfo struct {
@@ -464,6 +483,13 @@ type Dberrlog struct {
 }
 
 type Db_expir_user struct {
+	Nm     string `yaml:"nm"`
+	Title  string `yaml:"title"`
+	Desc   string `yaml:"desc"`
+	Result string `yaml:"result"`
+}
+
+type Db_password_verif struct {
 	Nm     string `yaml:"nm"`
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
@@ -572,18 +598,6 @@ type Db_4031check struct {
 	Desc  string `yaml:"desc"`
 }
 
-type Dbcrscheck struct {
-	Nm    string `yaml:"nm"`
-	Title string `yaml:"title"`
-	Desc  string `yaml:"desc"`
-}
-
-type Dbasmusage struct {
-	Nm    string `yaml:"nm"`
-	Title string `yaml:"title"`
-	Desc  string `yaml:"desc"`
-}
-
 type Dbrmancheck struct {
 	Nm      string `yaml:"nm"`
 	Title   string `yaml:"title"`
@@ -599,6 +613,60 @@ type Dbpsu struct {
 }
 
 type Dbpatch struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Dboption struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Dbfeatures struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Db_lang struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Crs_stat struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Crs_stat2 struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Ocr_info struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Ocr_bak_check struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Asm_usage struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Asm_offset struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
