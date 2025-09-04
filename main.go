@@ -4,6 +4,7 @@ import (
 	"autochk/anadata"
 	"autochk/readxml"
 	"autochk/structs"
+	"autochk/todocx"
 	"autochk/toxls"
 	"autochk/xmlfile"
 	"flag"
@@ -78,7 +79,7 @@ func main() {
 		readxml.ReadXml(fnm, &osshts, &dbsht, &instshts)
 		anadata.Ana(&osshts, &dbsht, &instshts, summaryEntries)
 		toxls.Xlsx(&osshts, &dbsht, &instshts, summaryEntries, prex, colcnt, *singlefile)
-		// todocx.Todocx(&osshts, &dbsht, &instshts, prex, colcnt, *singlefile)
+		todocx.Todocxfunc Xlsx(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.InstShts, summaryEntries *structs.SummaryEntries, xlsnm string, colcnt int, sglf bool) {
 		colcnt++
 	}
 	elapsed := time.Since(start)

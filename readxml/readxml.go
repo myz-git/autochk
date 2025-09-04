@@ -164,8 +164,8 @@ func processTag1Node(node *etree.Element, dbshtp *structs.DbSht) {
 	dbshtp.Dbmaa = structs.Tpstrc{}
 	dbshtp.Dbver = structs.Tpstrc{}
 	dbshtp.Dbstatus = structs.Tpstrc{}
-	dbshtp.Dbrole = structs.Tpstrc{}
 	dbshtp.Logmode = structs.Tpstrc{}
+	dbshtp.Dbrole = structs.Tpstrc{}
 	dbshtp.Flashback = structs.Tpstrc{}
 	dbshtp.Dbcursize = structs.Tpstrc{}
 	dbshtp.Dbf_size = structs.Tpstrc{}
@@ -189,16 +189,13 @@ func processTag1Node(node *etree.Element, dbshtp *structs.DbSht) {
 	dbshtp.Dbfeatures = structs.Tpstrc{}
 	dbshtp.Db_expir_user = structs.Tpstrc{}
 	dbshtp.Db_password_verif = structs.Tpstrc{}
-	dbshtp.Dbredocheck = structs.Tpstrc{}
-	dbshtp.Dbrecoverydest = structs.Tpstrc{}
-	dbshtp.Dbflashrecoveryuseage = structs.Tpstrc{}
-	dbshtp.Dbproductuserfailedlogin = structs.Tpstrc{}
+	dbshtp.Userfailedlogin = structs.Tpstrc{}
 	dbshtp.Dbrmancheck = structs.Tpstrc{}
 	dbshtp.Dbdbapriv = structs.Tpstrc{}
 	dbshtp.Dbsysdba = structs.Tpstrc{}
 	dbshtp.Dbauditsegment = structs.Tpstrc{}
 	dbshtp.Dbauditcont = structs.Tpstrc{}
-	dbshtp.Db_nosys_in_system = structs.Tpstrc{}
+	dbshtp.Db_Nosys_In_System = structs.Tpstrc{}
 	dbshtp.Dbvirscheck = structs.Tpstrc{}
 	dbshtp.Dbscnhealthcheck = structs.Tpstrc{}
 	dbshtp.Crs_stat = structs.Tpstrc{}
@@ -413,33 +410,12 @@ func processTag1Node(node *etree.Element, dbshtp *structs.DbSht) {
 			} else {
 				dbshtp.Db_password_verif.Contents = content
 			}
-		case "DBREDOCHECK":
+		case "Userfailedlogin":
 			content := strings.TrimSpace(tag.Text())
 			if content == "" {
-				dbshtp.Dbredocheck.Contents = "无记录"
+				dbshtp.Userfailedlogin.Contents = "无记录"
 			} else {
-				dbshtp.Dbredocheck.Contents = content
-			}
-		case "DBRECOVERYDEST":
-			content := strings.TrimSpace(tag.Text())
-			if content == "" {
-				dbshtp.Dbrecoverydest.Contents = "无记录"
-			} else {
-				dbshtp.Dbrecoverydest.Contents = content
-			}
-		case "DBFLASHRECOVERYUSEAGE":
-			content := strings.TrimSpace(tag.Text())
-			if content == "" {
-				dbshtp.Dbflashrecoveryuseage.Contents = "无记录"
-			} else {
-				dbshtp.Dbflashrecoveryuseage.Contents = content
-			}
-		case "DBPRODUCTUSERFAILEDLOGIN":
-			content := strings.TrimSpace(tag.Text())
-			if content == "" {
-				dbshtp.Dbproductuserfailedlogin.Contents = "无记录"
-			} else {
-				dbshtp.Dbproductuserfailedlogin.Contents = content
+				dbshtp.Userfailedlogin.Contents = content
 			}
 		case "DBRMANCHECK":
 			content := strings.TrimSpace(tag.Text())
@@ -479,9 +455,9 @@ func processTag1Node(node *etree.Element, dbshtp *structs.DbSht) {
 		case "DB_NOSYS_IN_SYSTEM":
 			content := strings.TrimSpace(tag.Text())
 			if content == "" {
-				dbshtp.Db_nosys_in_system.Contents = "无记录"
+				dbshtp.Db_Nosys_In_System.Contents = "无记录"
 			} else {
-				dbshtp.Db_nosys_in_system.Contents = content
+				dbshtp.Db_Nosys_In_System.Contents = content
 			}
 		case "DBVIRSCHECK":
 			content := strings.TrimSpace(tag.Text())
@@ -499,46 +475,22 @@ func processTag1Node(node *etree.Element, dbshtp *structs.DbSht) {
 			}
 		case "CRS_STAT":
 			content := strings.TrimSpace(tag.Text())
-			if content == "" {
-				dbshtp.Crs_stat.Contents = "无记录"
-			} else {
-				dbshtp.Crs_stat.Contents = content
-			}
+			dbshtp.Crs_stat.Contents = content
 		case "CRS_STAT2":
 			content := strings.TrimSpace(tag.Text())
-			if content == "" {
-				dbshtp.Crs_stat2.Contents = "无记录"
-			} else {
-				dbshtp.Crs_stat2.Contents = content
-			}
+			dbshtp.Crs_stat2.Contents = content
 		case "OCR_INFO":
 			content := strings.TrimSpace(tag.Text())
-			if content == "" {
-				dbshtp.Ocr_info.Contents = "无记录"
-			} else {
-				dbshtp.Ocr_info.Contents = content
-			}
+			dbshtp.Ocr_info.Contents = content
 		case "OCR_BAK_CHECK":
 			content := strings.TrimSpace(tag.Text())
-			if content == "" {
-				dbshtp.Ocr_bak_check.Contents = "无记录"
-			} else {
-				dbshtp.Ocr_bak_check.Contents = content
-			}
+			dbshtp.Ocr_bak_check.Contents = content
 		case "ASM_USAGE":
 			content := strings.TrimSpace(tag.Text())
-			if content == "" {
-				dbshtp.Asm_usage.Contents = "无记录"
-			} else {
-				dbshtp.Asm_usage.Contents = content
-			}
+			dbshtp.Asm_usage.Contents = content
 		case "ASM_OFFSET":
 			content := strings.TrimSpace(tag.Text())
-			if content == "" {
-				dbshtp.Asm_offset.Contents = "无记录"
-			} else {
-				dbshtp.Asm_offset.Contents = content
-			}
+			dbshtp.Asm_offset.Contents = content
 
 		}
 	}
@@ -562,7 +514,10 @@ func processTag2Node(node *etree.Element, instshts *[]structs.InstShts) {
 	instSht.Dbpsu = structs.Tpstrc{}
 	instSht.Dbpatch = structs.Tpstrc{}
 	instSht.Dblsnrinfo = structs.Tpstrc{}
+	instSht.Dbredocheck = structs.Tpstrc{}
 	instSht.Dbredoswitch = structs.Tpstrc{}
+	instSht.Recovery_usage = structs.Tpstrc{}
+	instSht.Recovery_detail = structs.Tpstrc{}
 	instSht.Dbparameter = structs.Tpstrc{}
 	instSht.Db_parameter_file = structs.Tpstrc{}
 	instSht.Dberrlog = structs.Tpstrc{}
@@ -650,12 +605,35 @@ func processTag2Node(node *etree.Element, instshts *[]structs.InstShts) {
 			} else {
 				instSht.Dblsnrinfo.Contents = content
 			}
+		case "DBREDOCHECK":
+			content := strings.TrimSpace(tag.Text())
+			if content == "" {
+				instSht.Dbredocheck.Contents = "无记录"
+			} else {
+				instSht.Dbredocheck.Contents = content
+			}
 		case "DBREDOSWITCH":
 			content := strings.TrimSpace(tag.Text())
 			if content == "" {
 				instSht.Dbredoswitch.Contents = "无记录"
 			} else {
 				instSht.Dbredoswitch.Contents = content
+			}
+		case "RECOVERY_USAGE":
+			content := strings.TrimSpace(tag.Text())
+			fmt.Printf("DEBUG: 读取到 RECOVERY_USAGE 内容: %s\n", content)
+			if content == "" {
+				instSht.Recovery_usage.Contents = "无记录"
+			} else {
+				instSht.Recovery_usage.Contents = content
+			}
+		case "RECOVERY_DETAIL":
+			content := strings.TrimSpace(tag.Text())
+			fmt.Printf("DEBUG: 读取到 RECOVERY_DETAIL 内容: %s\n", content)
+			if content == "" {
+				instSht.Recovery_detail.Contents = "无记录"
+			} else {
+				instSht.Recovery_detail.Contents = content
 			}
 		case "DBERRLOG":
 			content := strings.TrimSpace(tag.Text())

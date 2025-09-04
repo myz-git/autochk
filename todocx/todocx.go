@@ -11,7 +11,7 @@ import (
 	"github.com/lukasjarosch/go-docx"
 )
 
-func Todocx(infstp *structs.InfoSht, osshtp *structs.OsSht, dbshtp *structs.DbSht, prefix string, colcnt int, sglf bool) {
+func Todocxfunc(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.InstShts, summaryEntries *structs.SummaryEntries, xlsnm string, colcnt int, sglf bool) {
 	startTime := time.Now()
 
 	// 设置模板文件路径为当前目录下的 chk198S.docx

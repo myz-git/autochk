@@ -4,7 +4,6 @@ import (
 	"autochk/structs"
 	"autochk/utils"
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -38,33 +37,59 @@ func Ana_RESOURCE(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntri
 		Title:    rule.Dbrule.Dbresource.Title,
 		Desc:     rule.Dbrule.Dbresource.Desc,
 	}
-Looop:
-	for index, value := range strings.Split(msgdata, "\n") {
-		if index < 2 {
+
+	// 检查是否为空
+	if strings.TrimSpace(msgdata) == "" {
+		// 数据采集异常，设置为G级告警
+		instshtp.Dbresource.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,资源使用情况数据采集异常", instshtp.Instname.Contents))
+		return
+	}
+
+	// 按行分割数据
+	lines := strings.Split(msgdata, "\n")
+	var hasWarning bool
+
+	// 从第3行开始检查数据（跳过标题行）
+	for i := 2; i < len(lines); i++ {
+		currentLine := strings.TrimSpace(lines[i])
+		if currentLine == "" {
 			continue
 		}
-		value = strings.TrimSpace(value)
-		rd := regexp.MustCompile(`\d$`)
-		if rd.MatchString(value) {
-			msgs := strings.Fields(value)
-			if len(msgs) < 5 {
-				continue
-			}
-			data1, err := strconv.Atoi(msgs[3])
-			if err != nil {
-				log.Fatal(err)
-			}
-			data2, err := strconv.Atoi(msgs[4])
-			if err != nil {
-				log.Fatal(err)
-			}
-			if data1 >= data2*rule.Dbrule.Dbresource.Res_use_ge1/100 && data2 != 0 {
-				instshtp.Dbresource.Alarm = "R"
-				entry.Severe = append(entry.Severe, fmt.Sprintf("%s实例,资源%s使用率当前%d接近限制值%d,建议优化资源使用或增加资源限制", instshtp.Instname.Contents, msgs[1], data1, data2))
-				break Looop
+
+		// 按空格分割行数据
+		fields := strings.Fields(currentLine)
+		if len(fields) >= 4 {
+			resourceName := fields[0]  // 第1列：资源名称
+			maxUtilStr := fields[2]    // 第3列：最大使用量
+			limitValueStr := fields[3] // 第4列：限制值
+
+			// 移除逗号并转换为数值
+			maxUtilStr = strings.Replace(maxUtilStr, ",", "", -1)
+			limitValueStr = strings.Replace(limitValueStr, ",", "", -1)
+
+			if maxUtil, err := strconv.Atoi(maxUtilStr); err == nil {
+				if limitValue, err := strconv.Atoi(limitValueStr); err == nil {
+					// 检查使用率是否超过90%
+					if limitValue > 0 {
+						// 使用最大使用量计算使用率
+						utilizationRate := float64(maxUtil) / float64(limitValue) * 100
+						if utilizationRate > 90 {
+							hasWarning = true
+							instshtp.Dbresource.Alarm = "B"
+							entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,%s资源近期使用%d接近最大限制%d,建议根据需要调整限制及核查资源使用增长原因", instshtp.Instname.Contents, resourceName, maxUtil, limitValue))
+						}
+					}
+				}
 			}
 		}
 	}
+
+	// 如果没有告警，清空告警级别
+	if !hasWarning {
+		instshtp.Dbresource.Alarm = ""
+	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
@@ -79,35 +104,73 @@ func Ana_LOADPROFILE(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEn
 		Title:    rule.Dbrule.Loadprofile.Title,
 		Desc:     rule.Dbrule.Loadprofile.Desc,
 	}
-Looop:
-	for index, value := range strings.Split(msgdata, "\n") {
-		if index < 2 {
-			continue
-		}
-		value = strings.TrimSpace(value)
-		rd := regexp.MustCompile(`\d$`)
-		if rd.MatchString(value) {
-			msgs := strings.Split(value, ":")
-			if len(msgs) < 2 {
+
+	// 检查是否为空
+	if strings.TrimSpace(msgdata) == "" {
+		// 数据采集异常，设置为G级告警
+		instshtp.Loadprofile.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,负载性能数据采集异常", instshtp.Instname.Contents))
+	} else {
+		// 有数据，进行详细分析
+		lines := strings.Split(msgdata, "\n")
+		var hasRedoWarning, hasLogonWarning bool
+
+		for _, line := range lines {
+			line = strings.TrimSpace(line)
+			if line == "" {
 				continue
 			}
-			submsg := strings.Fields(msgs[1])
-			str := strings.Replace(submsg[0], ",", "", -1)
-			data, err := strconv.ParseFloat(str, 64)
-			if err != nil {
-				log.Fatal(err)
+
+			// 匹配 Redo size (bytes) 行
+			if strings.Contains(strings.ToLower(line), "redo") && strings.Contains(strings.ToLower(line), "size") && strings.Contains(strings.ToLower(line), "bytes") {
+				// 先用冒号分割，取得数值部分
+				parts := strings.Split(line, ":")
+				if len(parts) >= 2 {
+					// 取得冒号后面的部分：     57,671,680.0         228,185.1
+					valuePart := strings.TrimSpace(parts[1])
+
+					// 再以空格分割，取第一个数字
+					valueFields := strings.Fields(valuePart)
+					if len(valueFields) >= 1 {
+						// 移除逗号并转换为浮点数
+						redoSizeStr := strings.Replace(valueFields[0], ",", "", -1)
+
+						if redoSize, err := strconv.ParseFloat(redoSizeStr, 64); err == nil {
+							// 检查是否超过阈值（假设Redosize单位是MB，需要转换为字节进行比较）
+							if redoSize >= rule.Dbrule.Loadprofile.Redosize*1024*1024 {
+								hasRedoWarning = true
+								instshtp.Loadprofile.Alarm = "B"
+								entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,数据库负载较大(每秒产生redo数据量%.2f bytes),建议与业务沟通降低压力提升数据库稳定性", instshtp.Instname.Contents, redoSize))
+							}
+						}
+					}
+				}
 			}
-			if msgs[0] == "Redo size (bytes)" && data >= rule.Dbrule.Loadprofile.Redosize_ge1*1024*1024 {
-				instshtp.Loadprofile.Alarm = "G"
-				entry.Minor = append(entry.Minor, fmt.Sprintf("Redo size %.2f bytes 超过 %f MB，建议优化", data, rule.Dbrule.Loadprofile.Redosize_ge1))
-			}
-			if msgs[0] == "Logons" && data >= rule.Dbrule.Loadprofile.Logons_ge1 {
-				instshtp.Loadprofile.Alarm = "B"
-				entry.Moderate = append(entry.Moderate, fmt.Sprintf("登录数 %.2f 超过 %f，建议优化连接管理", data, rule.Dbrule.Loadprofile.Logons_ge1))
-				break Looop
+
+			// 匹配 Logons 行
+			if strings.Contains(strings.ToLower(line), "logons:") {
+				// 提取第二列数字（Per Second）
+				fields := strings.Fields(line)
+				if len(fields) >= 2 {
+					// 移除逗号并转换为浮点数
+					logonStr := strings.Replace(fields[1], ",", "", -1)
+					if logon, err := strconv.ParseFloat(logonStr, 64); err == nil {
+						if logon >= rule.Dbrule.Loadprofile.Logon {
+							hasLogonWarning = true
+							instshtp.Loadprofile.Alarm = "B"
+							entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,数据库连接压力过大(监听,每秒%.2f次连接),建议尽量避免短连接减少连接并发或启用多个监听", instshtp.Instname.Contents, logon))
+						}
+					}
+				}
 			}
 		}
+
+		// 如果没有告警，清空告警级别
+		if !hasRedoWarning && !hasLogonWarning {
+			instshtp.Loadprofile.Alarm = ""
+		}
 	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
@@ -122,94 +185,101 @@ func Ana_INSTEFFICIENCY(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 		Title:    rule.Dbrule.Instefficiency.Title,
 		Desc:     rule.Dbrule.Instefficiency.Desc,
 	}
-	rd := regexp.MustCompile(`\d$`)
-	rd2 := regexp.MustCompile(`^[1-9]\d*\.\d+$|^0\.\d+$|^[1-9]\d*$|^0$`)
-Looop:
-	for index, value := range strings.Split(msgdata, "\n") {
-		if index < 2 {
+
+	// 检查是否为空
+	if strings.TrimSpace(msgdata) == "" {
+		// 数据采集异常，设置为G级告警
+		instshtp.Instefficiency.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,实例效率数据采集异常", instshtp.Instname.Contents))
+		return
+	}
+
+	// 按行分割数据
+	lines := strings.Split(msgdata, "\n")
+	var hasWarning bool
+
+	// 从第3行开始检查数据（跳过标题行）
+	for i := 2; i < len(lines); i++ {
+		line := strings.TrimSpace(lines[i])
+		if line == "" {
 			continue
 		}
-		value = strings.TrimSpace(value)
-		if rd.MatchString(value) {
-			msgs := strings.Fields(value)
-			if len(msgs) < 4 {
-				continue
+
+		// 检查 Buffer Hit 命中率
+		if strings.Contains(line, "Buffer") && strings.Contains(line, "Hit") {
+			// 提取百分比数值
+			parts := strings.Split(line, ":")
+			if len(parts) >= 2 {
+				valuePart := strings.TrimSpace(parts[1])
+				valueFields := strings.Fields(valuePart)
+				if len(valueFields) >= 1 {
+					// 移除百分号并转换为浮点数
+					bufferHitStr := strings.TrimSuffix(valueFields[0], "%")
+					if bufferHit, err := strconv.ParseFloat(bufferHitStr, 64); err == nil {
+						if bufferHit < rule.Dbrule.Instefficiency.Buffer_hit {
+							hasWarning = true
+							instshtp.Instefficiency.Alarm = "G"
+							entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,Buffer Hit命中率%.2f%%小于%.2f%%,建议优化缓存命中率", instshtp.Instname.Contents, bufferHit, rule.Dbrule.Instefficiency.Buffer_hit))
+						}
+					}
+				}
 			}
-			for k := 0; k < len(msgs)-3; k++ {
-				if msgs[k] == "Buffer" && msgs[k+1] == "Hit" && rd2.MatchString(msgs[k+3]) {
-					data, err := strconv.ParseFloat(msgs[k+3], 64)
-					if err != nil {
-						log.Fatal(err)
-					}
-					if data < rule.Dbrule.Instefficiency.Buffer_hit {
-						instshtp.Instefficiency.Alarm = "G"
-						entry.Minor = append(entry.Minor, fmt.Sprintf("Buffer Hit 命中率 %.2f%% 小于 %f%%，建议优化", data, rule.Dbrule.Instefficiency.Buffer_hit))
-						break Looop
-					}
-				}
-				if msgs[k] == "Library" && msgs[k+1] == "Hit" && rd2.MatchString(msgs[k+3]) {
-					data, err := strconv.ParseFloat(msgs[k+3], 64)
-					if err != nil {
-						log.Fatal(err)
-					}
-					if data < rule.Dbrule.Instefficiency.Library_hit {
-						instshtp.Instefficiency.Alarm = "G"
-						entry.Minor = append(entry.Minor, fmt.Sprintf("Library Hit 命中率 %.2f%% 小于 %f%%，建议优化", data, rule.Dbrule.Instefficiency.Library_hit))
-						break Looop
+		}
+
+		// 检查 Library Hit 命中率
+		if strings.Contains(line, "Library") && strings.Contains(line, "Hit") {
+			// 提取百分比数值
+			parts := strings.Split(line, ":")
+			if len(parts) >= 2 {
+				valuePart := strings.TrimSpace(parts[1])
+				valueFields := strings.Fields(valuePart)
+				if len(valueFields) >= 1 {
+					// 移除百分号并转换为浮点数
+					libraryHitStr := strings.TrimSuffix(valueFields[0], "%")
+					if libraryHit, err := strconv.ParseFloat(libraryHitStr, 64); err == nil {
+						if libraryHit < rule.Dbrule.Instefficiency.Library_hit {
+							hasWarning = true
+							instshtp.Instefficiency.Alarm = "G"
+							entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,Library Hit命中率%.2f%%小于%.2f%%,建议优化库缓存命中率", instshtp.Instname.Contents, libraryHit, rule.Dbrule.Instefficiency.Library_hit))
+						}
 					}
 				}
-				if msgs[k] == "Soft" && msgs[k+1] == "Parse" && rd2.MatchString(msgs[k+3]) {
-					data, err := strconv.ParseFloat(msgs[k+3], 64)
-					if err != nil {
-						log.Fatal(err)
-					}
-					if data < rule.Dbrule.Instefficiency.Soft_parse {
-						instshtp.Instefficiency.Alarm = "G"
-						entry.Minor = append(entry.Minor, fmt.Sprintf("Soft Parse 命中率 %.2f%% 小于 %f%%，建议优化", data, rule.Dbrule.Instefficiency.Soft_parse))
-						break Looop
+			}
+		}
+
+		// 检查 Soft Parse 命中率
+		if strings.Contains(line, "Soft") && strings.Contains(line, "Parse") {
+			// 提取百分比数值
+			parts := strings.Split(line, ":")
+			if len(parts) >= 2 {
+				valuePart := strings.TrimSpace(parts[1])
+				valueFields := strings.Fields(valuePart)
+				if len(valueFields) >= 1 {
+					// 移除百分号并转换为浮点数
+					softParseStr := strings.TrimSuffix(valueFields[0], "%")
+					if softParse, err := strconv.ParseFloat(softParseStr, 64); err == nil {
+						if softParse < rule.Dbrule.Instefficiency.Soft_parse {
+							hasWarning = true
+							instshtp.Instefficiency.Alarm = "G"
+							entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,Soft Parse命中率%.2f%%小于%.2f%%,建议优化软解析命中率", instshtp.Instname.Contents, softParse, rule.Dbrule.Instefficiency.Soft_parse))
+						}
 					}
 				}
 			}
 		}
 	}
+
+	// 如果没有告警，清空告警级别
+	if !hasWarning {
+		instshtp.Instefficiency.Alarm = ""
+	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
 }
 
 // Ana_DBtopevent 分析顶部等待事件
-func Ana_DBtopevent(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := instshtp.Topevent.Contents
-	entry := structs.SummaryEntry{
-		Category: "数据库性能",
-		Nm:       rule.Dbrule.Topevent.Nm,
-		Title:    rule.Dbrule.Topevent.Title,
-		Desc:     rule.Dbrule.Topevent.Desc,
-	}
-	rd := regexp.MustCompile(`\d+$`)
-Looop:
-	for index, value := range strings.Split(msgdata, "\n") {
-		if index < 2 {
-			continue
-		}
-		if rd.MatchString(value) {
-			msgs := strings.Fields(value)
-			if len(msgs) < 3 {
-				continue
-			}
-			executions, _ := strconv.Atoi(msgs[1])
-			avgTime, _ := strconv.ParseFloat(msgs[2], 64)
-			if executions > 1000 && avgTime > 2 {
-				instshtp.Topevent.Alarm = "B"
-				entry.Moderate = append(entry.Moderate, fmt.Sprintf("SQL 执行次数 %d 次，平均耗时 %.2f 秒，建议优化", executions, avgTime))
-				break Looop
-			}
-		}
-	}
-	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
-		summaryEntries.Entries = append(summaryEntries.Entries, entry)
-	}
-}
 
 // Ana_DBtopSQL 分析顶部 SQL 性能
 func Ana_DBtopSQL(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
@@ -220,26 +290,83 @@ func Ana_DBtopSQL(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntri
 		Title:    rule.Dbrule.Topsql_by_ela.Title,
 		Desc:     rule.Dbrule.Topsql_by_ela.Desc,
 	}
-	rd := regexp.MustCompile(`\d+$`)
-Looop:
-	for index, value := range strings.Split(msgdata, "\n") {
-		if index < 2 {
+
+	// 检查是否为空
+	if strings.TrimSpace(msgdata) == "" {
+		// 数据采集异常，设置为G级告警
+		instshtp.Topsql_by_ela.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,Top SQL数据采集异常", instshtp.Instname.Contents))
+		return
+	}
+
+	// 按行分割数据
+	lines := strings.Split(msgdata, "\n")
+	var hasWarning bool
+
+	// 从第3行开始检查数据（跳过标题行）
+	for i := 2; i < len(lines); i++ {
+		currentLine := strings.TrimSpace(lines[i])
+		if currentLine == "" {
 			continue
 		}
-		if rd.MatchString(value) {
-			msgs := strings.Fields(value)
-			if len(msgs) < 3 {
-				continue
-			}
-			executions, _ := strconv.Atoi(msgs[2])
-			avgElaTime, _ := strconv.ParseFloat(msgs[4], 64)
-			if executions > 1000 && avgElaTime > 2 {
-				instshtp.Topsql_by_ela.Alarm = "G"
-				entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,SQL执行%d 次，平均耗时 %.2f 秒，建议优化", instshtp.Instname.Contents, executions, avgElaTime))
-				break Looop
+
+		// 使用正则表达式匹配独立的数字（前后有空格或行首行尾）
+		re := regexp.MustCompile(`(?:^|\s)(\d+(?:\.\d+)?)(?:\s|$)`)
+		matches := re.FindAllStringSubmatch(currentLine, -1)
+
+		if len(matches) >= 4 {
+			// 获取SQL_ID（第一个非数字字段）
+			fields := strings.Fields(currentLine)
+			sqlID := fields[0]
+
+			// 从匹配的数字中取第2个（执行次数）和第3个（平均耗时）
+			executionsStr := matches[1][1] // 第2个数字：10004
+			avgTimeStr := matches[2][1]    // 第3个数字：82.64
+
+			if executions, err := strconv.Atoi(executionsStr); err == nil {
+				if avgTime, err := strconv.ParseFloat(avgTimeStr, 64); err == nil {
+					// 检查条件：执行次数 > 10000 且 平均耗时 > 10
+					if executions > 10000 && avgTime > 10 {
+						hasWarning = true
+						instshtp.Topsql_by_ela.Alarm = "G"
+						entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,SQL_ID:%s,执行次数%d次,平均耗时%.2f秒,建议对高频执行的SQL语句进行优化提升单次执行效率", instshtp.Instname.Contents, sqlID, executions, avgTime))
+						break // 找到第一个符合条件的SQL就停止
+					}
+				}
 			}
 		}
 	}
+
+	// 如果没有告警，清空告警级别
+	if !hasWarning {
+		instshtp.Topsql_by_ela.Alarm = ""
+	}
+
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
+}
+
+// Ana_CursorShareMem 分析游标共享内存使用情况
+func Ana_CursorShareMem(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
+	msgdata := instshtp.Cursor_share_mem.Contents
+	entry := structs.SummaryEntry{
+		Category: "数据库性能",
+		Nm:       rule.Dbrule.Cursor_share_mem.Nm,
+		Title:    rule.Dbrule.Cursor_share_mem.Title,
+		Desc:     rule.Dbrule.Cursor_share_mem.Desc,
+	}
+
+	// 检查是否为空或包含"无记录"
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		// 正常情况，无告警
+		instshtp.Cursor_share_mem.Alarm = ""
+	} else {
+		// 有记录说明存在游标共享内存使用过大的情况，设置为G级告警
+		instshtp.Cursor_share_mem.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,游标共享内存使用过大,建议对游标共享内存使用>300M的SQL语句优化", instshtp.Instname.Contents))
+	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}

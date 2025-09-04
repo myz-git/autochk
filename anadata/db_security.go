@@ -14,32 +14,25 @@ import (
 
 // Ana_DBExpirUser 分析用户密码过期情况
 func Ana_DBExpirUser(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
-	msgdata := dbshtp.Db_expir_user.Contents
+	msgdata := strings.TrimSpace(dbshtp.Db_expir_user.Contents)
 	entry := structs.SummaryEntry{
 		Category: "数据库安全检查",
 		Nm:       rule.Dbrule.Db_expir_user.Nm,
 		Title:    rule.Dbrule.Db_expir_user.Title,
 		Desc:     rule.Dbrule.Db_expir_user.Desc,
 	}
-	rd := regexp.MustCompile(`\d+$`)
-Looop:
-	for index, value := range strings.Split(msgdata, "\n") {
-		if index < 1 {
-			continue
-		}
-		if rd.MatchString(value) {
-			msgs := strings.Fields(value)
-			if len(msgs) < 3 {
-				continue
-			}
-			days, _ := strconv.Atoi(msgs[len(msgs)-1])
-			if days < 30 {
-				dbshtp.Db_expir_user.Alarm = "B"
-				entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,用户%s口令将在%d天后过期,建议提前处理密码更新", dbshtp.Dbname.Contents, msgs[0], days))
-				break Looop
-			}
-		}
+
+	// 没有记录则表示正常（无问题，不追加告警）
+	if msgdata == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		dbshtp.Db_expir_user.Alarm = ""
+		return
 	}
+
+	// 只要有记录，即存在口令将过期的用户，判定为普通告警(B)
+	dbshtp.Db_expir_user.Alarm = "B"
+	entry.Moderate = append(entry.Moderate,
+		fmt.Sprintf("%s数据库,存在口令即将过期的用户,建议提前处理密码更新", dbshtp.Dbname.Contents))
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
@@ -60,9 +53,9 @@ func Ana_DB_PASSWORD_VERIF(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryE
 		// 正常情况，无告警
 		dbshtp.Db_password_verif.Alarm = ""
 	} else {
-		// 有记录说明存在未设置密码复杂性校验，设置为B级告警
-		dbshtp.Db_password_verif.Alarm = "B"
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,存在未设置密码复杂性校验的用户,建议启用密码复杂性验证以增强安全性", dbshtp.Dbname.Contents))
+		// 有记录说明存在未设置密码复杂性校验，设置为G级告警
+		dbshtp.Db_password_verif.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,存在未设置密码复杂性校验的PROFILE,建议启用密码复杂性验证以增强安全性", dbshtp.Dbname.Contents))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -70,29 +63,26 @@ func Ana_DB_PASSWORD_VERIF(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryE
 	}
 }
 
-// Ana_DBPRODUCTUSERFAILEDLOGIN 分析用户登录失败限制
-func Ana_DBPRODUCTUSERFAILEDLOGIN(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
-	msgdata := dbshtp.Dbproductuserfailedlogin.Contents
+// Ana_Userfailedlogin 密码错误用户锁定检查
+func Ana_Userfailedlogin(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Userfailedlogin.Contents
 	entry := structs.SummaryEntry{
 		Category: "数据库安全",
-		Nm:       rule.Dbrule.Dbproductuserfailedlogin.Nm,
-		Title:    rule.Dbrule.Dbproductuserfailedlogin.Title,
-		Desc:     rule.Dbrule.Dbproductuserfailedlogin.Desc,
+		Nm:       rule.Dbrule.Userfailedlogin.Nm,
+		Title:    rule.Dbrule.Userfailedlogin.Title,
+		Desc:     rule.Dbrule.Userfailedlogin.Desc,
 	}
-	rd := regexp.MustCompile(` \d+$`)
-Looop:
-	for _, value := range strings.Split(msgdata, "\n") {
-		value = strings.TrimSpace(value)
-		if value == rule.Dbrule.Dbproductuserfailedlogin.Result {
-			break Looop
-		}
-		if rd.MatchString(value) {
-			dbshtp.Dbproductuserfailedlogin.Alarm = "B"
-			msgs := strings.Fields(value)
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,用户%s错误登录次数限制当前为%s,建议调整为有限值以增强安全性", dbshtp.Dbname.Contents, msgs[0], msgs[len(msgs)-1]))
-			break Looop
-		}
+
+	// 检查是否为空或包含"无记录"
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		// 正常情况，无告警
+		dbshtp.Userfailedlogin.Alarm = ""
+	} else {
+		// 有记录说明存在登录失败锁定限制，设置为G级告警
+		dbshtp.Userfailedlogin.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,存在用户登录失败锁定限制，建议对于业务用户不做登录失败锁定限制", dbshtp.Dbname.Contents))
 	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
@@ -108,15 +98,47 @@ func Ana_DBDBAPRIV(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *
 		Title:    rule.Dbrule.Dbdbapriv.Title,
 		Desc:     rule.Dbrule.Dbdbapriv.Desc,
 	}
-	dbshtp.Dbdbapriv.Alarm = "G"
-	if value == "" || strings.Contains(value, rule.Dbrule.Dbdbapriv.ResultG) {
+
+	// 检查是否为空或包含"无记录"
+	if value == "" || strings.Contains(value, "无记录") || strings.Contains(strings.ToLower(value), "no rows selected") {
+		// 正常情况，无告警
 		dbshtp.Dbdbapriv.Alarm = ""
 	} else {
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,存在具有DBA权限的业务账户,建议收回不必要的DBA权限以增强安全性", dbshtp.Dbname.Contents))
+		// 有记录，检查记录数量
+		lines := strings.Split(value, "\n")
+		recordCount := 0
+
+		// 从第3行开始统计（跳过标题行和分隔线）
+		for i := 2; i < len(lines); i++ {
+			line := strings.TrimSpace(lines[i])
+			if line != "" {
+				recordCount++
+			}
+		}
+
+		// 如果存在两条（包含）以上记录则为G级告警
+		if recordCount >= 2 {
+			dbshtp.Dbdbapriv.Alarm = "G"
+			entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,存在%d个DBA权限账户，建议只保留一个DBA账户，收回其他DBA用户权限以增强安全性", dbshtp.Dbname.Contents, recordCount))
+		} else {
+			// 只有一条记录，正常情况
+			dbshtp.Dbdbapriv.Alarm = ""
+		}
 	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
+}
+
+// isDataLine 判断是否为数据行
+func isDataLine(line string) bool {
+	// 数据行通常包含日期格式（如 30-NOV-24）或数字
+	// 使用正则表达式匹配日期格式或纯数字行
+	datePattern := regexp.MustCompile(`\d{1,2}-[A-Z]{3}-\d{2,4}`)
+	numberPattern := regexp.MustCompile(`^\d+$`)
+
+	return datePattern.MatchString(line) || numberPattern.MatchString(line)
 }
 
 // Ana_DBSYSDBA 分析 SYSDBA 权限用户
@@ -129,12 +151,17 @@ func Ana_DBSYSDBA(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *s
 		Title:    rule.Dbrule.Dbsysdba.Title,
 		Desc:     rule.Dbrule.Dbsysdba.Desc,
 	}
-	dbshtp.Dbsysdba.Alarm = "B"
-	if value == "" || strings.Contains(value, rule.Dbrule.Dbsysdba.ResultB) {
+
+	// 检查是否为空或包含"无记录"
+	if value == "" || strings.Contains(value, "无记录") || strings.Contains(strings.ToLower(value), "no rows selected") {
+		// 正常情况，无告警
 		dbshtp.Dbsysdba.Alarm = ""
 	} else {
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,存在非必要SYSDBA权限用户,建议检查并收回不必要的SYSDBA权限", dbshtp.Dbname.Contents))
+		// 有记录说明存在非必要SYSDBA权限用户，设置为B级告警
+		dbshtp.Dbsysdba.Alarm = "Minor"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,存在非必要SYSDBA权限用户,建议收回不必要的SYSDBA权限", dbshtp.Dbname.Contents))
 	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
@@ -143,56 +170,77 @@ func Ana_DBSYSDBA(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *s
 // Ana_DBAUDITSEGMENT 分析审计段
 func Ana_DBAUDITSEGMENT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Dbauditsegment.Contents
-	value := strings.TrimSpace(msgdata)
 	entry := structs.SummaryEntry{
 		Category: "数据库安全",
 		Nm:       rule.Dbrule.Dbauditsegment.Nm,
 		Title:    rule.Dbrule.Dbauditsegment.Title,
 		Desc:     rule.Dbrule.Dbauditsegment.Desc,
 	}
-	if value != "" { //判断是否空, 为空正常, 非空则标记后退出
+
+	// 检查是否为空或包含"无记录"
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		// 正常情况，无告警
+		dbshtp.Dbauditsegment.Alarm = ""
+	} else {
+		// 有记录说明审计数据占用过多存储空间，设置为G级告警
 		dbshtp.Dbauditsegment.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,审计段存在异常信息,建议检查审计配置", dbshtp.Dbname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,审计数据占用过多存储空间，建议在满足审计监管要求下定期清理或归档数据", dbshtp.Dbname.Contents))
 	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
-
 }
 
 // Ana_DBAUDITCONT 分析审计内容
 func Ana_DBAUDITCONT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
-	msgdata := strings.TrimSpace(dbshtp.Dbauditcont.Contents) //去除头尾空格及空行
-	rd := regexp.MustCompile(` \d+$`)                         //匹配以空格+数字结尾
+	msgdata := strings.TrimSpace(dbshtp.Dbauditcont.Contents)
 	entry := structs.SummaryEntry{
 		Category: "数据库安全",
 		Nm:       rule.Dbrule.Dbauditcont.Nm,
 		Title:    rule.Dbrule.Dbauditcont.Title,
 		Desc:     rule.Dbrule.Dbauditcont.Desc,
 	}
-Looop:
-	for index, row := range strings.Split(msgdata, "\n") { //按行分割
-		if index < 2 { //跳过前面2行 (如 column head  和 ----)
-			continue
-		}
-		if rd.MatchString(row) { //匹配以"空格+数字"结尾的行
-			msgs := strings.Fields(row) // 以空格分隔的字符串转为 字符串数组
-			// msgs := strings.Split(value, ":") //将每一行按":"分割成两个数组
-			log.Println("msgs[0]--------->", msgs[0])
-			// if len(msgs) < 8 { //不足8列 跳过当前行, 不做分析
-			if len(msgs) > 1 { //这里正常只应有一列, 超过1列则数据有问题,跳过当前行,不做分析
-				continue
-			}
-			data, _ := strconv.Atoi(msgs[0]) //定位需要匹配的列是当前行拆分后转换的字符串数组第几个元素 ,这里取第一列
-			if data >= rule.Dbrule.Dbauditcont.ResultG {
-				dbshtp.Dbauditcont.Alarm = "G"
-				log.Printf("!!Matched!! value [%v]", data)
-				entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,审计内容数量当前%d超过阈值%d,建议检查审计配置并清理历史审计数据", dbshtp.Dbname.Contents, data, rule.Dbrule.Dbauditcont.ResultG))
-				break Looop
-			}
 
-		}
+	// 检查是否为空或包含"无记录"
+	if msgdata == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		// 正常情况，无告警
+		dbshtp.Dbauditcont.Alarm = ""
+		return
 	}
+
+	// 检查数据行数是否足够
+	lines := strings.Split(msgdata, "\n")
+	if len(lines) < 3 {
+		// 数据行数不足，不做告警处理
+		dbshtp.Dbauditcont.Alarm = ""
+		return
+	}
+
+	// 获取第3行（索引2）
+	thirdLine := strings.TrimSpace(lines[2])
+	if thirdLine == "" {
+		// 第3行为空，不做告警处理
+		dbshtp.Dbauditcont.Alarm = ""
+		return
+	}
+
+	// 尝试将第3行转换为数字
+	if data, err := strconv.Atoi(thirdLine); err == nil {
+		// 如果该值 > rule.Dbrule.Dbauditcont.Result，则判断为G
+		if data > rule.Dbrule.Dbauditcont.Result {
+			dbshtp.Dbauditcont.Alarm = "G"
+			entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,审计内容数量当前%d超过阈值%d,建议检查审计配置并清理历史审计数据", dbshtp.Dbname.Contents, data, rule.Dbrule.Dbauditcont.Result))
+		} else {
+			// 数值在阈值范围内，正常情况
+			dbshtp.Dbauditcont.Alarm = ""
+		}
+	} else {
+		// 第3行不是数字，不做告警处理
+		dbshtp.Dbauditcont.Alarm = ""
+		return
+	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
@@ -200,78 +248,113 @@ Looop:
 
 // Ana_DBNosysInSystem 分析系统用户
 func Ana_DBNosysInSystem(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Db_Nosys_In_System.Contents
+	entry := structs.SummaryEntry{
+		Category: "数据库安全",
+		Nm:       rule.Dbrule.Db_Nosys_In_System.Nm,
+		Title:    rule.Dbrule.Db_Nosys_In_System.Title,
+		Desc:     rule.Dbrule.Db_Nosys_In_System.Desc,
+	}
+
+	// 检查是否为空或包含"无记录"
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		// 正常情况，无告警
+		dbshtp.Db_Nosys_In_System.Alarm = ""
+	} else {
+		// 有记录说明存在业务账户对象存储在SYSTEM、SYSAUX表空间，设置为G级告警
+		dbshtp.Db_Nosys_In_System.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,存在业务账户对象存储在SYSTEM、SYSAUX表空间，建议将业务对象迁移到专用表空间", dbshtp.Dbname.Contents))
+	}
+
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
 }
 
 // Ana_DBVIRSCHECK 分析病毒检查
 func Ana_DBVIRSCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
-	//log.Println("rule.Dbrule.Dbvirscheck->", rule.Dbrule.Dbvirscheck)
 	msgdata := dbshtp.Dbvirscheck.Contents
-	rd := regexp.MustCompile(` \d+$`) //匹配以空格+数字结尾
 	entry := structs.SummaryEntry{
 		Category: "数据库安全",
 		Nm:       rule.Dbrule.Dbvirscheck.Nm,
 		Title:    rule.Dbrule.Dbvirscheck.Title,
 		Desc:     rule.Dbrule.Dbvirscheck.Desc,
 	}
-Looop:
-	//按行分割
-	for _, value := range strings.Split(msgdata, "\n") {
-		value = strings.TrimSpace(value)              //去除头尾空格及空行
-		if value == rule.Dbrule.Dbvirscheck.ResultR { //匹配到"no rows selected" ,或者没有记录则结束循环
-			break Looop
-		}
-		if rd.MatchString(value) { //匹配以"空格+数字"结尾的行
-			dbshtp.Dbvirscheck.Alarm = "R"
-			///log.Printf("!!Matched!! value [%v]", value)
-			break Looop
-		}
+
+	// 检查是否为空或包含"无记录"
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		// 正常情况，无告警
+		dbshtp.Dbvirscheck.Alarm = ""
+	} else {
+		// 有记录说明存在病毒植入风险，设置为R级告警
+		dbshtp.Dbvirscheck.Alarm = "R"
+		entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,存在病毒植入风险，建议立即做安全检查", dbshtp.Dbname.Contents))
 	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
-	// log.Printf("Dbvirscheck.Alarm->%s", dbshtp.Dbvirscheck.Alarm)
 }
 
-// Ana_DBRMANCHECK 分析 RMAN 备份配置
+// Ana_DBRMANCHECK 分析 RMAN 备份检查
 func Ana_DBRMANCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
-	// log.Println("rule.Dbrule.Dbrmancheck->", rule.Dbrule.Dbrmancheck)
 	msgdata := dbshtp.Dbrmancheck.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库安全",
+		Category: "数据库备份",
 		Nm:       rule.Dbrule.Dbrmancheck.Nm,
 		Title:    rule.Dbrule.Dbrmancheck.Title,
 		Desc:     rule.Dbrule.Dbrmancheck.Desc,
 	}
-	if strings.TrimSpace(msgdata) == "" { //判断是否空, 为空则标记后退出
-		dbshtp.Dbrmancheck.Alarm = "G"
-		return
-	}
-Looop:
-	//按行分割
-	for _, row := range strings.Split(msgdata, "\n") {
-		row = strings.TrimSpace(row) //去除头尾空格及空行
 
-		re1 := regexp.MustCompile(rule.Dbrule.Dbrmancheck.ResultR) //逐行查找是否有"ERROR"关键词
-		if re1.MatchString(strings.ToUpper(row)) {
+	// 检查是否为空或包含"无记录"
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		// 无记录说明数据库没有RMAN备份，设置为B级告警
+		dbshtp.Dbrmancheck.Alarm = "R"
+		entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,未发现RMAN备份记录,建议核查是否有其他备份", dbshtp.Dbname.Contents))
+	} else {
+		// 有记录，逐行检查关键词
+		lines := strings.Split(msgdata, "\n")
+		hasError := false
+		hasWarning := false
+
+		for _, line := range lines {
+			line = strings.TrimSpace(line)
+			if line == "" {
+				continue
+			}
+
+			// 检查是否包含ERROR关键词
+			if strings.Contains(strings.ToUpper(line), "ERROR") {
+				hasError = true
+			}
+
+			// 检查是否包含WARNINGS关键词
+			if strings.Contains(strings.ToUpper(line), "WARNINGS") {
+				hasWarning = true
+			}
+		}
+
+		// 根据检查结果设置告警级别
+		if hasError {
 			dbshtp.Dbrmancheck.Alarm = "R"
-			break Looop
-		}
-		re2 := regexp.MustCompile(rule.Dbrule.Dbrmancheck.ResultB) //逐行查找是否有"WARNINGS"关键词
-		if re2.MatchString(row) {
+			entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,近7天RMAN备份检查发现错误,建议立即核查备份情况", dbshtp.Dbname.Contents))
+		} else if hasWarning {
 			dbshtp.Dbrmancheck.Alarm = "B"
-			break Looop
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,近7天RMAN备份检查发现警告,建议立即核查备份情况", dbshtp.Dbname.Contents))
+		} else {
+			// 无错误无警告，正常情况
+			dbshtp.Dbrmancheck.Alarm = ""
 		}
-
 	}
+
+	// 如果有告警信息，添加到汇总中
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
-	// log.Printf("Dbrmancheck.Alarm->%s", dbshtp.Dbrmancheck.Alarm)
 }
 
 // Ana_DBSCNHEALTHCHECK 分析 SCN 健康状态
 func Ana_DBSCNHEALTHCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
-	//log.Println("rule.Dbrule.Dbscnhealthcheck->", rule.Dbrule.Dbscnhealthcheck)
 	msgdata := dbshtp.Dbscnhealthcheck.Contents
 	entry := structs.SummaryEntry{
 		Category: "数据库安全",
@@ -279,38 +362,63 @@ func Ana_DBSCNHEALTHCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEn
 		Title:    rule.Dbrule.Dbscnhealthcheck.Title,
 		Desc:     rule.Dbrule.Dbscnhealthcheck.Desc,
 	}
-Looop:
-	//按行分割
-	for index, value := range strings.Split(msgdata, "\n") {
-		if index < 2 { //跳过前面2行
+
+	// 检查是否为空或包含"无记录"
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		// 正常情况，无告警
+		dbshtp.Dbscnhealthcheck.Alarm = ""
+		return
+	}
+
+	// 按行分割进行详细检查
+	lines := strings.Split(msgdata, "\n")
+	scnHealthStatus := ""
+
+	// 从第3行开始检查（跳过标题行和分隔线）
+	for i := 2; i < len(lines); i++ {
+		line := strings.TrimSpace(lines[i])
+		if line == "" {
 			continue
 		}
-		value = strings.TrimSpace(value) //去除头尾空格及空行
-		// rda := regexp.MustCompile(`^Result: A`) // 判断是否检测到结果A
-		rdv19 := regexp.MustCompile(`^Version:\s+19\.`)          // 判断是否检测版本
-		rdv1124 := regexp.MustCompile(`^Version:\s+11\.2\.0\.4`) // 判断是否检测版本
-		rdb := regexp.MustCompile(`^Result: B`)                  // 判断是否检测到结果B
-		rdc := regexp.MustCompile(`^Result: C`)                  // 判断是否检测到结果C
 
-		if rdv19.MatchString(value) || rdv1124.MatchString(value) {
-			dbvstr := strings.Split(value, ":")
-			log.Println("dbv->", (strings.TrimSpace(dbvstr[1])))
-			break Looop
+		// 判断是否检测到版本信息
+		rdv19 := regexp.MustCompile(`^Version:\s+19\.`)          // 判断是否检测版本19
+		rdv1124 := regexp.MustCompile(`^Version:\s+11\.2\.0\.4`) // 判断是否检测版本11.2.0.4
+
+		// 判断是否检测到结果
+		rdb := regexp.MustCompile(`^Result: B`) // 判断是否检测到结果B
+		rdc := regexp.MustCompile(`^Result: C`) // 判断是否检测到结果C
+
+		if rdv19.MatchString(line) || rdv1124.MatchString(line) {
+			// 检测到版本信息，记录版本
+			dbvstr := strings.Split(line, ":")
+			if len(dbvstr) > 1 {
+				log.Printf("检测到数据库版本: %s", strings.TrimSpace(dbvstr[1]))
+			}
+			continue
 		}
 
-		if rdc.MatchString(value) { //匹配以"空格+数字"结尾的行
+		if rdc.MatchString(line) { // 匹配到结果C
+			scnHealthStatus = "C"
 			dbshtp.Dbscnhealthcheck.Alarm = "R"
-			///log.Printf("!!Matched!! value [%v]", value)
-			break Looop
+			entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,SCN健康检查结果为C，SCN增长异常，建议尽快核查数据库SCN增长情况", dbshtp.Dbname.Contents))
+			break
 		}
-		if rdb.MatchString(value) { //匹配以"空格+数字"结尾的行
+
+		if rdb.MatchString(line) { // 匹配到结果B
+			scnHealthStatus = "B"
 			dbshtp.Dbscnhealthcheck.Alarm = "B"
-			///log.Printf("!!Matched!! value [%v]", value)
-			break Looop
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,SCN健康检查结果为B，SCN增长较快，建议关注SCN增长情况", dbshtp.Dbname.Contents))
+			break
 		}
 	}
+
+	// 如果没有检测到B或C结果，说明SCN健康状态良好
+	if scnHealthStatus == "" {
+		dbshtp.Dbscnhealthcheck.Alarm = ""
+	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
-	// log.Printf("Dbscnhealthcheck.Alarm->%s", dbshtp.Dbscnhealthcheck.Alarm)
 }

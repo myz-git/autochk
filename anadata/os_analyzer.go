@@ -727,7 +727,7 @@ func Ana_Firewall(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *
 	if strings.Contains(msgdata, "is running") {
 		// 防火墙正在运行，普通告警
 		osshtp.Firewall.Alarm = "B"
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s主机,防火墙服务当前正在运行,建议禁用防火墙服务以提升数据库性能", osshtp.Hostname.Contents))
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s主机,防火墙服务当前正在运行,建议禁用防火墙服务以提升数据库整体稳定性", osshtp.Hostname.Contents))
 	} else if strings.Contains(msgdata, "not running") {
 		// 防火墙未运行，正常状态
 		osshtp.Firewall.Alarm = ""
@@ -852,36 +852,6 @@ func Ana_Lo_mtu(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *st
 	if osshtp.Lo_mtu.Alarm == "" && !strings.Contains(msgdata, "mtu ") {
 		osshtp.Lo_mtu.Alarm = "B"
 		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s主机,未找到LO网卡MTU配置信息,建议检查并设置合适的MTU值", osshtp.Hostname.Contents))
-	}
-
-	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
-		summaryEntries.Entries = append(summaryEntries.Entries, entry)
-	}
-}
-
-// Ana_Machine_platform 分析主机平台配置
-func Ana_Machine_platform(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
-	msgdata := osshtp.Machine_platform.Contents
-	entry := structs.SummaryEntry{
-		Category: "主机系统",
-		Nm:       "MACHINE_PLATFORM",
-		Title:    "主机平台类型检查",
-		Desc:     "检查主机是物理机还是虚拟服务器",
-	}
-
-	// 该指标仅做记录，不做告警判断
-	if strings.Contains(msgdata, "Virtual Machine") {
-		// 虚拟服务器，记录信息但不告警
-		osshtp.Machine_platform.Alarm = ""
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s主机,当前运行在虚拟服务器环境中", osshtp.Hostname.Contents))
-	} else if strings.Contains(msgdata, "Physical Server") {
-		// 物理服务器，记录信息但不告警
-		osshtp.Machine_platform.Alarm = ""
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s主机,当前运行在物理服务器环境中", osshtp.Hostname.Contents))
-	} else {
-		// 其他情况，记录信息但不告警
-		osshtp.Machine_platform.Alarm = ""
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s主机,主机平台类型未知: %s", osshtp.Hostname.Contents, strings.TrimSpace(msgdata)))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {

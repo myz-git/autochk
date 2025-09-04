@@ -37,54 +37,51 @@ type OsShts struct {
 
 // DbSht 用于存储TAG1中NODE1的DATABASE相关信息
 type DbSht struct {
-	NodeID                   string // 节点ID，只有一个"NODE1"
-	Dbname                   Tpstrc
-	Dbmaa                    Tpstrc
-	Dbver                    Tpstrc
-	Dbstatus                 Tpstrc
-	Dblang                   Tpstrc
-	Logmode                  Tpstrc
-	Flashback                Tpstrc
-	Dbcursize                Tpstrc
-	Dbf_size                 Tpstrc
-	Dbf_cnt                  Tpstrc
-	Dbf_stat                 Tpstrc
-	Tmpfile_size             Tpstrc
-	Dbtblcount               Tpstrc
-	Dbrole                   Tpstrc
-	Dbtbsusage               Tpstrc
-	Dbredocheck              Tpstrc
-	Dbcontrolfile            Tpstrc
-	User_info                Tpstrc
-	User_size                Tpstrc
-	Tab_info                 Tpstrc
-	Tab_parallel             Tpstrc
-	Inx_parallel             Tpstrc
-	Invalid_obj              Tpstrc
-	Invalid_inx              Tpstrc
-	Dbsequence               Tpstrc
-	Db_seq_usage             Tpstrc
-	Dboption                 Tpstrc
-	Dbfeatures               Tpstrc
-	Db_expir_user            Tpstrc
-	Db_password_verif        Tpstrc
-	Dbdbapriv                Tpstrc
-	Dbsysdba                 Tpstrc
-	Dbauditsegment           Tpstrc
-	Dbauditcont              Tpstrc
-	Db_nosys_in_system       Tpstrc
-	Dbrecoverydest           Tpstrc
-	Dbflashrecoveryuseage    Tpstrc
-	Dbproductuserfailedlogin Tpstrc
-	Dbvirscheck              Tpstrc
-	Dbscnhealthcheck         Tpstrc
-	Dbrmancheck              Tpstrc
-	Crs_stat                 Tpstrc
-	Crs_stat2                Tpstrc
-	Ocr_info                 Tpstrc
-	Ocr_bak_check            Tpstrc
-	Asm_usage                Tpstrc
-	Asm_offset               Tpstrc
+	NodeID             string // 节点ID，只有一个"NODE1"
+	Dbname             Tpstrc
+	Dbmaa              Tpstrc
+	Dbver              Tpstrc
+	Dbstatus           Tpstrc
+	Dblang             Tpstrc
+	Logmode            Tpstrc
+	Flashback          Tpstrc
+	Dbcursize          Tpstrc
+	Dbf_size           Tpstrc
+	Dbf_cnt            Tpstrc
+	Dbf_stat           Tpstrc
+	Tmpfile_size       Tpstrc
+	Dbtblcount         Tpstrc
+	Dbrole             Tpstrc
+	Dbtbsusage         Tpstrc
+	Dbcontrolfile      Tpstrc
+	User_info          Tpstrc
+	User_size          Tpstrc
+	Tab_info           Tpstrc
+	Tab_parallel       Tpstrc
+	Inx_parallel       Tpstrc
+	Invalid_obj        Tpstrc
+	Invalid_inx        Tpstrc
+	Dbsequence         Tpstrc
+	Db_seq_usage       Tpstrc
+	Dboption           Tpstrc
+	Dbfeatures         Tpstrc
+	Db_expir_user      Tpstrc
+	Db_password_verif  Tpstrc
+	Dbdbapriv          Tpstrc
+	Dbsysdba           Tpstrc
+	Dbauditsegment     Tpstrc
+	Dbauditcont        Tpstrc
+	Db_Nosys_In_System Tpstrc
+	Userfailedlogin    Tpstrc
+	Dbvirscheck        Tpstrc
+	Dbscnhealthcheck   Tpstrc
+	Dbrmancheck        Tpstrc
+	Crs_stat           Tpstrc
+	Crs_stat2          Tpstrc
+	Ocr_info           Tpstrc
+	Ocr_bak_check      Tpstrc
+	Asm_usage          Tpstrc
+	Asm_offset         Tpstrc
 }
 
 // InstShts 用于存储TAG2中每个NODE的实例、日志、监听等相关数据
@@ -102,7 +99,10 @@ type InstShts struct {
 	Dblsnrinfo        Tpstrc
 	Dbparameter       Tpstrc
 	Db_parameter_file Tpstrc
+	Dbredocheck       Tpstrc
 	Dbredoswitch      Tpstrc
+	Recovery_usage    Tpstrc
+	Recovery_detail   Tpstrc
 	Dberrlog          Tpstrc
 	Dbdglagcheck      Tpstrc
 	Dbdgerrcheck      Tpstrc

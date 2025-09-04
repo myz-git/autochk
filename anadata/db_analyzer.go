@@ -23,15 +23,45 @@ func Ana_DB_status(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *
 	// 按行分割数据
 	lines := strings.Split(msgdata, "\n")
 	if len(lines) < 3 {
-		// 数据行数不足，无法解析
+		// 数据行数不足，数据采集异常
+		dbshtp.Dbstatus.Alarm = "B"
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,数据库状态检查数据采集异常", dbshtp.Dbname.Contents))
 		return
 	}
 
 	// 检查第三行是否包含期望的状态
 	dataLine := strings.TrimSpace(lines[2])
+	if dataLine == "" {
+		// 第三行为空，数据采集异常
+		dbshtp.Dbstatus.Alarm = "B"
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,数据库状态检查数据采集异常", dbshtp.Dbname.Contents))
+		return
+	}
+
 	if !strings.Contains(dataLine, rule.Dbrule.Dbstatus.Status) {
 		dbshtp.Dbstatus.Alarm = "R"
-		entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库当前状态异常，建议尽快确认数据库是否正常", dbshtp.Dbname.Contents))
+		entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,当前状态异常，建议尽快确认数据库是否正常", dbshtp.Dbname.Contents))
+	}
+
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
+}
+
+// Ana_DB_logmode 分析是否数据库开启归档
+func Ana_DB_logmode(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Logmode.Contents
+	entry := structs.SummaryEntry{
+		Category: "数据库分析",
+		Nm:       rule.Dbrule.Logmode.Nm,
+		Title:    rule.Dbrule.Logmode.Title,
+		Desc:     rule.Dbrule.Logmode.Desc,
+	}
+
+	// 检查数据库是否开启归档
+	if strings.TrimSpace(msgdata) != rule.Dbrule.Logmode.Status {
+		dbshtp.Logmode.Alarm = "B"
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,当前日志模式为%s，建议开启归档模式(ARCHIVELOG)以确保数据安全", dbshtp.Dbname.Contents, strings.TrimSpace(msgdata)))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -52,13 +82,18 @@ func Ana_DBF_CNT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *st
 	// 按行分割数据
 	lines := strings.Split(msgdata, "\n")
 	if len(lines) < 3 {
-		// 数据行数不足，无法解析
+		// 数据行数不足，数据采集异常
+		dbshtp.Dbf_cnt.Alarm = "B"
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,数据文件数量检查数据采集异常", dbshtp.Dbname.Contents))
 		return
 	}
 
 	// 检查第三行数据
 	dataLine := strings.TrimSpace(lines[2])
 	if dataLine == "" {
+		// 第三行为空，数据采集异常
+		dbshtp.Dbf_cnt.Alarm = "B"
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,数据文件数量检查数据采集异常", dbshtp.Dbname.Contents))
 		return
 	}
 
@@ -79,7 +114,7 @@ func Ana_DBF_CNT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *st
 	// 计算使用率
 	usagePercent := float64(fileCnt) / float64(dbFilesLimit) * 100
 
-	// 当使用率超过80%时设置为严重告警
+	// 当文件数使用率超过90%时设置为严重告警
 	if usagePercent >= 90 {
 		dbshtp.Dbf_cnt.Alarm = "R"
 		entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库数据文件数量%d接近限制%d，使用率%.1f%%，建议及时调整增加db_files参数值", dbshtp.Dbname.Contents, fileCnt, dbFilesLimit, usagePercent))
@@ -145,7 +180,7 @@ Looop:
 			}
 			maxsize, _ := strconv.ParseFloat(msgs[1], 64)
 			usedsize, _ := strconv.ParseFloat(msgs[3], 64)
-			percent, _ := strconv.ParseFloat(msgs[4], 64)
+			percent, _ := strconv.ParseFloat(msgs[5], 64)
 			switch {
 			case percent >= rule.Dbrule.Dbtbsusage.Tbsutil_ge2 && (maxsize-usedsize) < rule.Dbrule.Dbtbsusage.Freesize_le2:
 				dbshtp.Dbtbsusage.Alarm = "R"

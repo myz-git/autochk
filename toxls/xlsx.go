@@ -330,217 +330,195 @@ func PutSht_DB(f *excelize.File, dbshtp *structs.DbSht, osshts *[]structs.OsShts
 		{"Dbtblcount", 14},
 		{"Dbrole", 15},
 		{"Dbtbsusage", 16},
-		{"Dbredocheck", 17},
-		{"Dbcontrolfile", 18},
-		{"User_info", 19},
-		{"User_size", 20},
-		{"Tab_info", 21},
-		{"Tab_parallel", 22},
-		{"Inx_parallel", 23},
-		{"Invalid_obj", 24},
-		{"Invalid_inx", 25},
-		{"Dbsequence", 26},
-		{"Db_seq_usage", 27},
-		{"Dboption", 28},
-		{"Dbfeatures", 29},
-		{"Db_expir_user", 30},
-		{"Db_password_verif", 31},
-		{"Dbdbapriv", 32},
-		{"Dbsysdba", 33},
-		{"Dbauditsegment", 34},
-		{"Dbauditcont", 35},
-		{"Db_nosys_in_system", 36},
-		{"Dbrecoverydest", 37},
-		{"Dbflashrecoveryuseage", 38},
-		{"Dbproductuserfailedlogin", 39},
-		{"Dbvirscheck", 40},
-		{"Dbscnhealthcheck", 41},
-		{"Dbrmancheck", 42},
-		{"Crs_stat", 43},
-		{"Crs_stat2", 44},
-		{"Ocr_info", 45},
-		{"Ocr_bak_check", 46},
-		{"Asm_usage", 47},
-		{"Asm_offset", 48},
+		{"Dbcontrolfile", 17},
+		{"User_info", 18},
+		{"User_size", 19},
+		{"Tab_info", 20},
+		{"Tab_parallel", 21},
+		{"Inx_parallel", 22},
+		{"Invalid_obj", 23},
+		{"Invalid_inx", 24},
+		{"Dbsequence", 25},
+		{"Db_seq_usage", 26},
+		{"Dboption", 27},
+		{"Dbfeatures", 28},
+		{"Db_expir_user", 29},
+		{"Db_password_verif", 30},
+		{"Dbdbapriv", 31},
+		{"Dbsysdba", 32},
+		{"Dbauditsegment", 33},
+		{"Dbauditcont", 34},
+		{"Db_Nosys_In_System", 35},
+		{"Userfailedlogin", 36},
+		{"Dbvirscheck", 37},
+		{"Dbscnhealthcheck", 38},
+		{"Dbrmancheck", 39},
+		{"Crs_stat", 40},
+		{"Crs_stat2", 41},
+		{"Ocr_info", 42},
+		{"Ocr_bak_check", 43},
+		{"Asm_usage", 44},
+		{"Asm_offset", 45},
 	}
 
+	// 只在第一列（C列）填充DB信息，因为DB信息只有一个NODE1
+	col := "C"
+
 	// 填充每个字段
-	// 遍历所有OS节点（用于确定列数）
-	for nodeIndex, ossht := range *osshts {
-		// 确定列位置：C列对应NODE1，D列对应NODE2，以此类推
-		col := fmt.Sprintf("%c", 'C'+nodeIndex)
+	for _, field := range dbFields {
+		cell := fmt.Sprintf("%s%d", col, field.row)
+		var content string
+		var alarm string
 
-		// 填充每个字段
-		for _, field := range dbFields {
-			cell := fmt.Sprintf("%s%d", col, field.row)
-			var content string
-			var alarm string
+		// 根据字段名获取对应的内容和告警级别
+		switch field.fieldName {
+		case "NodeID":
+			content = "NODE1" // DB信息固定为NODE1
+			alarm = ""
+		case "Dbname":
+			content = dbshtp.Dbname.Contents
+			alarm = dbshtp.Dbname.Alarm
+		case "Dbmaa":
+			content = dbshtp.Dbmaa.Contents
+			alarm = dbshtp.Dbmaa.Alarm
+		case "Dbver":
+			content = dbshtp.Dbver.Contents
+			alarm = dbshtp.Dbver.Alarm
+		case "Dbstatus":
+			content = dbshtp.Dbstatus.Contents
+			alarm = dbshtp.Dbstatus.Alarm
+		case "Dblang":
+			content = dbshtp.Dblang.Contents
+			alarm = dbshtp.Dblang.Alarm
+		case "Logmode":
+			content = dbshtp.Logmode.Contents
+			alarm = dbshtp.Logmode.Alarm
+		case "Flashback":
+			content = dbshtp.Flashback.Contents
+			alarm = dbshtp.Flashback.Alarm
+		case "Dbcursize":
+			content = dbshtp.Dbcursize.Contents
+			alarm = dbshtp.Dbcursize.Alarm
+		case "Dbf_size":
+			content = dbshtp.Dbf_size.Contents
+			alarm = dbshtp.Dbf_size.Alarm
+		case "Dbf_cnt":
+			content = dbshtp.Dbf_cnt.Contents
+			alarm = dbshtp.Dbf_cnt.Alarm
+		case "Dbf_stat":
+			content = dbshtp.Dbf_stat.Contents
+			alarm = dbshtp.Dbf_stat.Alarm
+		case "Tmpfile_size":
+			content = dbshtp.Tmpfile_size.Contents
+			alarm = dbshtp.Tmpfile_size.Alarm
+		case "Dbtblcount":
+			content = dbshtp.Dbtblcount.Contents
+			alarm = dbshtp.Dbtblcount.Alarm
+		case "Dbrole":
+			content = dbshtp.Dbrole.Contents
+			alarm = dbshtp.Dbrole.Alarm
+		case "Dbtbsusage":
+			content = dbshtp.Dbtbsusage.Contents
+			alarm = dbshtp.Dbtbsusage.Alarm
+		case "Dbcontrolfile":
+			content = dbshtp.Dbcontrolfile.Contents
+			alarm = dbshtp.Dbcontrolfile.Alarm
+		case "User_info":
+			content = dbshtp.User_info.Contents
+			alarm = dbshtp.User_info.Alarm
+		case "User_size":
+			content = dbshtp.User_size.Contents
+			alarm = dbshtp.User_size.Alarm
+		case "Tab_info":
+			content = dbshtp.Tab_info.Contents
+			alarm = dbshtp.Tab_info.Alarm
+		case "Tab_parallel":
+			content = dbshtp.Tab_parallel.Contents
+			alarm = dbshtp.Tab_parallel.Alarm
+		case "Inx_parallel":
+			content = dbshtp.Inx_parallel.Contents
+			alarm = dbshtp.Inx_parallel.Alarm
+		case "Invalid_obj":
+			content = dbshtp.Invalid_obj.Contents
+			alarm = dbshtp.Invalid_obj.Alarm
+		case "Invalid_inx":
+			content = dbshtp.Invalid_inx.Contents
+			alarm = dbshtp.Invalid_inx.Alarm
+		case "Dbsequence":
+			content = dbshtp.Dbsequence.Contents
+			alarm = dbshtp.Dbsequence.Alarm
+		case "Db_seq_usage":
+			content = dbshtp.Db_seq_usage.Contents
+			alarm = dbshtp.Db_seq_usage.Alarm
+		case "Dboption":
+			content = dbshtp.Dboption.Contents
+			alarm = dbshtp.Dboption.Alarm
+		case "Dbfeatures":
+			content = dbshtp.Dbfeatures.Contents
+			alarm = dbshtp.Dbfeatures.Alarm
+		case "Db_expir_user":
+			content = dbshtp.Db_expir_user.Contents
+			alarm = dbshtp.Db_expir_user.Alarm
+		case "Db_password_verif":
+			content = dbshtp.Db_password_verif.Contents
+			alarm = dbshtp.Db_password_verif.Alarm
+		case "Dbdbapriv":
+			content = dbshtp.Dbdbapriv.Contents
+			alarm = dbshtp.Dbdbapriv.Alarm
+		case "Dbsysdba":
+			content = dbshtp.Dbsysdba.Contents
+			alarm = dbshtp.Dbsysdba.Alarm
+		case "Dbauditsegment":
+			content = dbshtp.Dbauditsegment.Contents
+			alarm = dbshtp.Dbauditsegment.Alarm
+		case "Dbauditcont":
+			content = dbshtp.Dbauditcont.Contents
+			alarm = dbshtp.Dbauditcont.Alarm
+		case "Db_Nosys_In_System":
+			content = dbshtp.Db_Nosys_In_System.Contents
+			alarm = dbshtp.Db_Nosys_In_System.Alarm
+		case "Userfailedlogin":
+			content = dbshtp.Userfailedlogin.Contents
+			alarm = dbshtp.Userfailedlogin.Alarm
+		case "Dbvirscheck":
+			content = dbshtp.Dbvirscheck.Contents
+			alarm = dbshtp.Dbvirscheck.Alarm
+		case "Dbscnhealthcheck":
+			content = dbshtp.Dbscnhealthcheck.Contents
+			alarm = dbshtp.Dbscnhealthcheck.Alarm
+		case "Dbrmancheck":
+			content = dbshtp.Dbrmancheck.Contents
+			alarm = dbshtp.Dbrmancheck.Alarm
+		case "Crs_stat":
+			content = dbshtp.Crs_stat.Contents
+			alarm = dbshtp.Crs_stat.Alarm
+		case "Crs_stat2":
+			content = dbshtp.Crs_stat2.Contents
+			alarm = dbshtp.Crs_stat2.Alarm
+		case "Ocr_info":
+			content = dbshtp.Ocr_info.Contents
+			alarm = dbshtp.Ocr_info.Alarm
+		case "Ocr_bak_check":
+			content = dbshtp.Ocr_bak_check.Contents
+			alarm = dbshtp.Ocr_bak_check.Alarm
+		case "Asm_usage":
+			content = dbshtp.Asm_usage.Contents
+			alarm = dbshtp.Asm_usage.Alarm
+		case "Asm_offset":
+			content = dbshtp.Asm_offset.Contents
+			alarm = dbshtp.Asm_offset.Alarm
+		}
 
-			// 根据字段名获取对应的内容和告警级别
-			switch field.fieldName {
-			case "NodeID":
-				content = ossht.NodeID
-				alarm = ""
-			case "Dbname":
-				content = dbshtp.Dbname.Contents
-				alarm = dbshtp.Dbname.Alarm
-			case "Dbmaa":
-				content = dbshtp.Dbmaa.Contents
-				alarm = dbshtp.Dbmaa.Alarm
-			case "Dbver":
-				content = dbshtp.Dbver.Contents
-				alarm = dbshtp.Dbver.Alarm
-			case "Dbstatus":
-				content = dbshtp.Dbstatus.Contents
-				alarm = dbshtp.Dbstatus.Alarm
-			case "Dblang":
-				content = dbshtp.Dblang.Contents
-				alarm = dbshtp.Dblang.Alarm
-			case "Logmode":
-				content = dbshtp.Logmode.Contents
-				alarm = dbshtp.Logmode.Alarm
-			case "Flashback":
-				content = dbshtp.Flashback.Contents
-				alarm = dbshtp.Flashback.Alarm
-			case "Dbcursize":
-				content = dbshtp.Dbcursize.Contents
-				alarm = dbshtp.Dbcursize.Alarm
-			case "Dbf_size":
-				content = dbshtp.Dbf_size.Contents
-				alarm = dbshtp.Dbf_size.Alarm
-			case "Dbf_cnt":
-				content = dbshtp.Dbf_cnt.Contents
-				alarm = dbshtp.Dbf_cnt.Alarm
-			case "Dbf_stat":
-				content = dbshtp.Dbf_stat.Contents
-				alarm = dbshtp.Dbf_stat.Alarm
-			case "Tmpfile_size":
-				content = dbshtp.Tmpfile_size.Contents
-				alarm = dbshtp.Tmpfile_size.Alarm
-			case "Dbtblcount":
-				content = dbshtp.Dbtblcount.Contents
-				alarm = dbshtp.Dbtblcount.Alarm
-			case "Dbrole":
-				content = dbshtp.Dbrole.Contents
-				alarm = dbshtp.Dbrole.Alarm
-			case "Dbtbsusage":
-				content = dbshtp.Dbtbsusage.Contents
-				alarm = dbshtp.Dbtbsusage.Alarm
-			case "Dbredocheck":
-				content = dbshtp.Dbredocheck.Contents
-				alarm = dbshtp.Dbredocheck.Alarm
-			case "Dbcontrolfile":
-				content = dbshtp.Dbcontrolfile.Contents
-				alarm = dbshtp.Dbcontrolfile.Alarm
-			case "User_info":
-				content = dbshtp.User_info.Contents
-				alarm = dbshtp.User_info.Alarm
-			case "User_size":
-				content = dbshtp.User_size.Contents
-				alarm = dbshtp.User_size.Alarm
-			case "Tab_info":
-				content = dbshtp.Tab_info.Contents
-				alarm = dbshtp.Tab_info.Alarm
-			case "Tab_parallel":
-				content = dbshtp.Tab_parallel.Contents
-				alarm = dbshtp.Tab_parallel.Alarm
-			case "Inx_parallel":
-				content = dbshtp.Inx_parallel.Contents
-				alarm = dbshtp.Inx_parallel.Alarm
-			case "Invalid_obj":
-				content = dbshtp.Invalid_obj.Contents
-				alarm = dbshtp.Invalid_obj.Alarm
-			case "Invalid_inx":
-				content = dbshtp.Invalid_inx.Contents
-				alarm = dbshtp.Invalid_inx.Alarm
-			case "Dbsequence":
-				content = dbshtp.Dbsequence.Contents
-				alarm = dbshtp.Dbsequence.Alarm
-			case "Db_seq_usage":
-				content = dbshtp.Db_seq_usage.Contents
-				alarm = dbshtp.Db_seq_usage.Alarm
-			case "Dboption":
-				content = dbshtp.Dboption.Contents
-				alarm = dbshtp.Dboption.Alarm
-			case "Dbfeatures":
-				content = dbshtp.Dbfeatures.Contents
-				alarm = dbshtp.Dbfeatures.Alarm
-			case "Db_expir_user":
-				content = dbshtp.Db_expir_user.Contents
-				alarm = dbshtp.Db_expir_user.Alarm
-			case "Db_password_verif":
-				content = dbshtp.Db_password_verif.Contents
-				alarm = dbshtp.Db_password_verif.Alarm
-			case "Dbdbapriv":
-				content = dbshtp.Dbdbapriv.Contents
-				alarm = dbshtp.Dbdbapriv.Alarm
-			case "Dbsysdba":
-				content = dbshtp.Dbsysdba.Contents
-				alarm = dbshtp.Dbsysdba.Alarm
-			case "Dbauditsegment":
-				content = dbshtp.Dbauditsegment.Contents
-				alarm = dbshtp.Dbauditsegment.Alarm
-			case "Dbauditcont":
-				content = dbshtp.Dbauditcont.Contents
-				alarm = dbshtp.Dbauditcont.Alarm
-			case "Db_nosys_in_system":
-				content = dbshtp.Db_nosys_in_system.Contents
-				alarm = dbshtp.Db_nosys_in_system.Alarm
-			case "Dbrecoverydest":
-				content = dbshtp.Dbrecoverydest.Contents
-				alarm = dbshtp.Dbrecoverydest.Alarm
-			case "Dbflashrecoveryuseage":
-				content = dbshtp.Dbflashrecoveryuseage.Contents
-				alarm = dbshtp.Dbflashrecoveryuseage.Alarm
-			case "Dbproductuserfailedlogin":
-				content = dbshtp.Dbproductuserfailedlogin.Contents
-				alarm = dbshtp.Dbproductuserfailedlogin.Alarm
-			case "Dbvirscheck":
-				content = dbshtp.Dbvirscheck.Contents
-				alarm = dbshtp.Dbvirscheck.Alarm
-			case "Dbscnhealthcheck":
-				content = dbshtp.Dbscnhealthcheck.Contents
-				alarm = dbshtp.Dbscnhealthcheck.Alarm
-			case "Dbrmancheck":
-				content = dbshtp.Dbrmancheck.Contents
-				alarm = dbshtp.Dbrmancheck.Alarm
-			case "Crs_stat":
-				content = dbshtp.Crs_stat.Contents
-				alarm = dbshtp.Crs_stat.Alarm
-				fmt.Printf("DEBUG: Crs_stat content: %s, alarm: %s\n", content, alarm)
-			case "Crs_stat2":
-				content = dbshtp.Crs_stat2.Contents
-				alarm = dbshtp.Crs_stat2.Alarm
-				fmt.Printf("DEBUG: Crs_stat2 content: %s, alarm: %s\n", content, alarm)
-			case "Ocr_info":
-				content = dbshtp.Ocr_info.Contents
-				alarm = dbshtp.Ocr_info.Alarm
-				fmt.Printf("DEBUG: Ocr_info content: %s, alarm: %s\n", content, alarm)
-			case "Ocr_bak_check":
-				content = dbshtp.Ocr_bak_check.Contents
-				alarm = dbshtp.Ocr_bak_check.Alarm
-				fmt.Printf("DEBUG: Ocr_bak_check content: %s, alarm: %s\n", content, alarm)
-			case "Asm_usage":
-				content = dbshtp.Asm_usage.Contents
-				alarm = dbshtp.Asm_usage.Alarm
-				fmt.Printf("DEBUG: Asm_usage content: %s, alarm: %s\n", content, alarm)
-			case "Asm_offset":
-				content = dbshtp.Asm_offset.Contents
-				alarm = dbshtp.Asm_offset.Alarm
-				fmt.Printf("DEBUG: Asm_offset content: %s, alarm: %s\n", content, alarm)
-			}
+		// 设置单元格内容
+		f.SetCellStr(shnm, cell, content)
 
-			// 设置单元格内容
-			f.SetCellStr(shnm, cell, content)
-
-			// 设置单元格样式（根据告警级别）
-			if alarm == "R" {
-				f.SetCellStyle(shnm, cell, cell, styleR)
-			} else if alarm == "B" {
-				f.SetCellStyle(shnm, cell, cell, styleB)
-			} else if alarm == "G" {
-				f.SetCellStyle(shnm, cell, cell, styleG)
-			}
+		// 设置单元格样式（根据告警级别）
+		if alarm == "R" {
+			f.SetCellStyle(shnm, cell, cell, styleR)
+		} else if alarm == "B" {
+			f.SetCellStyle(shnm, cell, cell, styleB)
+		} else if alarm == "G" {
+			f.SetCellStyle(shnm, cell, cell, styleG)
 		}
 	}
 }
@@ -643,7 +621,7 @@ func PutSht_Issuelist(f *excelize.File, summaryEntries *structs.SummaryEntries) 
 	}
 
 	// 填充 Issue List（从 B27 开始）
-	rowIndex := 27
+	rowIndex := 29
 	itemIndex := 1
 
 	// 按照预定义的category顺序填充
@@ -732,10 +710,13 @@ func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts) {
 		{"Dblsnrinfo", 11},
 		{"Dbparameter", 12},
 		{"Db_parameter_file", 13},
-		{"Dbredoswitch", 14},
-		{"Dberrlog", 15},
-		{"Dbdglagcheck", 16},
-		{"Dbdgerrcheck", 17},
+		{"Dbredocheck", 14},
+		{"Dbredoswitch", 15},
+		{"Recovery_usage", 16},
+		{"Recovery_detail", 17},
+		{"Dberrlog", 18},
+		{"Dbdglagcheck", 19},
+		{"Dbdgerrcheck", 20},
 	}
 
 	// 遍历所有实例节点
@@ -790,9 +771,18 @@ func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts) {
 			case "Db_parameter_file":
 				content = instsht.Db_parameter_file.Contents
 				alarm = instsht.Db_parameter_file.Alarm
+			case "Dbredocheck":
+				content = instsht.Dbredocheck.Contents
+				alarm = instsht.Dbredocheck.Alarm
 			case "Dbredoswitch":
 				content = instsht.Dbredoswitch.Contents
 				alarm = instsht.Dbredoswitch.Alarm
+			case "Recovery_usage":
+				content = instsht.Recovery_usage.Contents
+				alarm = instsht.Recovery_usage.Alarm
+			case "Recovery_detail":
+				content = instsht.Recovery_detail.Contents
+				alarm = instsht.Recovery_detail.Alarm
 			case "Dberrlog":
 				content = instsht.Dberrlog.Contents
 				alarm = instsht.Dberrlog.Alarm
@@ -830,26 +820,26 @@ func NewXlsx(xlsnm string) {
 	// 初始化 HealthReport Sheet
 	shnm := "HealthReport"
 	f.SetCellStr(shnm, "C1", "健康检查报告")
-	f.SetCellStr(shnm, "G1", "Health Report")
-	f.SetCellStr(shnm, "B13", "Issue summary")
-	f.SetCellStr(shnm, "C14", "重要")
-	f.SetCellStr(shnm, "D14", "普通")
-	f.SetCellStr(shnm, "E14", "轻微")
-	f.SetCellStr(shnm, "B15", "主机系统分析")
-	f.SetCellStr(shnm, "B16", "数据库实例分析")
-	f.SetCellStr(shnm, "B17", "数据库集群检查")
-	f.SetCellStr(shnm, "B18", "DataGuard检查")
-	f.SetCellStr(shnm, "B19", "数据库备份检查")
-	f.SetCellStr(shnm, "B20", "数据库安全检查")
-	f.SetCellStr(shnm, "B21", "软件使用分析")
-	f.SetCellStr(shnm, "B22", "其他项检查")
-	f.SetCellStr(shnm, "B23", "Issue list")
-	f.SetCellStr(shnm, "B24", "No.")
-	f.SetCellStr(shnm, "C24", "问题类别")
-	f.SetCellStr(shnm, "D24", "检查项")
-	f.SetCellStr(shnm, "E24", "结果")
-	f.SetCellStr(shnm, "F24", "影响")
-	f.SetCellStr(shnm, "G24", "问题描述及建议")
+	// f.SetCellStr(shnm, "G1", "Health Report")
+	// f.SetCellStr(shnm, "B13", "Issue summary")
+	// f.SetCellStr(shnm, "C14", "重要")
+	// f.SetCellStr(shnm, "D14", "普通")
+	// f.SetCellStr(shnm, "E14", "轻微")
+	// f.SetCellStr(shnm, "B15", "主机系统分析")
+	// f.SetCellStr(shnm, "B16", "数据库实例分析")
+	// f.SetCellStr(shnm, "B17", "数据库集群检查")
+	// f.SetCellStr(shnm, "B18", "DataGuard检查")
+	// f.SetCellStr(shnm, "B19", "数据库备份检查")
+	// f.SetCellStr(shnm, "B20", "数据库安全检查")
+	// f.SetCellStr(shnm, "B21", "软件使用分析")
+	// f.SetCellStr(shnm, "B22", "其他项检查")
+	// f.SetCellStr(shnm, "B23", "Issue list")
+	// f.SetCellStr(shnm, "B24", "No.")
+	// f.SetCellStr(shnm, "C24", "问题类别")
+	// f.SetCellStr(shnm, "D24", "检查项")
+	// f.SetCellStr(shnm, "E24", "结果")
+	// f.SetCellStr(shnm, "F24", "影响")
+	// f.SetCellStr(shnm, "G24", "问题描述及建议")
 
 	// 初始化 OS Sheet
 	shnm = "OS"

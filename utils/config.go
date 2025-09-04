@@ -44,6 +44,7 @@ type Osrule struct {
 type Dbrule struct {
 	// 数据库分析
 	Dbstatus      Dbstatus      `yaml:"dbstatus"`
+	Logmode       Logmode       `yaml:"logmode"`
 	Db_lang       Db_lang       `yaml:"db_lang"`
 	Dbtbsusage    Dbtbsusage    `yaml:"dbtbsusage"`
 	Dbcursize     Dbcursize     `yaml:"dbcursize"`
@@ -78,19 +79,21 @@ type Dbrule struct {
 	Db_parameter_file Db_parameter_file `yaml:"db_parameter_file"`
 	Db_shp_size       Db_shp_size       `yaml:"db_shp_size"`
 	Db_shp_pct        Db_shp_pct        `yaml:"db_shp_pct"`
+	Recovery_usage    Recovery_usage    `yaml:"recovery_usage"`
+	Recovery_detail   Recovery_detail   `yaml:"recovery_detail"`
 
 	// 数据库安全检查
-	Db_expir_user            Db_expir_user            `yaml:"db_expir_user"`
-	Db_password_verif        Db_password_verif        `yaml:"db_password_verif"`
-	Dbproductuserfailedlogin Dbproductuserfailedlogin `yaml:"dbproductuserfailedlogin"`
-	Dbdbapriv                Dbdbapriv                `yaml:"dbdbapriv"`
-	Dbsysdba                 Dbsysdba                 `yaml:"dbsysdba"`
-	Dbauditsegment           Dbauditsegment           `yaml:"dbauditsegment"`
-	Dbauditcont              Dbauditcont              `yaml:"dbauditcont"`
-	Db_Nosys_In_System       Db_Nosys_In_System       `yaml:"db_nosys_in_system"`
-	Dbvirscheck              Dbvirscheck              `yaml:"dbvirscheck"`
-	Dbrmancheck              Dbrmancheck              `yaml:"dbrmancheck"`
-	Dbscnhealthcheck         Dbscnhealthcheck         `yaml:"dbscnhealthcheck"`
+	Db_expir_user      Db_expir_user      `yaml:"db_expir_user"`
+	Db_password_verif  Db_password_verif  `yaml:"db_password_verif"`
+	Userfailedlogin    Userfailedlogin    `yaml:"userfailedlogin"`
+	Dbdbapriv          Dbdbapriv          `yaml:"dbdbapriv"`
+	Dbsysdba           Dbsysdba           `yaml:"dbsysdba"`
+	Dbauditsegment     Dbauditsegment     `yaml:"dbauditsegment"`
+	Dbauditcont        Dbauditcont        `yaml:"dbauditcont"`
+	Db_Nosys_In_System Db_Nosys_In_System `yaml:"db_nosys_in_system"`
+	Dbvirscheck        Dbvirscheck        `yaml:"dbvirscheck"`
+	Dbrmancheck        Dbrmancheck        `yaml:"dbrmancheck"`
+	Dbscnhealthcheck   Dbscnhealthcheck   `yaml:"dbscnhealthcheck"`
 
 	//软件使用
 	Dboption   Dboption   `yaml:"dboption"`
@@ -99,12 +102,10 @@ type Dbrule struct {
 	Dbpatch    Dbpatch    `yaml:"dbpatch"`
 
 	// 日志、集群、DataGuard、备份及杂项分析
-	Dberrlog              Dberrlog              `yaml:"dberrlog"`
-	Dbdglagcheck          Dbdglagcheck          `yaml:"dbdglagcheck"`
-	Dbdgerrcheck          Dbdgerrcheck          `yaml:"dbdgerrcheck"`
-	Dblsnrinfo            Dblsnrinfo            `yaml:"dblsnrinfo"`
-	Dbrecoverydest        Dbrecoverydest        `yaml:"dbrecoverydest"`
-	Dbflashrecoveryuseage Dbflashrecoveryuseage `yaml:"dbflashrecoveryuseage"`
+	Dberrlog     Dberrlog     `yaml:"dberrlog"`
+	Dbdglagcheck Dbdglagcheck `yaml:"dbdglagcheck"`
+	Dbdgerrcheck Dbdgerrcheck `yaml:"dbdgerrcheck"`
+	Dblsnrinfo   Dblsnrinfo   `yaml:"dblsnrinfo"`
 
 	// 集群检查
 	Crs_stat      Crs_stat      `yaml:"crs_stat"`
@@ -285,6 +286,13 @@ type Dbstatus struct {
 	Status string `yaml:"status"`
 }
 
+type Logmode struct {
+	Nm     string `yaml:"nm"`
+	Title  string `yaml:"title"`
+	Desc   string `yaml:"desc"`
+	Status string `yaml:"status"`
+}
+
 type Dbtbsusage struct {
 	Nm           string  `yaml:"nm"`
 	Title        string  `yaml:"title"`
@@ -380,10 +388,10 @@ type Invalid_inx struct {
 }
 
 type Dbredocheck struct {
-	Nm           string  `yaml:"nm"`
-	Title        string  `yaml:"title"`
-	Desc         string  `yaml:"desc"`
-	Rdf_size_lt1 float64 `yaml:"rdf_size_lt1"`
+	Nm       string  `yaml:"nm"`
+	Title    string  `yaml:"title"`
+	Desc     string  `yaml:"desc"`
+	Rdf_size float64 `yaml:"rdf_size"`
 	// Rdf_status   string `yaml:"rdf_status"`
 	Rdf_status_list []string `yaml:"rdf_status_list,flow"` //返回字符串数组, flow为固定词
 }
@@ -403,11 +411,11 @@ type Dbresource struct {
 }
 
 type Loadprofile struct {
-	Nm           string  `yaml:"nm"`
-	Title        string  `yaml:"title"`
-	Desc         string  `yaml:"desc"`
-	Redosize_ge1 float64 `yaml:"redosize_ge1"`
-	Logons_ge1   float64 `yaml:"logons_ge1"`
+	Nm       string  `yaml:"nm"`
+	Title    string  `yaml:"title"`
+	Desc     string  `yaml:"desc"`
+	Redosize float64 `yaml:"redosize"`
+	Logon    float64 `yaml:"logon"`
 }
 
 type Instefficiency struct {
@@ -460,19 +468,18 @@ type Db_seq_usage struct {
 	Result string `yaml:"result"`
 }
 
-type Dbrecoverydest struct {
+type Recovery_usage struct {
+	Nm     string `yaml:"nm"`
+	Title  string `yaml:"title"`
+	Desc   string `yaml:"desc"`
+	Result []int  `yaml:"result"`
+}
+
+type Recovery_detail struct {
 	Nm     string `yaml:"nm"`
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
-}
-
-type Dbflashrecoveryuseage struct {
-	Nm      string  `yaml:"nm"`
-	Title   string  `yaml:"title"`
-	Desc    string  `yaml:"desc"`
-	Useage1 float64 `yaml:"useage1"`
-	Useage2 float64 `yaml:"useage2"`
 }
 
 type Dberrlog struct {
@@ -496,7 +503,7 @@ type Db_password_verif struct {
 	Result string `yaml:"result"`
 }
 
-type Dbproductuserfailedlogin struct {
+type Userfailedlogin struct {
 	Nm     string `yaml:"nm"`
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
@@ -532,24 +539,24 @@ type Dbdgerrcheck struct {
 }
 
 type Dbauditsegment struct {
-	Nm      string `yaml:"nm"`
-	Title   string `yaml:"title"`
-	Desc    string `yaml:"desc"`
-	ResultG string `yaml:"resultG"`
+	Nm     string `yaml:"nm"`
+	Title  string `yaml:"title"`
+	Desc   string `yaml:"desc"`
+	Result int    `yaml:"result"`
 }
 
 type Dbauditcont struct {
-	Nm      string `yaml:"nm"`
-	Title   string `yaml:"title"`
-	Desc    string `yaml:"desc"`
-	ResultG int    `yaml:"resultG"`
+	Nm     string `yaml:"nm"`
+	Title  string `yaml:"title"`
+	Desc   string `yaml:"desc"`
+	Result int    `yaml:"result"`
 }
 
 type Db_Nosys_In_System struct {
-	Nm      string `yaml:"nm"`
-	Title   string `yaml:"title"`
-	Desc    string `yaml:"desc"`
-	ResultB string `yaml:"resultB"`
+	Nm     string `yaml:"nm"`
+	Title  string `yaml:"title"`
+	Desc   string `yaml:"desc"`
+	Result string `yaml:"result"`
 }
 
 type Dbvirscheck struct {
