@@ -76,7 +76,7 @@ func Ana_Ocr_info(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *s
 	if strings.TrimSpace(msgdata) == "" {
 		// 数据采集异常，设置为B级告警
 		dbshtp.Ocr_info.Alarm = "B"
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,OCR信息数据采集异常", dbshtp.Dbname.Contents))
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,OCR信息数据采集异常", dbshtp.Dbname.Contents))
 	} else {
 		// 有数据，进行详细分析
 		lines := strings.Split(msgdata, "\n")
@@ -117,15 +117,15 @@ func Ana_Ocr_info(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *s
 		case 1:
 			// 1个ONLINE，存在单点故障风险
 			dbshtp.Ocr_info.Alarm = "R"
-			entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,OCR存在单点故障风险,建议配置NORMAL或以上冗余模式", dbshtp.Dbname.Contents))
+			entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,OCR存在单点故障风险,\n建议: 对于OCR磁盘组配置NORMAL或以上冗余模式", dbshtp.Dbname.Contents))
 		case 2, 4:
 			// 2个或4个ONLINE，疑似有冗余OCR盘掉线
 			dbshtp.Ocr_info.Alarm = "R"
-			entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,疑似有冗余OCR盘掉线,建议尽快核查所有OCR盘是否状态正常", dbshtp.Dbname.Contents))
+			entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,疑似有冗余OCR盘掉线,\n建议: 尽快核查所有OCR盘是否状态正常", dbshtp.Dbname.Contents))
 		default:
 			// 其他情况，设置为B级告警
 			dbshtp.Ocr_info.Alarm = "B"
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,OCR状态异常,ONLINE数量为%d", dbshtp.Dbname.Contents, onlineCount))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,OCR状态异常,ONLINE数量为%d,\n建议: 尽快核查OCR盘是否状态正常", dbshtp.Dbname.Contents, onlineCount))
 		}
 
 		// 检查OCR可用空间
@@ -134,7 +134,7 @@ func Ana_Ocr_info(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *s
 			if dbshtp.Ocr_info.Alarm != "R" {
 				dbshtp.Ocr_info.Alarm = "R"
 			}
-			entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,OCR可用空间不足(%d KB),建议尽快扩展OCR磁盘组", dbshtp.Dbname.Contents, ocrSpace))
+			entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,OCR可用空间不足(%d KB),\n建议: 尽快扩展OCR磁盘组", dbshtp.Dbname.Contents, ocrSpace))
 		}
 	}
 
@@ -157,7 +157,7 @@ func Ana_Asm_offset(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries 
 	if strings.TrimSpace(msgdata) == "" {
 		// 数据采集异常，设置为G级告警
 		dbshtp.Asm_offset.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,ASM偏移量数据采集异常", dbshtp.Dbname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,ASM偏移量数据采集异常", dbshtp.Dbname.Contents))
 		return
 	}
 
@@ -166,7 +166,7 @@ func Ana_Asm_offset(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries 
 	if len(lines) < 3 {
 		// 数据行数不足，数据采集异常
 		dbshtp.Asm_offset.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,ASM偏移量数据采集异常", dbshtp.Dbname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,ASM偏移量数据采集异常", dbshtp.Dbname.Contents))
 		return
 	}
 
@@ -209,13 +209,13 @@ func Ana_Asm_offset(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries 
 		// 存在严重偏移，设置为B级告警
 		dbshtp.Asm_offset.Alarm = "B"
 		for _, diskGroup := range severeDiskGroups {
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,ASM磁盘组%s磁盘使用严重偏移,建议及时对ASM磁盘维护校准", dbshtp.Dbname.Contents, diskGroup))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,ASM磁盘组%s磁盘使用严重偏移,\n建议: 及时对ASM磁盘维护校准", dbshtp.Dbname.Contents, diskGroup))
 		}
 	} else if hasModerateOffset {
 		// 存在中等偏移，设置为G级告警
 		dbshtp.Asm_offset.Alarm = "G"
 		for _, diskGroup := range moderateDiskGroups {
-			entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,ASM磁盘组%s磁盘使用偏移超过10%%,建议保持关注ASM磁盘使用情况", dbshtp.Dbname.Contents, diskGroup))
+			entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,ASM磁盘组%s磁盘使用偏移超过10%%,\n建议: 保持关注ASM磁盘使用情况", dbshtp.Dbname.Contents, diskGroup))
 		}
 	} else {
 		// 正常情况，不设置告警
@@ -241,7 +241,7 @@ func Ana_ASM_usage(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *
 	if strings.TrimSpace(msgdata) == "" {
 		// 数据采集异常，设置为B级告警
 		dbshtp.Asm_usage.Alarm = "B"
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,ASM使用情况数据采集异常", dbshtp.Dbname.Contents))
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,ASM使用情况数据采集异常", dbshtp.Dbname.Contents))
 		return
 	}
 
@@ -250,7 +250,7 @@ func Ana_ASM_usage(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *
 	if len(lines) < 3 {
 		// 数据行数不足，数据采集异常
 		dbshtp.Asm_usage.Alarm = "B"
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,ASM使用情况数据采集异常", dbshtp.Dbname.Contents))
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,ASM使用情况数据采集异常", dbshtp.Dbname.Contents))
 		return
 	}
 
@@ -300,13 +300,13 @@ func Ana_ASM_usage(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *
 		// 存在CRITICAL状态，设置为R级告警
 		dbshtp.Asm_usage.Alarm = "R"
 		for _, diskGroup := range criticalDiskGroups {
-			entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,ASM磁盘组%s空间严重不足,已不能满足冗余需求,建议尽快扩容磁盘或数据清理", dbshtp.Dbname.Contents, diskGroup))
+			entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,ASM磁盘组%s空间严重不足,已不能满足冗余需求,\n建议: 尽快扩容磁盘或数据清理", dbshtp.Dbname.Contents, diskGroup))
 		}
 	} else if hasWarning {
 		// 存在WARNING状态或使用率超过90%，设置为B级告警
 		dbshtp.Asm_usage.Alarm = "B"
 		for _, diskGroup := range warningDiskGroups {
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,ASM磁盘组%s空间使用超过90%%,建议及时扩容磁盘或数据清理", dbshtp.Dbname.Contents, diskGroup))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,ASM磁盘组%s空间使用超过90%%,\n建议: 及时扩容磁盘或数据清理", dbshtp.Dbname.Contents, diskGroup))
 		}
 	} else {
 		// 正常情况，不设置告警

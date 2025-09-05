@@ -4,11 +4,11 @@ import (
 	"autochk/anadata"
 	"autochk/readxml"
 	"autochk/structs"
-	"autochk/todocx"
+
 	"autochk/toxls"
+	"autochk/utils"
 	"autochk/xmlfile"
 	"flag"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -38,15 +38,15 @@ func main() {
 
 	start := time.Now()
 
-	log.Println("######---Start---######")
+	utils.LogInfof("######---Start---######")
 
 	// 首先执行XML文件合并
-	log.Println("开始执行XML文件合并...")
+	utils.LogInfof("开始执行XML文件合并...")
 	if err := xmlfile.MergeXMLFiles(); err != nil {
-		log.Printf("XML文件合并失败: %v", err)
+		utils.LogErrorf("XML文件合并失败: %v", err)
 		return
 	}
-	log.Println("XML文件合并完成")
+	utils.LogInfof("XML文件合并完成")
 
 	//删除*Done.xlsx文件
 	ClearFile(*singlefile)
@@ -65,7 +65,7 @@ func main() {
 		if *singlefile {
 			colcnt = 1
 		}
-		log.Println("开始处理--->", fnm)
+		utils.LogInfof("开始处理---> %s", fnm)
 		fileName := filepath.Base(fnm)
 		prex := strings.Replace(fileName, ".R.xml", "", -1)
 		prex = strings.Replace(prex, ".S.xml", "", -1)
@@ -79,12 +79,13 @@ func main() {
 		readxml.ReadXml(fnm, &osshts, &dbsht, &instshts)
 		anadata.Ana(&osshts, &dbsht, &instshts, summaryEntries)
 		toxls.Xlsx(&osshts, &dbsht, &instshts, summaryEntries, prex, colcnt, *singlefile)
-		todocx.Todocxfunc Xlsx(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.InstShts, summaryEntries *structs.SummaryEntries, xlsnm string, colcnt int, sglf bool) {
+		// todocx.Todocx(&osshts, &dbsht, &instshts, summaryEntries, prex, colcnt, *singlefile)
+		// tohtml.GenerateHTML(&osshts, &dbsht, &instshts, summaryEntries, prex, *singlefile)
 		colcnt++
 	}
 	elapsed := time.Since(start)
-	log.Printf("#####---Completed! Elapsed Time:%v---#####", elapsed)
-	log.Println("Anaylze Check Data (ACD) release 1.8")
+	utils.LogInfof("#####---Completed! Elapsed Time:%v---#####", elapsed)
+	utils.LogInfof("Anaylze Check Data (ACD) release 1.8")
 	// fmt.Printf("执行完成,请按任意键退出...")
 
 }
@@ -96,13 +97,13 @@ func GetXMLS(typ string) (xmlnms []string) {
 	xmltyp := "." + typ + ".xml"
 	f, err := os.Open(dirname)
 	if err != nil {
-		log.Printf("打开目录 %s 失败: %v", dirname, err)
+		utils.LogErrorf("打开目录 %s 失败: %v", dirname, err)
 		return xmlnms
 	}
 	files, err := f.Readdir(-1)
 	f.Close()
 	if err != nil {
-		log.Printf("读取目录 %s 失败: %v", dirname, err)
+		utils.LogErrorf("读取目录 %s 失败: %v", dirname, err)
 		return xmlnms
 	}
 	for _, file := range files {
@@ -118,27 +119,31 @@ func GetXMLS(typ string) (xmlnms []string) {
 func ClearFile(sglf bool) {
 	//遍历打开当前路径下的文件
 	dirname := "."
-	var xmltyp string
+	var xlsxTyp, htmlTyp string
 	if sglf {
-		xmltyp = ".Done.xlsx"
+		xlsxTyp = ".Done.xlsx"
+		htmlTyp = ".Done.html"
 	} else {
-		xmltyp = ".ALLDone.xlsx"
+		xlsxTyp = ".ALLDone.xlsx"
+		htmlTyp = ".ALLDone.html"
 	}
 
 	f, err := os.Open(dirname)
 	if err != nil {
-		log.Fatal(err)
+		utils.LogErrorf("打开目录失败: %v", err)
+		return
 	}
 	files, err := f.Readdir(-1)
 	if err != nil {
-		log.Fatal(err)
+		utils.LogErrorf("读取目录失败: %v", err)
+		return
 	}
 	for _, file := range files {
-		//遍历查找是否为"*.Done.xlsx"结尾的文件,如果是则删除 {
-		if strings.HasSuffix(file.Name(), xmltyp) {
+		//遍历查找是否为"*.Done.xlsx"或"*.Done.html"结尾的文件,如果是则删除
+		if strings.HasSuffix(file.Name(), xlsxTyp) || strings.HasSuffix(file.Name(), htmlTyp) {
 			del := os.Remove(file.Name())
 			if del != nil {
-				log.Println(del)
+				utils.LogWarnf("删除文件失败: %v", del)
 			}
 		}
 	}

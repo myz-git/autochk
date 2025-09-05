@@ -170,14 +170,14 @@ Average:     dev252-6      4.33     69.33      0.00     16.00      0.03      5.8
 AnonHugePages:         0 kB
 always madvise [never]
 </THPSTAT>
-<HUGPAGE>
+<HUGEPAGE>
 HugePages_Total:       0
 HugePages_Free:        0
 HugePages_Rsvd:        0
 HugePages_Surp:        0
 Hugepagesize:       2048 kB
 Hugetlb:               0 kB
-</HUGPAGE>
+</HUGEPAGE>
 <NUMA>
 NUMA turned off
 </NUMA>

@@ -7,35 +7,35 @@ github.com/lukasjarosch/go-docx
 # github.com/mattn/go-sqlite3 v1.14.24
 ## explicit; go 1.19
 github.com/mattn/go-sqlite3
-# github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
-## explicit
-github.com/mohae/deepcopy
 # github.com/richardlehane/mscfb v1.0.4
 ## explicit
 github.com/richardlehane/mscfb
-# github.com/richardlehane/msoleps v1.0.3
+# github.com/richardlehane/msoleps v1.0.4
 ## explicit
 github.com/richardlehane/msoleps/types
-# github.com/xuri/efp v0.0.0-20231025114914-d1ff6096ae53
+# github.com/tiendc/go-deepcopy v1.6.0
+## explicit; go 1.18
+github.com/tiendc/go-deepcopy
+# github.com/xuri/efp v0.0.1
 ## explicit; go 1.11
 github.com/xuri/efp
-# github.com/xuri/excelize/v2 v2.8.1
-## explicit; go 1.18
+# github.com/xuri/excelize/v2 v2.9.1
+## explicit; go 1.23.0
 github.com/xuri/excelize/v2
-# github.com/xuri/nfp v0.0.0-20230919160717-d98342af3f05
+# github.com/xuri/nfp v0.0.1
 ## explicit; go 1.15
 github.com/xuri/nfp
-# golang.org/x/crypto v0.19.0
-## explicit; go 1.18
+# golang.org/x/crypto v0.38.0
+## explicit; go 1.23.0
 golang.org/x/crypto/md4
 golang.org/x/crypto/ripemd160
-# golang.org/x/net v0.21.0
-## explicit; go 1.18
+# golang.org/x/net v0.40.0
+## explicit; go 1.23.0
 golang.org/x/net/html
 golang.org/x/net/html/atom
 golang.org/x/net/html/charset
-# golang.org/x/text v0.14.0
-## explicit; go 1.18
+# golang.org/x/text v0.25.0
+## explicit; go 1.23.0
 golang.org/x/text/cases
 golang.org/x/text/encoding
 golang.org/x/text/encoding/charmap

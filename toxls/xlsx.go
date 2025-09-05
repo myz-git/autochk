@@ -2,7 +2,9 @@ package toxls
 
 import (
 	"autochk/structs"
+	"autochk/utils"
 	"fmt"
+	"strings"
 
 	"github.com/xuri/excelize/v2"
 )
@@ -10,7 +12,7 @@ import (
 // 定义公共的单元格样式
 func getCellStyles(f *excelize.File) (styleB, styleR, styleG int) {
 	styleB, _ = f.NewStyle(&excelize.Style{
-		Fill: excelize.Fill{Type: "pattern", Color: []string{"#4876FF"}, Pattern: 1},
+		Fill: excelize.Fill{Type: "pattern", Color: []string{"#00B0F0"}, Pattern: 1},
 		Font: &excelize.Font{
 			Family: "Cascadia Code Light",
 			Size:   8,
@@ -24,7 +26,7 @@ func getCellStyles(f *excelize.File) (styleB, styleR, styleG int) {
 		},
 	})
 	styleR, _ = f.NewStyle(&excelize.Style{
-		Fill: excelize.Fill{Type: "pattern", Color: []string{"#FF0000"}, Pattern: 1},
+		Fill: excelize.Fill{Type: "pattern", Color: []string{"#EBA8A5"}, Pattern: 1},
 		Font: &excelize.Font{
 			Family: "Cascadia Code Light",
 			Size:   8,
@@ -38,7 +40,7 @@ func getCellStyles(f *excelize.File) (styleB, styleR, styleG int) {
 		},
 	})
 	styleG, _ = f.NewStyle(&excelize.Style{
-		Fill: excelize.Fill{Type: "pattern", Color: []string{"#00bf5f"}, Pattern: 1},
+		Fill: excelize.Fill{Type: "pattern", Color: []string{"#B3DEE3"}, Pattern: 1},
 		Font: &excelize.Font{
 			Family: "Cascadia Code Light",
 			Size:   8,
@@ -66,12 +68,12 @@ func Xlsx(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.I
 	// 加载模板文件
 	f, err := excelize.OpenFile("HealthReport.xlsx")
 	if err != nil {
-		fmt.Println("打开模板文件失败:", err)
+		utils.LogErrorf("打开模板文件失败: %v", err)
 		return
 	}
 	defer func() {
 		if err := f.Close(); err != nil {
-			fmt.Println(err)
+			utils.LogWarnf("关闭文件失败: %v", err)
 		}
 	}()
 
@@ -79,13 +81,13 @@ func Xlsx(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.I
 	PutSht_INFO(f, osshts, dbshtp, colcnt)
 
 	// 填充 OS Sheet - 支持多节点
-	PutSht_OS(f, osshts, colcnt)
+	PutSht_OS(f, osshts, summaryEntries, colcnt)
 
 	// 填充 DB Sheet
-	PutSht_DB(f, dbshtp, osshts, colcnt)
+	PutSht_DB(f, dbshtp, osshts, summaryEntries, colcnt)
 
 	// 填充 Inst Sheet
-	PutSht_Inst(f, instshts)
+	PutSht_Inst(f, instshts, summaryEntries)
 
 	// 填充 HealthReport Sheet 的 Issue Summary
 	PutSht_Summary(f, summaryEntries)
@@ -95,7 +97,7 @@ func Xlsx(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.I
 
 	// 保存文件
 	if err := f.SaveAs(newfnm); err != nil {
-		fmt.Println("保存文件失败:", err)
+		utils.LogErrorf("保存文件失败: %v", err)
 		return
 	}
 }
@@ -124,14 +126,156 @@ func PutSht_INFO(f *excelize.File, osshts *[]structs.OsShts, dbshtp *structs.DbS
 	f.SetCellStr(shnm, "K8", dbshtp.Logmode.Contents)
 	f.SetCellStr(shnm, "K9", dbshtp.Dblang.Contents)
 	f.SetCellStr(shnm, "K10", dbshtp.Dbcursize.Contents)
-	f.SetCellStr(shnm, "K11", dbshtp.Dbtblcount.Contents)
 
-	// 添加更多数据库信息
-	f.SetCellStr(shnm, "K12", dbshtp.Dbf_cnt.Contents)    // 数据文件数量
-	f.SetCellStr(shnm, "K13", dbshtp.Dbtbsusage.Contents) // 表空间使用情况
 }
 
-func PutSht_OS(f *excelize.File, osshts *[]structs.OsShts, colcnt int) {
+// getCommentForField 根据字段名获取对应的注释内容
+func getCommentForField(fieldName string, summaryEntries *structs.SummaryEntries) string {
+	utils.LogDebugf("查找字段 %s 的注释，SummaryEntries 总数: %d", fieldName, len(summaryEntries.Entries))
+
+	// 字段名到检查项Nm的映射（直接使用SummaryEntries中的Nm字段）
+	fieldToCheckMap := map[string]string{
+		// OS字段
+		"Hostname":         "HOSTNAME",
+		"Ipaddr":           "IPADDR",
+		"Os":               "OS",
+		"Relver":           "RELVER",
+		"Cores":            "CORES",
+		"Cpucount":         "CPUCOUNT",
+		"Cpumhz":           "CPUMHZ",
+		"Memtotal":         "MEMTOTAL",
+		"Swaptotal":        "SWAPTOTAL",
+		"Osparameter":      "OSPARAMETER",
+		"Ulimit":           "ULIMIT",
+		"Oslog":            "OSLOG",
+		"Filesystem":       "FILESYSTEM",
+		"Inodeusage":       "INODEUSAGE",
+		"Cpustat":          "CPUSTAT",
+		"Memstat":          "MEMSTAT",
+		"Iostat":           "IOSTAT",
+		"Thpstat":          "THPSTAT",
+		"Hugepage":         "HUGEPAGE",
+		"Numa":             "NUMA",
+		"Ntp":              "NTP",
+		"Tmzone":           "TMZONE",
+		"Selinux":          "SELINUX",
+		"Firewall":         "FIREWALL",
+		"Nsswitch":         "NSSWITCH",
+		"Lo_mtu":           "LO_MTU",
+		"Machine_platform": "MACHINE_PLATFORM",
+		"CPU_PERF_MODE":    "CPU_PERF_MODE",
+		"NOZEROCONF":       "NOZEROCONF",
+		"RPM_PACKAGES":     "RPM_PACKAGES",
+
+		// DB字段
+		"Dbname":             "DBNAME",
+		"Dbmaa":              "DBMAA",
+		"Dbver":              "DBVER",
+		"Dbstatus":           "DBSTATUS",
+		"Dblang":             "DBLANG",
+		"Logmode":            "LOGMODE",
+		"Flashback":          "FLASHBACK",
+		"Dbcursize":          "DBCURSIZE",
+		"Dbf_size":           "DBF_SIZE",
+		"Dbf_cnt":            "DBF_CNT",
+		"Dbf_stat":           "DBF_STAT",
+		"Tmpfile_size":       "TMPFILE_SIZE",
+		"Dbtblcount":         "DBTBLCOUNT",
+		"Dbrole":             "DBROLE",
+		"Dbtbsusage":         "DBTBSUSAGE",
+		"Dbcontrolfile":      "DBCONTROLFILE",
+		"User_info":          "USER_INFO",
+		"User_size":          "USER_SIZE",
+		"Tab_info":           "TAB_INFO",
+		"Tab_parallel":       "TAB_PARALLEL",
+		"Inx_parallel":       "INX_PARALLEL",
+		"Invalid_obj":        "INVALID_OBJ",
+		"Invalid_inx":        "INVALID_INX",
+		"Dbsequence":         "DBSEQUENCE",
+		"Db_seq_usage":       "DB_SEQ_USAGE",
+		"Dboption":           "DBOPTION",
+		"Dbfeatures":         "DBFEATURES",
+		"Db_expir_user":      "DB_EXPIR_USER",
+		"Db_password_verif":  "DB_PASSWORD_VERIF",
+		"Dbdbapriv":          "DBDBAPRIV",
+		"Dbsysdba":           "DBSYSDBA",
+		"Dbauditsegment":     "DBAUDITSEGMENT",
+		"Dbauditcont":        "DBAUDITCONT",
+		"Db_Nosys_In_System": "DB_NOSYS_IN_SYSTEM",
+		"Userfailedlogin":    "USERFAILEDLOGIN",
+		"Dbvirscheck":        "DBVIRSCHECK",
+		"Dbscnhealthcheck":   "DBSCNHEALTHCHECK",
+		"Dbrmancheck":        "DBRMANCHECK",
+		"Crs_stat":           "CRS_STAT",
+		"Crs_stat2":          "CRS_STAT2",
+		"Ocr_info":           "OCR_INFO",
+		"Ocr_bak_check":      "OCR_BAK_CHECK",
+		"Asm_usage":          "ASM_USAGE",
+		"Asm_offset":         "ASM_OFFSET",
+
+		// INST字段
+		"Instname":          "INSTNAME",
+		"Loadprofile":       "LOADPROFILE",
+		"Instefficiency":    "INSTEFFICIENCY",
+		"Topevent":          "TOPEVENT",
+		"Topsql_by_ela":     "TOPSQL_BY_ELA",
+		"Cursor_share_mem":  "CURSOR_SHARE_MEM",
+		"Dbresource":        "DBRESOURCE",
+		"Dbpsu":             "DBPSU",
+		"Dbpatch":           "DBPATCH",
+		"Dblsnrinfo":        "DBLSNRINFO",
+		"Dbparameter":       "DBPARAMETER",
+		"Db_parameter_file": "DB_PARAMETER_FILE",
+		"Dbredocheck":       "DBREDOCHECK",
+		"Dbredoswitch":      "DBREDOSWITCH",
+		"Recovery_usage":    "RECOVERY_USAGE",
+		"Recovery_detail":   "RECOVERY_DETAIL",
+		"Dberrlog":          "DBERRLOG",
+		"Dbdglagcheck":      "DBDGLAGCHECK",
+		"Dbdgerrcheck":      "DBDGERRCHECK",
+	}
+
+	checkName := fieldToCheckMap[fieldName]
+	utils.LogDebugf("字段 %s 映射到检查项: %s", fieldName, checkName)
+
+	if checkName == "" {
+		utils.LogDebugf("字段 %s 没有对应的检查项映射", fieldName)
+		return ""
+	}
+
+	// 在SummaryEntries中查找对应的检查项
+	for i, entry := range summaryEntries.Entries {
+		utils.LogDebugf("检查项 %d: Title=%s, Nm=%s, Category=%s", i+1, entry.Title, entry.Nm, entry.Category)
+		// 直接匹配Nm字段
+		if entry.Nm == checkName {
+			utils.LogDebugf("找到匹配的检查项: %s", checkName)
+			var comments []string
+			if len(entry.Severe) > 0 {
+				comments = append(comments, "严重问题:\n"+strings.Join(entry.Severe, "\n"))
+				utils.LogDebugf("严重问题数量: %d", len(entry.Severe))
+			}
+			if len(entry.Moderate) > 0 {
+				comments = append(comments, "普通问题:\n"+strings.Join(entry.Moderate, "\n"))
+				utils.LogDebugf("一般问题数量: %d", len(entry.Moderate))
+			}
+			if len(entry.Minor) > 0 {
+				comments = append(comments, "轻微问题:\n"+strings.Join(entry.Minor, "\n"))
+				utils.LogDebugf("轻微问题数量: %d", len(entry.Minor))
+			}
+			if len(comments) > 0 {
+				result := strings.Join(comments, "\n\n")
+				utils.LogDebugf("生成的注释内容: %s", result)
+				return result
+			} else {
+				utils.LogDebugf("检查项 %s 没有问题描述", checkName)
+			}
+		}
+	}
+	utils.LogDebugf("未找到字段 %s 对应的检查项", fieldName)
+	return ""
+}
+
+func PutSht_OS(f *excelize.File, osshts *[]structs.OsShts, summaryEntries *structs.SummaryEntries, colcnt int) {
 	shnm := "OS"
 
 	// 定义单元格样式
@@ -161,7 +305,7 @@ func PutSht_OS(f *excelize.File, osshts *[]structs.OsShts, colcnt int) {
 		{"Memstat", 17},
 		{"Iostat", 18},
 		{"Thpstat", 19},
-		{"Hugpage", 20},
+		{"Hugepage", 20},
 		{"Numa", 21},
 		{"Ntp", 22},
 		{"Tmzone", 23},
@@ -244,9 +388,9 @@ func PutSht_OS(f *excelize.File, osshts *[]structs.OsShts, colcnt int) {
 			case "Thpstat":
 				content = ossht.Thpstat.Contents
 				alarm = ossht.Thpstat.Alarm
-			case "Hugpage":
-				content = ossht.Hugpage.Contents
-				alarm = ossht.Hugpage.Alarm
+			case "Hugepage":
+				content = ossht.Hugepage.Contents
+				alarm = ossht.Hugepage.Alarm
 			case "Numa":
 				content = ossht.Numa.Contents
 				alarm = ossht.Numa.Alarm
@@ -283,27 +427,74 @@ func PutSht_OS(f *excelize.File, osshts *[]structs.OsShts, colcnt int) {
 			}
 
 			// 在样式设置前添加调试信息
-			fmt.Printf("节点: %s, 字段: %s, 告警级别: %s\n", ossht.NodeID, field.fieldName, alarm)
+			utils.LogDebugf("节点: %s, 字段: %s, 告警级别: %s", ossht.NodeID, field.fieldName, alarm)
 
 			// 设置单元格内容
 			f.SetCellStr(shnm, cell, content)
 
+			// 添加单元格注释（如果有告警）
+			if alarm != "" {
+				utils.LogDebugf("尝试为字段 %s 添加注释，告警级别: %s", field.fieldName, alarm)
+				comment := getCommentForField(field.fieldName, summaryEntries)
+				utils.LogDebugf("获取到的注释内容: %s", comment)
+				if comment != "" {
+					// 创建带样式的注释
+					commentObj := excelize.Comment{
+						Cell:   cell,
+						Text:   comment,
+						Author: "健康检查系统",
+						Width:  400, // 注释框宽度
+						Height: 100, // 注释框高度
+					}
+
+					// 添加调试信息
+					utils.LogDebugf("注释对象: Cell=%s, Width=%d, Height=%d, Text长度=%d",
+						commentObj.Cell, commentObj.Width, commentObj.Height, len(commentObj.Text))
+
+					err := f.AddComment(shnm, commentObj)
+					if err != nil {
+						utils.LogErrorf("添加注释失败: %v", err)
+					} else {
+						utils.LogDebugf("成功添加注释到单元格: %s", cell)
+					}
+				} else {
+					utils.LogDebugf("未找到字段 %s 对应的注释内容", field.fieldName)
+				}
+			}
+
+			// 设置B列检查结果分数 (从B2开始，B1是标题行，跳过NodeID)
+			if field.fieldName != "NodeID" {
+				bCell := fmt.Sprintf("B%d", field.row)
+				var score int
+				switch alarm {
+				case "R":
+					score = 0 // 严重影响
+				case "B":
+					score = 5 // 普通影响
+				case "G":
+					score = 8 // 轻微影响
+				default:
+					score = 10 // 正常
+				}
+				f.SetCellInt(shnm, bCell, int64(score))
+			}
+
 			// 设置单元格样式（根据告警级别）
 			if alarm == "R" {
 				f.SetCellStyle(shnm, cell, cell, styleR)
-				fmt.Printf("应用红色样式到单元格: %s (节点: %s, 字段: %s)\n", cell, ossht.NodeID, field.fieldName)
+				utils.LogDebugf("应用红色样式到单元格: %s (节点: %s, 字段: %s)", cell, ossht.NodeID, field.fieldName)
 			} else if alarm == "B" {
 				f.SetCellStyle(shnm, cell, cell, styleB)
-				fmt.Printf("应用蓝色样式到单元格: %s (节点: %s, 字段: %s)\n", cell, ossht.NodeID, field.fieldName)
+				utils.LogDebugf("应用蓝色样式到单元格: %s (节点: %s, 字段: %s)", cell, ossht.NodeID, field.fieldName)
 			} else if alarm == "G" {
 				f.SetCellStyle(shnm, cell, cell, styleG)
-				fmt.Printf("应用绿色样式到单元格: %s (节点: %s, 字段: %s)\n", cell, ossht.NodeID, field.fieldName)
+				utils.LogDebugf("应用绿色样式到单元格: %s (节点: %s, 字段: %s)", cell, ossht.NodeID, field.fieldName)
 			}
 		}
 	}
 }
 
-func PutSht_DB(f *excelize.File, dbshtp *structs.DbSht, osshts *[]structs.OsShts, colcnt int) {
+func PutSht_DB(f *excelize.File, dbshtp *structs.DbSht, osshts *[]structs.OsShts, summaryEntries *structs.SummaryEntries, colcnt int) {
 	shnm := "DB"
 
 	// 定义单元格样式
@@ -512,6 +703,53 @@ func PutSht_DB(f *excelize.File, dbshtp *structs.DbSht, osshts *[]structs.OsShts
 		// 设置单元格内容
 		f.SetCellStr(shnm, cell, content)
 
+		// 添加单元格注释（如果有告警）
+		if alarm != "" {
+			utils.LogDebugf("尝试为DB字段 %s 添加注释，告警级别: %s", field.fieldName, alarm)
+			comment := getCommentForField(field.fieldName, summaryEntries)
+			utils.LogDebugf("获取到的DB注释内容: %s", comment)
+			if comment != "" {
+				// 创建带样式的注释
+				commentObj := excelize.Comment{
+					Cell:   cell,
+					Text:   comment,
+					Author: "健康检查系统",
+					Width:  400, // 注释框宽度
+					Height: 100, // 注释框高度
+				}
+
+				// 添加调试信息
+				utils.LogDebugf("DB注释对象: Cell=%s, Width=%d, Height=%d, Text长度=%d",
+					commentObj.Cell, commentObj.Width, commentObj.Height, len(commentObj.Text))
+
+				err := f.AddComment(shnm, commentObj)
+				if err != nil {
+					utils.LogErrorf("添加DB注释失败: %v", err)
+				} else {
+					utils.LogDebugf("成功添加DB注释到单元格: %s", cell)
+				}
+			} else {
+				utils.LogDebugf("未找到DB字段 %s 对应的注释内容", field.fieldName)
+			}
+		}
+
+		// 设置B列检查结果分数 (从B2开始，B1是标题行，跳过NodeID)
+		if field.fieldName != "NodeID" {
+			bCell := fmt.Sprintf("B%d", field.row)
+			var score int
+			switch alarm {
+			case "R":
+				score = 0 // 严重影响
+			case "B":
+				score = 5 // 普通影响
+			case "G":
+				score = 8 // 轻微影响
+			default:
+				score = 10 // 正常
+			}
+			f.SetCellInt(shnm, bCell, int64(score))
+		}
+
 		// 设置单元格样式（根据告警级别）
 		if alarm == "R" {
 			f.SetCellStyle(shnm, cell, cell, styleR)
@@ -526,167 +764,212 @@ func PutSht_DB(f *excelize.File, dbshtp *structs.DbSht, osshts *[]structs.OsShts
 func PutSht_Summary(f *excelize.File, summaryEntries *structs.SummaryEntries) {
 	shnm := "HealthReport"
 
-	// 按问题类型聚合统计
-	categoryStats := make(map[string]struct {
-		severe   int
-		moderate int
-		minor    int
+	// ——关键：设置工作簿计算属性——
+	auto := "auto"
+	yes := true
+	_ = f.SetCalcProps(&excelize.CalcPropsOptions{
+		CalcMode:       &auto, // 自动计算
+		FullCalcOnLoad: &yes,  // 打开时强制全量重算
+		CalcOnSave:     &yes,  // （可选）保存时也计算
 	})
 
-	// 统计每种类型的问题数量
+	// 原有统计逻辑…
+	categoryStats := make(map[string]struct{ severe, moderate, minor int })
 	for _, entry := range summaryEntries.Entries {
-		stats := categoryStats[entry.Category]
-		stats.severe += len(entry.Severe)
-		stats.moderate += len(entry.Moderate)
-		stats.minor += len(entry.Minor)
-		categoryStats[entry.Category] = stats
+		s := categoryStats[entry.Category]
+		s.severe += len(entry.Severe)
+		s.moderate += len(entry.Moderate)
+		s.minor += len(entry.Minor)
+		categoryStats[entry.Category] = s
 	}
 
-	// 定义问题类型的顺序
-	categories := []string{
-		"主机系统",
-		"数据库分析",
-		"实例分析",
-		"数据库性能",
-		"数据库集群",
-		"DataGuard",
-		"数据库备份",
-		"数据库安全",
-		"软件使用",
-		"其他项检查",
-	}
-
-	// 填充 Issue Summary（C15:C22 和 D15:F22）
+	categories := []string{"主机系统", "数据库分析", "实例分析", "数据库性能", "数据库集群", "DataGuard", "数据库备份", "数据库安全", "软件使用", "其他项检查"}
 	rowIndex := 15
-	for _, category := range categories {
-		stats := categoryStats[category]
-
-		// 填充 Issue Summary
-		f.SetCellStr(shnm, fmt.Sprintf("C%d", rowIndex), category)       // C列：问题类型
-		f.SetCellInt(shnm, fmt.Sprintf("D%d", rowIndex), stats.severe)   // D列：严重级别计数
-		f.SetCellInt(shnm, fmt.Sprintf("E%d", rowIndex), stats.moderate) // E列：一般级别计数
-		f.SetCellInt(shnm, fmt.Sprintf("F%d", rowIndex), stats.minor)    // F列：轻微级别计数
-
+	for _, c := range categories {
+		s := categoryStats[c]
+		_ = f.SetCellStr(shnm, fmt.Sprintf("C%d", rowIndex), c)
+		_ = f.SetCellInt(shnm, fmt.Sprintf("D%d", rowIndex), int64(s.severe))
+		_ = f.SetCellInt(shnm, fmt.Sprintf("E%d", rowIndex), int64(s.moderate))
+		_ = f.SetCellInt(shnm, fmt.Sprintf("F%d", rowIndex), int64(s.minor))
 		rowIndex++
 	}
+
+	// 写公式（注意使用英文逗号 ,）
+	_ = f.SetCellFormula(shnm, "H13", "=\"Health status (\"&SUM($D$15:$F$24)&\" of \"&85&\")\"")
+	_ = f.SetCellFormula(shnm, "L14", "=1-SUM($D$15:$F$24)/85")
+
+	// ——关键：更新/清理缓存值（避免 Excel 以为不需要重算）——
+	_ = f.UpdateLinkedValue()
+
+	// （可选）把 L14 设成百分比格式
+	// style, _ := f.NewStyle(&excelize.Style{NumFmt: 10}) // 10 = 0%
+	// _ = f.SetCellStyle(shnm, "L14", "L14", style)
 }
 
 func PutSht_Issuelist(f *excelize.File, summaryEntries *structs.SummaryEntries) {
 	shnm := "HealthReport"
 
 	// 调试输出：显示所有SummaryEntry的内容
-	fmt.Println("=== SummaryEntry 调试信息 ===")
-	fmt.Printf("总共有 %d 个 SummaryEntry\n", len(summaryEntries.Entries))
+	utils.LogDebugf("=== SummaryEntry 调试信息 ===")
+	utils.LogDebugf("总共有 %d 个 SummaryEntry", len(summaryEntries.Entries))
 
 	for i, entry := range summaryEntries.Entries {
-		fmt.Printf("\n--- SummaryEntry %d ---\n", i+1)
-		fmt.Printf("Category: %s\n", entry.Category)
-		fmt.Printf("Nm: %s\n", entry.Nm)
-		fmt.Printf("Title: %s\n", entry.Title)
-		fmt.Printf("Desc: %s\n", entry.Desc)
-		fmt.Printf("Severe 问题数量: %d\n", len(entry.Severe))
+		utils.LogDebugf("--- SummaryEntry %d ---", i+1)
+		utils.LogDebugf("Category: %s", entry.Category)
+		utils.LogDebugf("Nm: %s", entry.Nm)
+		utils.LogDebugf("Title: %s", entry.Title)
+		utils.LogDebugf("Desc: %s", entry.Desc)
+		utils.LogDebugf("Severe 问题数量: %d", len(entry.Severe))
 		if len(entry.Severe) > 0 {
-			fmt.Printf("Severe 问题: %v\n", entry.Severe)
+			utils.LogDebugf("Severe 问题: %v", entry.Severe)
 		}
-		fmt.Printf("Moderate 问题数量: %d\n", len(entry.Moderate))
+		utils.LogDebugf("Moderate 问题数量: %d", len(entry.Moderate))
 		if len(entry.Moderate) > 0 {
-			fmt.Printf("Moderate 问题: %v\n", entry.Moderate)
+			utils.LogDebugf("Moderate 问题: %v", entry.Moderate)
 		}
-		fmt.Printf("Minor 问题数量: %d\n", len(entry.Minor))
+		utils.LogDebugf("Minor 问题数量: %d", len(entry.Minor))
 		if len(entry.Minor) > 0 {
-			fmt.Printf("Minor 问题: %v\n", entry.Minor)
+			utils.LogDebugf("Minor 问题: %v", entry.Minor)
 		}
 	}
-	fmt.Println("=== 调试信息结束 ===\n")
+	utils.LogDebugf("=== 调试信息结束 ===")
 
-	// 按category分组和排序
-	categoryOrder := []string{
-		"主机系统",
-		"数据库分析",
-		"实例分析",
-		"数据库性能",
-		"数据库集群",
-		"DataGuard",
-		"数据库备份",
-		"数据库安全",
-		"软件使用",
-		"其他项检查",
+	// 定义问题级别优先级（数字越小优先级越高）
+	severityOrder := map[string]int{
+		"严重": 1,
+		"普通": 2,
+		"轻微": 3,
+		"正常": 4,
 	}
 
-	// 按category分组summaryEntries
-	categoryGroups := make(map[string][]*structs.SummaryEntry)
+	// 定义问题类别优先级（数字越小优先级越高）
+	categoryOrder := map[string]int{
+		"主机系统":      1,
+		"数据库分析":     2,
+		"实例分析":      3,
+		"数据库性能":     4,
+		"数据库集群":     5,
+		"DataGuard": 6,
+		"数据库备份":     7,
+		"数据库安全":     8,
+		"软件使用":      9,
+		"其他项检查":     10,
+	}
+
+	// 创建问题项结构体用于排序
+	type ProblemItem struct {
+		Category    string
+		Title       string
+		Nm          string
+		Severity    string
+		Score       int
+		Description string
+	}
+
+	var problemItems []ProblemItem
+
+	// 收集所有问题项
 	for i := range summaryEntries.Entries {
 		entry := &summaryEntries.Entries[i]
-		categoryGroups[entry.Category] = append(categoryGroups[entry.Category], entry)
+
+		// 收集严重问题
+		for _, problem := range entry.Severe {
+			problemItems = append(problemItems, ProblemItem{
+				Category:    entry.Category,
+				Title:       entry.Title,
+				Nm:          entry.Nm,
+				Severity:    "严重",
+				Score:       0,
+				Description: problem,
+			})
+		}
+
+		// 收集普通问题
+		for _, problem := range entry.Moderate {
+			problemItems = append(problemItems, ProblemItem{
+				Category:    entry.Category,
+				Title:       entry.Title,
+				Nm:          entry.Nm,
+				Severity:    "普通",
+				Score:       5,
+				Description: problem,
+			})
+		}
+
+		// 收集轻微问题
+		for _, problem := range entry.Minor {
+			problemItems = append(problemItems, ProblemItem{
+				Category:    entry.Category,
+				Title:       entry.Title,
+				Nm:          entry.Nm,
+				Severity:    "轻微",
+				Score:       8,
+				Description: problem,
+			})
+		}
+
+		// 如果没有问题，添加正常项
+		if len(entry.Severe) == 0 && len(entry.Moderate) == 0 && len(entry.Minor) == 0 {
+			problemItems = append(problemItems, ProblemItem{
+				Category:    entry.Category,
+				Title:       entry.Title,
+				Nm:          entry.Nm,
+				Severity:    "正常",
+				Score:       10,
+				Description: "检查通过，无问题",
+			})
+		}
 	}
 
-	// 填充 Issue List（从 B27 开始）
+	// 对问题项进行排序
+	// 首先按问题重要程度排序，然后按问题类别排序
+	for i := 0; i < len(problemItems)-1; i++ {
+		for j := i + 1; j < len(problemItems); j++ {
+			// 比较问题重要程度
+			severityI := severityOrder[problemItems[i].Severity]
+			severityJ := severityOrder[problemItems[j].Severity]
+
+			if severityI > severityJ {
+				// 交换位置
+				problemItems[i], problemItems[j] = problemItems[j], problemItems[i]
+			} else if severityI == severityJ {
+				// 问题重要程度相同，按问题类别排序
+				categoryI := categoryOrder[problemItems[i].Category]
+				categoryJ := categoryOrder[problemItems[j].Category]
+
+				if categoryI > categoryJ {
+					// 交换位置
+					problemItems[i], problemItems[j] = problemItems[j], problemItems[i]
+				}
+			}
+		}
+	}
+
+	// 填充 Issue List（从 B29 开始）
 	rowIndex := 29
 	itemIndex := 1
 
-	// 按照预定义的category顺序填充
-	for _, category := range categoryOrder {
-		entries := categoryGroups[category]
+	// 按照排序后的顺序填充
+	for _, item := range problemItems {
+		f.SetCellInt(shnm, fmt.Sprintf("B%d", rowIndex), int64(itemIndex))  // B列：序号
+		f.SetCellStr(shnm, fmt.Sprintf("C%d", rowIndex), item.Category)     // C列：问题类型
+		f.SetCellStr(shnm, fmt.Sprintf("D%d", rowIndex), item.Title)        // D列：检查项
+		f.SetCellInt(shnm, fmt.Sprintf("F%d", rowIndex), int64(item.Score)) // F列：检查结果分数
+		f.SetCellStr(shnm, fmt.Sprintf("G%d", rowIndex), item.Severity)     // G列：问题级别
+		f.SetCellStr(shnm, fmt.Sprintf("H%d", rowIndex), item.Description)  // H列：检查项说明
 
-		// 填充该category下的所有检查项
-		for _, entry := range entries {
-			// 为每个具体问题填充一行
-			// 先处理严重问题
-			for _, problem := range entry.Severe {
-				f.SetCellInt(shnm, fmt.Sprintf("B%d", rowIndex), itemIndex)      // B列：序号
-				f.SetCellStr(shnm, fmt.Sprintf("C%d", rowIndex), entry.Category) // C列：问题类型
-				f.SetCellStr(shnm, fmt.Sprintf("D%d", rowIndex), entry.Title)    // D列：检查项
-				f.SetCellInt(shnm, fmt.Sprintf("F%d", rowIndex), 0)              // F列：检查结果分数（严重为0）
-				f.SetCellStr(shnm, fmt.Sprintf("G%d", rowIndex), "严重")           // G列：问题级别
-				f.SetCellStr(shnm, fmt.Sprintf("H%d", rowIndex), problem)        // H列：检查项说明
-
-				rowIndex++
-				itemIndex++
-			}
-
-			// 再处理一般问题
-			for _, problem := range entry.Moderate {
-				f.SetCellInt(shnm, fmt.Sprintf("B%d", rowIndex), itemIndex)      // B列：序号
-				f.SetCellStr(shnm, fmt.Sprintf("C%d", rowIndex), entry.Category) // C列：问题类型
-				f.SetCellStr(shnm, fmt.Sprintf("D%d", rowIndex), entry.Title)    // D列：检查项
-				f.SetCellInt(shnm, fmt.Sprintf("F%d", rowIndex), 5)              // F列：检查结果分数（普通为5）
-				f.SetCellStr(shnm, fmt.Sprintf("G%d", rowIndex), "普通")           // G列：问题级别
-				f.SetCellStr(shnm, fmt.Sprintf("H%d", rowIndex), problem)        // H列：检查项说明
-
-				rowIndex++
-				itemIndex++
-			}
-
-			// 再处理轻微问题
-			for _, problem := range entry.Minor {
-				f.SetCellInt(shnm, fmt.Sprintf("B%d", rowIndex), itemIndex)      // B列：序号
-				f.SetCellStr(shnm, fmt.Sprintf("C%d", rowIndex), entry.Category) // C列：问题类型
-				f.SetCellStr(shnm, fmt.Sprintf("D%d", rowIndex), entry.Title)    // D列：检查项
-				f.SetCellInt(shnm, fmt.Sprintf("F%d", rowIndex), 8)              // F列：检查结果分数（轻微为8）
-				f.SetCellStr(shnm, fmt.Sprintf("G%d", rowIndex), "轻微")           // G列：问题级别
-				f.SetCellStr(shnm, fmt.Sprintf("H%d", rowIndex), problem)        // H列：检查项说明
-
-				rowIndex++
-				itemIndex++
-			}
-
-			// 如果没有问题，填充一行"正常"
-			if len(entry.Severe) == 0 && len(entry.Moderate) == 0 && len(entry.Minor) == 0 {
-				f.SetCellInt(shnm, fmt.Sprintf("B%d", rowIndex), itemIndex)      // B列：序号
-				f.SetCellStr(shnm, fmt.Sprintf("C%d", rowIndex), entry.Category) // C列：问题类型
-				f.SetCellStr(shnm, fmt.Sprintf("D%d", rowIndex), entry.Title)    // D列：检查项
-				f.SetCellInt(shnm, fmt.Sprintf("F%d", rowIndex), 10)             // F列：检查结果分数（正常为10）
-				f.SetCellStr(shnm, fmt.Sprintf("G%d", rowIndex), "正常")           // G列：问题级别
-				f.SetCellStr(shnm, fmt.Sprintf("H%d", rowIndex), "检查通过，无问题")     // H列：检查项说明
-
-				rowIndex++
-				itemIndex++
-			}
+		// L列：添加超链接到具体问题位置
+		hyperlink := getHyperlinkForProblem(item.Nm, item.Category, item.Description)
+		if hyperlink != "" {
+			f.SetCellFormula(shnm, fmt.Sprintf("L%d", rowIndex), hyperlink)
 		}
+
+		rowIndex++
+		itemIndex++
 	}
 }
 
-func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts) {
+func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts, summaryEntries *structs.SummaryEntries) {
 	shnm := "Inst" // 使用专门的Inst sheet
 
 	// 定义单元格样式
@@ -796,6 +1079,53 @@ func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts) {
 
 			// 设置单元格内容
 			f.SetCellStr(shnm, cell, content)
+
+			// 添加单元格注释（如果有告警）
+			if alarm != "" {
+				utils.LogDebugf("尝试为INST字段 %s 添加注释，告警级别: %s", field.fieldName, alarm)
+				comment := getCommentForField(field.fieldName, summaryEntries)
+				utils.LogDebugf("获取到的INST注释内容: %s", comment)
+				if comment != "" {
+					// 创建带样式的注释
+					commentObj := excelize.Comment{
+						Cell:   cell,
+						Text:   comment,
+						Author: "健康检查系统",
+						Width:  400, // 注释框宽度
+						Height: 100, // 注释框高度
+					}
+
+					// 添加调试信息
+					utils.LogDebugf("INST注释对象: Cell=%s, Width=%d, Height=%d, Text长度=%d",
+						commentObj.Cell, commentObj.Width, commentObj.Height, len(commentObj.Text))
+
+					err := f.AddComment(shnm, commentObj)
+					if err != nil {
+						utils.LogErrorf("添加INST注释失败: %v", err)
+					} else {
+						utils.LogDebugf("成功添加INST注释到单元格: %s", cell)
+					}
+				} else {
+					utils.LogDebugf("未找到INST字段 %s 对应的注释内容", field.fieldName)
+				}
+			}
+
+			// 设置B列检查结果分数 (从B2开始，B1是标题行，跳过NodeID)
+			if field.fieldName != "NodeID" {
+				bCell := fmt.Sprintf("B%d", field.row)
+				var score int
+				switch alarm {
+				case "R":
+					score = 0 // 严重影响
+				case "B":
+					score = 5 // 普通影响
+				case "G":
+					score = 8 // 轻微影响
+				default:
+					score = 10 // 正常
+				}
+				f.SetCellInt(shnm, bCell, int64(score))
+			}
 
 			// 设置单元格样式（根据告警级别）
 			if alarm == "R" {
@@ -971,4 +1301,197 @@ func NewXlsx(xlsnm string) {
 		})
 	}
 	f.SaveAs(xlsnm)
+}
+
+// getHyperlinkForProblem 根据检查项Nm和Category生成超链接
+func getHyperlinkForProblem(nm string, category string, problem string) string {
+	// 字段名到行号的映射
+	fieldToRowMap := map[string]int{
+		// OS字段
+		"HOSTNAME":         2,
+		"IPADDR":           3,
+		"OS":               4,
+		"RELVER":           5,
+		"CORES":            6,
+		"CPUCOUNT":         6,
+		"CPUMHZ":           7,
+		"MEMTOTAL":         8,
+		"SWAPTOTAL":        10,
+		"OSPARAMETER":      11,
+		"ULIMIT":           12,
+		"OSLOG":            13,
+		"FILESYSTEM":       14,
+		"INODEUSAGE":       15,
+		"CPUSTAT":          16,
+		"MEMSTAT":          17,
+		"IOSTAT":           18,
+		"THPSTAT":          19,
+		"HUGEPAGE":         20,
+		"NUMA":             21,
+		"NTP":              22,
+		"TMZONE":           23,
+		"SELINUX":          24,
+		"FIREWALL":         25,
+		"NSSWITCH":         26,
+		"LO_MTU":           27,
+		"MACHINE_PLATFORM": 9,
+		"CPU_PERF_MODE":    28,
+		"NOZEROCONF":       29,
+		"RPM_PACKAGES":     30,
+
+		// DB字段
+		"DBNAME":             2,
+		"DBMAA":              3,
+		"DBVER":              4,
+		"DBSTATUS":           5,
+		"DBLANG":             6,
+		"LOGMODE":            7,
+		"FLASHBACK":          8,
+		"DBCURSIZE":          9,
+		"DBF_SIZE":           10,
+		"DBF_CNT":            11,
+		"DBF_STAT":           12,
+		"TMPFILE_SIZE":       13,
+		"DBTBLCOUNT":         14,
+		"DBROLE":             15,
+		"DBTBSUSAGE":         16,
+		"DBCONTROLFILE":      17,
+		"USER_INFO":          18,
+		"USER_SIZE":          19,
+		"TAB_INFO":           20,
+		"TAB_PARALLEL":       21,
+		"INX_PARALLEL":       22,
+		"INVALID_OBJ":        23,
+		"INVALID_INX":        24,
+		"DBSEQUENCE":         25,
+		"DB_SEQ_USAGE":       26,
+		"DBOPTION":           27,
+		"DBFEATURES":         28,
+		"DB_EXPIR_USER":      29,
+		"DB_PASSWORD_VERIF":  30,
+		"DBDBAPRIV":          31,
+		"DBSYSDBA":           32,
+		"DBAUDITSEGMENT":     33,
+		"DBAUDITCONT":        34,
+		"DB_NOSYS_IN_SYSTEM": 35,
+		"USERFAILEDLOGIN":    36,
+		"DBVIRSCHECK":        37,
+		"DBSCNHEALTHCHECK":   38,
+		"DBRMANCHECK":        39,
+		"CRS_STAT":           40,
+		"CRS_STAT2":          41,
+		"OCR_INFO":           42,
+		"OCR_BAK_CHECK":      43,
+		"ASM_USAGE":          44,
+		"ASM_OFFSET":         45,
+
+		// INST字段
+		"INSTNAME":          2,
+		"LOADPROFILE":       3,
+		"INSTEFFICIENCY":    4,
+		"TOPEVENT":          5,
+		"TOPSQL_BY_ELA":     6,
+		"CURSOR_SHARE_MEM":  7,
+		"DBRESOURCE":        8,
+		"DBPSU":             9,
+		"DBPATCH":           10,
+		"DBLSNRINFO":        11,
+		"DBPARAMETER":       12,
+		"DB_PARAMETER_FILE": 13,
+		"DBREDOCHECK":       14,
+		"DBREDOSWITCH":      15,
+		"RECOVERY_USAGE":    16,
+		"RECOVERY_DETAIL":   17,
+		"DBERRLOG":          18,
+		"DBDGLAGCHECK":      19,
+		"DBDGERRCHECK":      20,
+	}
+
+	// 根据字段名确定Sheet名称
+	var sheetName string
+
+	// 检查字段是否属于OS sheet
+	osFields := []string{
+		"HOSTNAME", "IPADDR", "OS", "RELVER", "CORES", "CPUCOUNT", "CPUMHZ",
+		"MEMTOTAL", "SWAPTOTAL", "OSPARAMETER", "ULIMIT", "OSLOG", "FILESYSTEM",
+		"INODEUSAGE", "CPUSTAT", "MEMSTAT", "IOSTAT", "THPSTAT", "HUGEPAGE",
+		"NUMA", "NTP", "TMZONE", "SELINUX", "FIREWALL", "NSSWITCH", "LO_MTU",
+		"MACHINE_PLATFORM", "CPU_PERF_MODE", "NOZEROCONF", "RPM_PACKAGES",
+	}
+
+	// 检查字段是否属于DB sheet
+	dbFields := []string{
+		"DBNAME", "DBMAA", "DBVER", "DBSTATUS", "DBLANG", "LOGMODE", "FLASHBACK",
+		"DBCURSIZE", "DBF_SIZE", "DBF_CNT", "DBF_STAT", "TMPFILE_SIZE", "DBTBLCOUNT",
+		"DBROLE", "DBTBSUSAGE", "DBCONTROLFILE", "USER_INFO", "USER_SIZE", "TAB_INFO",
+		"TAB_PARALLEL", "INX_PARALLEL", "INVALID_OBJ", "INVALID_INX", "DBSEQUENCE",
+		"DB_SEQ_USAGE", "DBOPTION", "DBFEATURES", "DB_EXPIR_USER", "DB_PASSWORD_VERIF",
+		"DBDBAPRIV", "DBSYSDBA", "DBAUDITSEGMENT", "DBAUDITCONT", "DB_NOSYS_IN_SYSTEM",
+		"USERFAILEDLOGIN", "DBVIRSCHECK", "DBSCNHEALTHCHECK", "DBRMANCHECK", "CRS_STAT",
+		"CRS_STAT2", "OCR_INFO", "OCR_BAK_CHECK", "ASM_USAGE", "ASM_OFFSET",
+	}
+
+	// 检查字段是否属于Inst sheet
+	instFields := []string{
+		"INSTNAME", "LOADPROFILE", "INSTEFFICIENCY", "TOPEVENT", "TOPSQL_BY_ELA",
+		"CURSOR_SHARE_MEM", "DBRESOURCE", "DBPSU", "DBPATCH", "DBLSNRINFO",
+		"DBPARAMETER", "DB_PARAMETER_FILE", "DBREDOCHECK", "DBREDOSWITCH",
+		"RECOVERY_USAGE", "RECOVERY_DETAIL", "DBERRLOG", "DBDGLAGCHECK", "DBDGERRCHECK",
+	}
+
+	// 根据字段名确定Sheet
+	if contains(osFields, nm) {
+		sheetName = "OS"
+	} else if contains(dbFields, nm) {
+		sheetName = "DB"
+	} else if contains(instFields, nm) {
+		sheetName = "Inst"
+	} else {
+		// 默认根据Category确定
+		switch category {
+		case "主机系统":
+			sheetName = "OS"
+		case "数据库分析":
+			sheetName = "DB"
+		case "实例分析":
+			sheetName = "Inst"
+		default:
+			sheetName = "OS"
+		}
+	}
+
+	// 获取行号
+	row, exists := fieldToRowMap[nm]
+	if !exists {
+		return ""
+	}
+
+	// 从问题描述中解析节点信息
+	// 问题描述格式通常是："问题: NODE1主机,xxx" 或 "问题: NODE2主机,xxx"
+	var col string = "C" // 默认C列（NODE1）
+
+	// 检查问题描述中是否包含节点信息
+	if strings.Contains(problem, "NODE1") {
+		col = "C"
+	} else if strings.Contains(problem, "NODE2") {
+		col = "D"
+	} else if strings.Contains(problem, "NODE3") {
+		col = "E"
+	} else if strings.Contains(problem, "NODE4") {
+		col = "F"
+	}
+
+	// 生成超链接公式
+	cellRef := fmt.Sprintf("%s%d", col, row)
+	return fmt.Sprintf("=HYPERLINK(\"#%s!%s\",\"Detail\")", sheetName, cellRef)
+}
+
+// contains 检查字符串切片是否包含指定字符串
+func contains(slice []string, item string) bool {
+	for _, s := range slice {
+		if s == item {
+			return true
+		}
+	}
+	return false
 }

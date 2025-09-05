@@ -10,13 +10,13 @@ import (
 	"strings"
 )
 
-// db_security.go 包含与数据库安全检查相关的分析函数
+// db_security.go 包含与数据库安全相关的分析函数
 
 // Ana_DBExpirUser 分析用户密码过期情况
 func Ana_DBExpirUser(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := strings.TrimSpace(dbshtp.Db_expir_user.Contents)
 	entry := structs.SummaryEntry{
-		Category: "数据库安全检查",
+		Category: "数据库安全",
 		Nm:       rule.Dbrule.Db_expir_user.Nm,
 		Title:    rule.Dbrule.Db_expir_user.Title,
 		Desc:     rule.Dbrule.Db_expir_user.Desc,
@@ -29,9 +29,9 @@ func Ana_DBExpirUser(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 	}
 
 	// 只要有记录，即存在口令将过期的用户，判定为普通告警(B)
-	dbshtp.Db_expir_user.Alarm = "B"
+	dbshtp.Db_expir_user.Alarm = "G"
 	entry.Moderate = append(entry.Moderate,
-		fmt.Sprintf("%s数据库,存在口令即将过期的用户,建议提前处理密码更新", dbshtp.Dbname.Contents))
+		fmt.Sprintf("问题: %s数据库,存在密码即将过期的用户,\n建议: 提前更新用户密码", dbshtp.Dbname.Contents))
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
@@ -42,7 +42,7 @@ func Ana_DBExpirUser(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 func Ana_DB_PASSWORD_VERIF(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Db_password_verif.Contents
 	entry := structs.SummaryEntry{
-		Category: "数据库安全检查",
+		Category: "数据库安全",
 		Nm:       rule.Dbrule.Db_password_verif.Nm,
 		Title:    rule.Dbrule.Db_password_verif.Title,
 		Desc:     rule.Dbrule.Db_password_verif.Desc,
@@ -55,7 +55,7 @@ func Ana_DB_PASSWORD_VERIF(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryE
 	} else {
 		// 有记录说明存在未设置密码复杂性校验，设置为G级告警
 		dbshtp.Db_password_verif.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,存在未设置密码复杂性校验的PROFILE,建议启用密码复杂性验证以增强安全性", dbshtp.Dbname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,存在未设置密码复杂性校验的PROFILE,\n建议: 启用密码复杂性验证以增强安全性", dbshtp.Dbname.Contents))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -79,8 +79,8 @@ func Ana_Userfailedlogin(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEnt
 		dbshtp.Userfailedlogin.Alarm = ""
 	} else {
 		// 有记录说明存在登录失败锁定限制，设置为G级告警
-		dbshtp.Userfailedlogin.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,存在用户登录失败锁定限制，建议对于业务用户不做登录失败锁定限制", dbshtp.Dbname.Contents))
+		dbshtp.Userfailedlogin.Alarm = "B"
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,存在用户登录失败锁定限制,\n建议: 对于业务用户不做登录失败锁定限制", dbshtp.Dbname.Contents))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -119,7 +119,7 @@ func Ana_DBDBAPRIV(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *
 		// 如果存在两条（包含）以上记录则为G级告警
 		if recordCount >= 2 {
 			dbshtp.Dbdbapriv.Alarm = "G"
-			entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,存在%d个DBA权限账户，建议只保留一个DBA账户，收回其他DBA用户权限以增强安全性", dbshtp.Dbname.Contents, recordCount))
+			entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,存在%d个DBA权限账户,\n建议: 只保留一个DBA账户，收回其他DBA用户权限以增强安全性", dbshtp.Dbname.Contents, recordCount))
 		} else {
 			// 只有一条记录，正常情况
 			dbshtp.Dbdbapriv.Alarm = ""
@@ -129,16 +129,6 @@ func Ana_DBDBAPRIV(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
-}
-
-// isDataLine 判断是否为数据行
-func isDataLine(line string) bool {
-	// 数据行通常包含日期格式（如 30-NOV-24）或数字
-	// 使用正则表达式匹配日期格式或纯数字行
-	datePattern := regexp.MustCompile(`\d{1,2}-[A-Z]{3}-\d{2,4}`)
-	numberPattern := regexp.MustCompile(`^\d+$`)
-
-	return datePattern.MatchString(line) || numberPattern.MatchString(line)
 }
 
 // Ana_DBSYSDBA 分析 SYSDBA 权限用户
@@ -159,7 +149,7 @@ func Ana_DBSYSDBA(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *s
 	} else {
 		// 有记录说明存在非必要SYSDBA权限用户，设置为B级告警
 		dbshtp.Dbsysdba.Alarm = "Minor"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,存在非必要SYSDBA权限用户,建议收回不必要的SYSDBA权限", dbshtp.Dbname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,存在非必要SYSDBA权限用户,\n建议: 对涉及用户收回SYSDBA权限", dbshtp.Dbname.Contents))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -184,7 +174,7 @@ func Ana_DBAUDITSEGMENT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntr
 	} else {
 		// 有记录说明审计数据占用过多存储空间，设置为G级告警
 		dbshtp.Dbauditsegment.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,审计数据占用过多存储空间，建议在满足审计监管要求下定期清理或归档数据", dbshtp.Dbname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,审计数据占用过多存储空间,\n建议: 在满足审计监管要求下定期清理或归档数据。", dbshtp.Dbname.Contents))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -230,7 +220,7 @@ func Ana_DBAUDITCONT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 		// 如果该值 > rule.Dbrule.Dbauditcont.Result，则判断为G
 		if data > rule.Dbrule.Dbauditcont.Result {
 			dbshtp.Dbauditcont.Alarm = "G"
-			entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,审计内容数量当前%d超过阈值%d,建议检查审计配置并清理历史审计数据", dbshtp.Dbname.Contents, data, rule.Dbrule.Dbauditcont.Result))
+			entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,审计内容数量当前%d超过阈值%d,\n建议: 在满足审计监管要求下定期清理或归档数据。", dbshtp.Dbname.Contents, data, rule.Dbrule.Dbauditcont.Result))
 		} else {
 			// 数值在阈值范围内，正常情况
 			dbshtp.Dbauditcont.Alarm = ""
@@ -263,7 +253,7 @@ func Ana_DBNosysInSystem(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEnt
 	} else {
 		// 有记录说明存在业务账户对象存储在SYSTEM、SYSAUX表空间，设置为G级告警
 		dbshtp.Db_Nosys_In_System.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,存在业务账户对象存储在SYSTEM、SYSAUX表空间，建议将业务对象迁移到专用表空间", dbshtp.Dbname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,存在业务账户对象存储在SYSTEM、SYSAUX表空间,\n建议: 将业务对象迁移到专用表空间", dbshtp.Dbname.Contents))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -288,7 +278,7 @@ func Ana_DBVIRSCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 	} else {
 		// 有记录说明存在病毒植入风险，设置为R级告警
 		dbshtp.Dbvirscheck.Alarm = "R"
-		entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,存在病毒植入风险，建议立即做安全检查", dbshtp.Dbname.Contents))
+		entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,存在病毒植入风险,\n建议: 立即深入安全检查核实病毒风险", dbshtp.Dbname.Contents))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -310,7 +300,7 @@ func Ana_DBRMANCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
 		// 无记录说明数据库没有RMAN备份，设置为B级告警
 		dbshtp.Dbrmancheck.Alarm = "R"
-		entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,未发现RMAN备份记录,建议核查是否有其他备份", dbshtp.Dbname.Contents))
+		entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,未发现RMAN备份记录,\n建议: 确认是否有其他有效备份,尽快部署RMAN备份策略", dbshtp.Dbname.Contents))
 	} else {
 		// 有记录，逐行检查关键词
 		lines := strings.Split(msgdata, "\n")
@@ -337,10 +327,10 @@ func Ana_DBRMANCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 		// 根据检查结果设置告警级别
 		if hasError {
 			dbshtp.Dbrmancheck.Alarm = "R"
-			entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,近7天RMAN备份检查发现错误,建议立即核查备份情况", dbshtp.Dbname.Contents))
+			entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,近7天RMAN备份检查发现错误,\n建议: 检查备份作业执行情况,确保备份作业正常运行", dbshtp.Dbname.Contents))
 		} else if hasWarning {
 			dbshtp.Dbrmancheck.Alarm = "B"
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,近7天RMAN备份检查发现警告,建议立即核查备份情况", dbshtp.Dbname.Contents))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,近7天RMAN备份检查发现警告,\n建议: 检查备份作业执行情况,确保备份作业正常运行", dbshtp.Dbname.Contents))
 		} else {
 			// 无错误无警告，正常情况
 			dbshtp.Dbrmancheck.Alarm = ""
@@ -401,14 +391,14 @@ func Ana_DBSCNHEALTHCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEn
 		if rdc.MatchString(line) { // 匹配到结果C
 			scnHealthStatus = "C"
 			dbshtp.Dbscnhealthcheck.Alarm = "R"
-			entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,SCN健康检查结果为C，SCN增长异常，建议尽快核查数据库SCN增长情况", dbshtp.Dbname.Contents))
+			entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,SCN健康检查结果为C，SCN增长异常,\n建议: 尽快核查数据库是否SCN增长异常", dbshtp.Dbname.Contents))
 			break
 		}
 
 		if rdb.MatchString(line) { // 匹配到结果B
 			scnHealthStatus = "B"
 			dbshtp.Dbscnhealthcheck.Alarm = "B"
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,SCN健康检查结果为B，SCN增长较快，建议关注SCN增长情况", dbshtp.Dbname.Contents))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,SCN健康检查结果为B，SCN增长较快,\n建议: 关注SCN增长速度是否过快", dbshtp.Dbname.Contents))
 			break
 		}
 	}

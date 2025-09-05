@@ -27,6 +27,7 @@ type Osrule struct {
 	Memstat          Memstat          `yaml:"memstat"`
 	Iostat           Iostat           `yaml:"iostat"`
 	Thpstat          Thpstat          `yaml:"thpstat"`
+	Hugepage         Hugepage         `yaml:"hugepage"`
 	Numa             Numa             `yaml:"numa"`
 	Ntp              Ntp              `yaml:"ntp"`
 	Tmzone           Tmzone           `yaml:"tmzone"`
@@ -38,6 +39,7 @@ type Osrule struct {
 	CPU_PERF_MODE    CPU_PERF_MODE    `yaml:"cpu_perf_mode"`
 	NOZEROCONF       NOZEROCONF       `yaml:"nozeroconf"`
 	RPM_PACKAGES     RPM_PACKAGES     `yaml:"rpm_packages"`
+	Oslog            Oslog            `yaml:"oslog"`
 }
 
 // //*** Lv2***////
@@ -206,6 +208,12 @@ type Thpstat struct {
 	Anpages_gt int    `yaml:"anpages_gt"`
 }
 
+type Hugepage struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
 type Numa struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
@@ -269,6 +277,12 @@ type NOZEROCONF struct {
 }
 
 type RPM_PACKAGES struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+}
+
+type Oslog struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`

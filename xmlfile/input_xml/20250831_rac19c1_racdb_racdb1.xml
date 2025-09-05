@@ -167,14 +167,14 @@ Average:     dev252-6      5.00     69.33      2.67     14.40      0.05      8.7
 AnonHugePages:         0 kB
 always madvise [never]
 </THPSTAT>
-<HUGPAGE>
+<HUGEPAGE>
 HugePages_Total:       0
 HugePages_Free:        0
 HugePages_Rsvd:        0
 HugePages_Surp:        0
 Hugepagesize:       2048 kB
 Hugetlb:               0 kB
-</HUGPAGE>
+</HUGEPAGE>
 <NUMA>
 NUMA turned off
 </NUMA>
@@ -803,7 +803,7 @@ parallel_max_servers                        5                6      32767
 
 GROUP# THREAD#                  SEQUENCE#         MB ARCHIVED   STATUS
 ------ ------- -------------------------- ---------- ---------- ----------------
-     1       1                         40      100.0 NO         CURRENT
+     1       1                         40      500.0 NO         CURRENT
      2       1                         38      500.0 YES        INACTIVE
      3       1                         39      500.0 YES        INACTIVE
      4       2                         37      500.0 YES        INACTIVE
@@ -815,7 +815,7 @@ GROUP# THREAD#                  SEQUENCE#         MB ARCHIVED   STATUS
 DT    DY  Total   h0   h1   h2   h3   h4   h5   h6   h7   h8   h9  h10  h11  h12  h13  h14  h15  h16  h17  h18  h19  h20  h21  h22  h23
 ----- --- ----- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 13/08 Wed     1    0    0    0    0    0    0    0    0    1    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
-14/08 Thu     2    0    0    0    0    0    0  120    0    0    0    0    0    0    0    1    1    0    0    0    0    0    0    0    0
+14/08 Thu     2    0    0    0    0    0    0    0    0    0    0    0    0    0    0    1    1    0    0    0    0    0    0    0    0
 16/08 Sat     2    0    0    0    0    0    0    0    0    0    1    0    0    0    0    0    0    0    0    0    0    0    0    1    0
 17/08 Sun     1    0    0    0    0    0    0    0    0    1    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
 18/08 Mon     1    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    1    0    0    0
@@ -833,7 +833,7 @@ DT    DY  Total   h0   h1   h2   h3   h4   h5   h6   h7   h8   h9  h10  h11  h12
 
 NAME                                               LIMIT_GB     USED_GB USED_PERCENT(%)
 --------------------------------------------- ------------- ----------- ---------------
-+DATA                                                 20.00        18.00          90.01
++DATA                                                 20.00        3.00           15.01
 ]]></RECOVERY_USAGE>
 <RECOVERY_DETAIL><![CDATA[
 
@@ -1027,7 +1027,56 @@ OPatch succeeded.
 <DBDGERRCHECK><![CDATA[
 ]]></DBDGERRCHECK>
 <DBLSNRINFO><![CDATA[
+grid        9026       1  0 Aug02 ?        00:00:36 /u01/app/19/grid/bin/tnslsnr ASMNET1LSNR_ASM -no_crs_notify -inherit
+grid        9127       1  0 Aug02 ?        00:00:31 /u01/app/19/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+grid        9130       1  0 Aug02 ?        00:00:30 /u01/app/19/grid/bin/tnslsnr LISTENER_SCAN1 -no_crs_notify -inherit
 
+LSNRCTL for Linux: Version 19.0.0.0.0 - Production on 31-AUG-2025 13:49:44
+
+Copyright (c) 1991, 2024, Oracle.  All rights reserved.
+
+TNS-01101: Could not find listener name or service name asmnet1lsnr_asm
+
+LSNRCTL for Linux: Version 19.0.0.0.0 - Production on 31-AUG-2025 13:49:44
+
+Copyright (c) 1991, 2024, Oracle.  All rights reserved.
+
+Connecting to (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1521))
+STATUS of the LISTENER
+------------------------
+Alias                     LISTENER
+Version                   TNSLSNR for Linux: Version 19.0.0.0.0 - Production
+Start Date                02-AUG-2025 11:21:01
+Uptime                    29 days 2 hr. 28 min. 44 sec
+Trace Level               off
+Security                  ON: Local OS Authentication
+SNMP                      OFF
+Listener Parameter File   /u01/app/19/grid/network/admin/listener.ora
+Listener Log File         /u01/app/grid/diag/tnslsnr/rac19c1/listener/alert/log.xml
+Listening Endpoints Summary...
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=ipc)(KEY=LISTENER)))
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=1.1.1.192)(PORT=1521)))
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=1.1.1.191)(PORT=1521)))
+Services Summary...
+Service "+ASM" has 1 instance(s).
+  Instance "+ASM1", status READY, has 1 handler(s) for this service...
+Service "+ASM_DATA" has 1 instance(s).
+  Instance "+ASM1", status READY, has 1 handler(s) for this service...
+Service "+ASM_OCR" has 1 instance(s).
+  Instance "+ASM1", status READY, has 1 handler(s) for this service...
+Service "racdb" has 1 instance(s).
+  Instance "racdb1", status READY, has 1 handler(s) for this service...
+Service "racdbXDB" has 1 instance(s).
+  Instance "racdb1", status READY, has 1 handler(s) for this service...
+The command completed successfully
+
+LSNRCTL for Linux: Version 19.0.0.0.0 - Production on 31-AUG-2025 13:49:44
+
+Copyright (c) 1991, 2024, Oracle.  All rights reserved.
+
+TNS-01101: Could not find listener name or service name listener_scan1
+size=28361215 bytes, file=/u01/app/oracle/../grid/diag/tnslsnr/rac19c1/listener_scan1/trace/listener_scan1.log
+size=29005587 bytes, file=/u01/app/oracle/../grid/diag/tnslsnr/rac19c1/listener/trace/listener.log
 ]]></DBLSNRINFO>
 <DBERRLOG><![CDATA[
 

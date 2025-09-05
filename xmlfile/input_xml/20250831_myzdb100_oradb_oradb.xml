@@ -131,14 +131,14 @@ Average:     dev252-0      5.67      1.33     18.67      3.53      0.03      4.5
 AnonHugePages:         0 kB
 always madvise [never]
 </THPSTAT>
-<HUGPAGE>
+<HUGEPAGE>
 HugePages_Total:    2563
 HugePages_Free:     1068
 HugePages_Rsvd:     1066
 HugePages_Surp:        0
 Hugepagesize:       2048 kB
 Hugetlb:         5249024 kB
-</HUGPAGE>
+</HUGEPAGE>
 <NUMA>
 NUMA turned off
 </NUMA>
@@ -778,8 +778,8 @@ Service "oradb" has 2 instance(s).
   Instance "oradb", status UNKNOWN, has 1 handler(s) for this service...
   Instance "oradb", status READY, has 3 handler(s) for this service...
 The command completed successfully
-size=10070909890 bytes, file=/u01/app/oracle/../oracle/diag/tnslsnr/myzdb100/listener/trace/listener_1.log
-size=1540251000 bytes, file=/u01/app/oracle/../oracle/diag/tnslsnr/myzdb100/listener/trace/listener.log
+size=170909890 bytes, file=/u01/app/oracle/../oracle/diag/tnslsnr/myzdb100/listener/trace/listener_1.log
+size=15402510 bytes, file=/u01/app/oracle/../oracle/diag/tnslsnr/myzdb100/listener/trace/listener.log
 ]]></DBLSNRINFO>
 <DBERRLOG><![CDATA[
 

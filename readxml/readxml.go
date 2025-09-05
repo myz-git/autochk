@@ -65,14 +65,13 @@ func processTag0Node(node *etree.Element, osshts *[]structs.OsShts) {
 	osSht.Swaptotal = structs.Tpstrc{}
 	osSht.Osparameter = structs.Tpstrc{}
 	osSht.Ulimit = structs.Tpstrc{}
-	osSht.Oslog = structs.Tpstrc{}
 	osSht.Filesystem = structs.Tpstrc{}
 	osSht.Inodeusage = structs.Tpstrc{}
 	osSht.Cpustat = structs.Tpstrc{}
 	osSht.Memstat = structs.Tpstrc{}
 	osSht.Iostat = structs.Tpstrc{}
 	osSht.Thpstat = structs.Tpstrc{}
-	osSht.Hugpage = structs.Tpstrc{}
+	osSht.Hugepage = structs.Tpstrc{}
 	osSht.Numa = structs.Tpstrc{}
 	osSht.Ntp = structs.Tpstrc{}
 	osSht.Tmzone = structs.Tpstrc{}
@@ -84,6 +83,7 @@ func processTag0Node(node *etree.Element, osshts *[]structs.OsShts) {
 	osSht.CPU_PERF_MODE = structs.Tpstrc{}
 	osSht.NOZEROCONF = structs.Tpstrc{}
 	osSht.RPM_PACKAGES = structs.Tpstrc{}
+	osSht.Oslog = structs.Tpstrc{}
 
 	for _, tag := range node.ChildElements() {
 		switch tag.Tag {
@@ -109,8 +109,6 @@ func processTag0Node(node *etree.Element, osshts *[]structs.OsShts) {
 			osSht.Osparameter.Contents = strings.TrimSpace(tag.Text())
 		case "ULIMIT":
 			osSht.Ulimit.Contents = strings.TrimSpace(tag.Text())
-		case "OSLOG":
-			osSht.Oslog.Contents = strings.TrimSpace(tag.Text())
 		case "FILESYSTEM":
 			osSht.Filesystem.Contents = strings.TrimSpace(tag.Text())
 		case "INODEUSAGE":
@@ -123,8 +121,8 @@ func processTag0Node(node *etree.Element, osshts *[]structs.OsShts) {
 			osSht.Iostat.Contents = strings.TrimSpace(tag.Text())
 		case "THPSTAT":
 			osSht.Thpstat.Contents = strings.TrimSpace(tag.Text())
-		case "HUGPAGE":
-			osSht.Hugpage.Contents = strings.TrimSpace(tag.Text())
+		case "HUGEPAGE":
+			osSht.Hugepage.Contents = strings.TrimSpace(tag.Text())
 		case "NUMA":
 			osSht.Numa.Contents = strings.TrimSpace(tag.Text())
 		case "NTP":
@@ -147,6 +145,8 @@ func processTag0Node(node *etree.Element, osshts *[]structs.OsShts) {
 			osSht.NOZEROCONF.Contents = strings.TrimSpace(tag.Text())
 		case "RPM_PACKAGES":
 			osSht.RPM_PACKAGES.Contents = strings.TrimSpace(tag.Text())
+		case "OSLOG":
+			osSht.Oslog.Contents = strings.TrimSpace(tag.Text())
 		}
 	}
 
@@ -621,7 +621,6 @@ func processTag2Node(node *etree.Element, instshts *[]structs.InstShts) {
 			}
 		case "RECOVERY_USAGE":
 			content := strings.TrimSpace(tag.Text())
-			fmt.Printf("DEBUG: 读取到 RECOVERY_USAGE 内容: %s\n", content)
 			if content == "" {
 				instSht.Recovery_usage.Contents = "无记录"
 			} else {
@@ -629,7 +628,6 @@ func processTag2Node(node *etree.Element, instshts *[]structs.InstShts) {
 			}
 		case "RECOVERY_DETAIL":
 			content := strings.TrimSpace(tag.Text())
-			fmt.Printf("DEBUG: 读取到 RECOVERY_DETAIL 内容: %s\n", content)
 			if content == "" {
 				instSht.Recovery_detail.Contents = "无记录"
 			} else {

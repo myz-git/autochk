@@ -53,7 +53,7 @@ func Ana_RDF(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *s
 		status := fields[5]
 		if !utils.Contain(status, rule.Dbrule.Dbredocheck.Rdf_status_list) {
 			instshtp.Dbredocheck.Alarm = "R"
-			entry.Severe = append(entry.Severe, fmt.Sprintf("%s实例,REDO文件%s状态%s异常，需立即检查", instshtp.Instname.Contents, fields[0], status))
+			entry.Severe = append(entry.Severe, fmt.Sprintf("%s实例,REDO文件%s状态%s异常,\n建议: 立即核查REDO文件状态是否正常", instshtp.Instname.Contents, fields[0], status))
 			break // 发现状态异常就退出，不需要继续检查
 		}
 
@@ -61,7 +61,7 @@ func Ana_RDF(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *s
 		if size, err := strconv.ParseFloat(fields[3], 64); err == nil {
 			if size < rule.Dbrule.Dbredocheck.Rdf_size {
 				instshtp.Dbredocheck.Alarm = "G"
-				entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,REDO文件%s大小%.1fMB小于阈值%.1fMB，建议生产环境每个redo文件在200M-4G之间", instshtp.Instname.Contents, fields[0], size, rule.Dbrule.Dbredocheck.Rdf_size))
+				entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,REDO文件%s大小%.1fMB小于阈值%.1fMB,\n建议: 生产环境每个redo文件在200M-4G之间", instshtp.Instname.Contents, fields[0], size, rule.Dbrule.Dbredocheck.Rdf_size))
 				break // 发现大小异常就退出，不需要继续检查
 			}
 		}
@@ -97,7 +97,7 @@ Looop:
 				value, _ := strconv.Atoi(v)
 				if value > rule.Dbrule.Dbredoswitch.Sw_cnt_ge1 {
 					instshtp.Dbredoswitch.Alarm = "B"
-					entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,归档切换每小时%d次超过阈值%d次,建议增加redo大小及数量每15-20分钟切换一次", instshtp.Instname.Contents, value, rule.Dbrule.Dbredoswitch.Sw_cnt_ge1))
+					entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,归档切换每小时%d次超过阈值%d次,\n建议: 增加redo大小及数量期望每10-20分钟切换一次", instshtp.Instname.Contents, value, rule.Dbrule.Dbredoswitch.Sw_cnt_ge1))
 					break Looop
 				}
 			}
@@ -130,7 +130,7 @@ func Ana_RECOVERY_USAGE(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 	if len(lines) < 3 {
 		// 数据行数不足，数据采集异常
 		instshtp.Recovery_usage.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,闪回区空间使用检查数据采集异常", instshtp.Instname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,闪回区空间使用检查数据采集异常", instshtp.Instname.Contents))
 		return
 	}
 
@@ -139,7 +139,7 @@ func Ana_RECOVERY_USAGE(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 	if thirdLine == "" {
 		// 第3行为空，数据采集异常
 		instshtp.Recovery_usage.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,闪回区空间使用检查数据采集异常", instshtp.Instname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,闪回区空间使用检查数据采集异常", instshtp.Instname.Contents))
 		return
 	}
 
@@ -148,7 +148,7 @@ func Ana_RECOVERY_USAGE(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 	if len(fields) < 4 {
 		// 字段数不足，数据采集异常
 		instshtp.Recovery_usage.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,闪回区空间使用检查数据采集异常", instshtp.Instname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,闪回区空间使用检查数据采集异常", instshtp.Instname.Contents))
 		return
 	}
 
@@ -157,11 +157,11 @@ func Ana_RECOVERY_USAGE(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 		// 如果 >= rule.Dbrule.Recovery_usage.Result[1]，则为R级告警
 		if usedPercent >= float64(rule.Dbrule.Recovery_usage.Result[1]) {
 			instshtp.Recovery_usage.Alarm = "R"
-			entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,闪回区使用率当前%.2f%%超过严重阈值%.0f%%,建议尽快清理或扩容闪回区", instshtp.Instname.Contents, usedPercent, rule.Dbrule.Recovery_usage.Result[1]))
+			entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s实例,闪回区使用率当前%.2f%%超过严重阈值%.0f%%,\n建议: 尽快清理或扩容闪回区", instshtp.Instname.Contents, usedPercent, rule.Dbrule.Recovery_usage.Result[1]))
 		} else if usedPercent >= float64(rule.Dbrule.Recovery_usage.Result[0]) {
 			// 如果 >= rule.Dbrule.Recovery_usage.Result[0]，则为B级告警
 			instshtp.Recovery_usage.Alarm = "B"
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,闪回区使用率当前%.2f%%超过阈值%.0f%%,建议及时清理或扩容闪回区", instshtp.Instname.Contents, usedPercent, rule.Dbrule.Recovery_usage.Result[0]))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s实例,闪回区使用率当前%.2f%%超过阈值%.0f%%,\n建议: 及时清理或扩容闪回区", instshtp.Instname.Contents, usedPercent, rule.Dbrule.Recovery_usage.Result[0]))
 		} else {
 			// 使用率在正常范围内
 			instshtp.Recovery_usage.Alarm = ""
@@ -169,7 +169,7 @@ func Ana_RECOVERY_USAGE(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 	} else {
 		// 第4列不是数字，数据采集异常
 		instshtp.Recovery_usage.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,闪回区空间使用检查数据采集异常", instshtp.Instname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,闪回区空间使用检查数据采集异常", instshtp.Instname.Contents))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -179,11 +179,6 @@ func Ana_RECOVERY_USAGE(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 
 // Ana_DBparameter 分析数据库初始化参数
 func Ana_DBparameter(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-}
-
-// Ana_DBParameterFile 分析数据库参数文件
-func Ana_DBParameterFile(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
-
 }
 
 // Ana_DBShpSize 分析共享池大小
@@ -200,7 +195,7 @@ func Ana_DBShpSize(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntr
 	// 		size, _ := strconv.Atoi(matches[1])
 	// 		if size < 1000000000 {
 	// 			dbshtp.Dbrecoverydest.Alarm = "B"
-	// 			entry.Moderate = append(entry.Moderate, fmt.Sprintf("共享池大小 %d 字节过小，建议调整", size))
+	// 			entry.Moderate = append(entry.Moderate, fmt.Sprintf("共享池大小 %d 字节过小,\n建议: 调整", size))
 	// 		}
 	// 	}
 	// }
@@ -227,7 +222,7 @@ func Ana_DBShpPct(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntri
 	// 			sgaSize, _ := strconv.Atoi(sgaMatches[1])
 	// 			if float64(size)/float64(sgaSize)*100 > 60 {
 	// 				dbshtp.Dbrecoverydest.Alarm = "B"
-	// 				entry.Moderate = append(entry.Moderate, fmt.Sprintf("共享池使用率 %.2f%% 超过 60%%，建议优化", float64(size)/float64(sgaSize)*100))
+	// 				entry.Moderate = append(entry.Moderate, fmt.Sprintf("共享池使用率 %.2f%% 超过 60%%,\n建议: 优化", float64(size)/float64(sgaSize)*100))
 	// 			}
 	// 		}
 	// 	}

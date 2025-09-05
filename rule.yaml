@@ -10,7 +10,7 @@ osrule:
     swap_ge2: 1000
   memstat: 
     nm: MEMSTAT
-    title: "内存使用检查"
+    title: "内存使用"
     desc: "查看空闲内存是否足够,是否频繁使用换页SWAP"
     available_le1:  4096
     available_le2:  2048
@@ -36,6 +36,10 @@ osrule:
     nm: THPSTAT
     title: "主机透明大页检查"
     desc: "查看主机透明大页配置情况,为提升系统稳定性建议关闭透明在大页"
+  hugepage: 
+    nm: HUGEPAGE
+    title: "主机大页检查"
+    desc: "查看主机大页配置使用情况,为提升系统性能建议开启大页"
   osparameter: 
     nm: OSPARAMETER
     title: "内核参数"
@@ -90,11 +94,11 @@ osrule:
   selinux: 
     nm: SELINUX
     title: "SELinux状态检查"
-    desc: "检查SELinux状态, 建议关闭SELinux"
+    desc: "检查SELinux状态, 建议禁用SELinux以提升数据库整体稳定性"
   firewall: 
     nm: FIREWALL
     title: "防火墙状态检查"
-    desc: "检查防火墙状态, 建议关闭防火墙"
+    desc: "检查防火墙状态, 建议禁用防火墙服务以提升数据库整体稳定性"
   nsswitch: 
     nm: NSSWITCH
     title: "NSSwitch配置检查"
@@ -120,6 +124,10 @@ osrule:
     title: "安全漏洞RPM包检查"
     desc: "检查主机是否安装了存在安全漏洞的RPM包, 建议卸载存在安全隐患的RPM包"
     rpm_list: [firefox, freetype, ghostscript, open-vm-tools, libsmbclient, libwbclient, samba-client-libs, samba-common-libs]
+  oslog: 
+    nm: OSLOG
+    title: "操作系统日志检查"
+    desc: "检查操作系统近期日志是否有严重错误"
 # 数据库规则
 dbrule: 
   # 数据库实例分析
@@ -337,12 +345,12 @@ dbrule:
   dbauditsegment: 
     nm: DBAUDITSEGMENT
     title: "审计数据大小检查"
-    desc: "数据库审计数据占用过多存储空间,建议在满足审计监管要求下定期清理或档数据。"
+    desc: "数据库审计数据占用过多存储空间,建议在满足审计监管要求下定期清理或归档数据。"
     result: 10
   dbauditcont: 
     nm: DBAUDITCONT
     title: "审计对象数量检查"
-    desc: "审计对象长期不归档或清理, 建议在满足审计监管要求下定期清理或档数据。"
+    desc: "审计对象长期不归档或清理, 建议在满足审计监管要求下定期清理或归档数据。"
     result: 100000
   db_nosys_in_system: 
     nm: DB_NOSYS_IN_SYSTEM

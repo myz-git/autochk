@@ -21,7 +21,7 @@ func Ana_DB4031check(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEn
 	}
 	if strings.Contains(msgdata, "ORA-4031") {
 		instshtp.Dberrlog.Alarm = "R"
-		entry.Severe = append(entry.Severe, fmt.Sprintf("%s实例,检测到ORA-4031共享池内存不足错误,建议调整共享池大小或清理LRU列表", instshtp.Instname.Contents))
+		entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s实例,检测到ORA-4031共享池内存不足错误,\n建议: 调整共享池大小或优化相关参数配置", instshtp.Instname.Contents))
 	}
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
@@ -42,7 +42,7 @@ func Ana_RESOURCE(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntri
 	if strings.TrimSpace(msgdata) == "" {
 		// 数据采集异常，设置为G级告警
 		instshtp.Dbresource.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,资源使用情况数据采集异常", instshtp.Instname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,资源使用情况数据采集异常", instshtp.Instname.Contents))
 		return
 	}
 
@@ -77,7 +77,7 @@ func Ana_RESOURCE(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntri
 						if utilizationRate > 90 {
 							hasWarning = true
 							instshtp.Dbresource.Alarm = "B"
-							entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,%s资源近期使用%d接近最大限制%d,建议根据需要调整限制及核查资源使用增长原因", instshtp.Instname.Contents, resourceName, maxUtil, limitValue))
+							entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s实例,%s资源近期使用%d接近最大限制%d,\n建议: 根据需要调整限制及核查资源使用增长是否预期规划", instshtp.Instname.Contents, resourceName, maxUtil, limitValue))
 						}
 					}
 				}
@@ -109,7 +109,7 @@ func Ana_LOADPROFILE(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEn
 	if strings.TrimSpace(msgdata) == "" {
 		// 数据采集异常，设置为G级告警
 		instshtp.Loadprofile.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,负载性能数据采集异常", instshtp.Instname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,负载性能数据采集异常", instshtp.Instname.Contents))
 	} else {
 		// 有数据，进行详细分析
 		lines := strings.Split(msgdata, "\n")
@@ -140,7 +140,7 @@ func Ana_LOADPROFILE(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEn
 							if redoSize >= rule.Dbrule.Loadprofile.Redosize*1024*1024 {
 								hasRedoWarning = true
 								instshtp.Loadprofile.Alarm = "B"
-								entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,数据库负载较大(每秒产生redo数据量%.2f bytes),建议与业务沟通降低压力提升数据库稳定性", instshtp.Instname.Contents, redoSize))
+								entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s实例,数据库负载较大(每秒产生redo数据量%.2f bytes),\n建议: 根据业务运行情况降低REDO压力,提升数据库性能", instshtp.Instname.Contents, redoSize))
 							}
 						}
 					}
@@ -158,7 +158,7 @@ func Ana_LOADPROFILE(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEn
 						if logon >= rule.Dbrule.Loadprofile.Logon {
 							hasLogonWarning = true
 							instshtp.Loadprofile.Alarm = "B"
-							entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,数据库连接压力过大(监听,每秒%.2f次连接),建议尽量避免短连接减少连接并发或启用多个监听", instshtp.Instname.Contents, logon))
+							entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s实例,数据库连接压力过大(监听,每秒%.2f次连接),\n建议: 尽量避免短连接减少并发连接或启用多个监听分担压力", instshtp.Instname.Contents, logon))
 						}
 					}
 				}
@@ -190,7 +190,7 @@ func Ana_INSTEFFICIENCY(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 	if strings.TrimSpace(msgdata) == "" {
 		// 数据采集异常，设置为G级告警
 		instshtp.Instefficiency.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,实例效率数据采集异常", instshtp.Instname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,实例效率数据采集异常", instshtp.Instname.Contents))
 		return
 	}
 
@@ -219,7 +219,7 @@ func Ana_INSTEFFICIENCY(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 						if bufferHit < rule.Dbrule.Instefficiency.Buffer_hit {
 							hasWarning = true
 							instshtp.Instefficiency.Alarm = "G"
-							entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,Buffer Hit命中率%.2f%%小于%.2f%%,建议优化缓存命中率", instshtp.Instname.Contents, bufferHit, rule.Dbrule.Instefficiency.Buffer_hit))
+							entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,Buffer Hit命中率%.2f%%小于%.2f%%,\n建议: 优化适当增加BufferCache或SGA,提升缓存命中率", instshtp.Instname.Contents, bufferHit, rule.Dbrule.Instefficiency.Buffer_hit))
 						}
 					}
 				}
@@ -240,7 +240,7 @@ func Ana_INSTEFFICIENCY(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 						if libraryHit < rule.Dbrule.Instefficiency.Library_hit {
 							hasWarning = true
 							instshtp.Instefficiency.Alarm = "G"
-							entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,Library Hit命中率%.2f%%小于%.2f%%,建议优化库缓存命中率", instshtp.Instname.Contents, libraryHit, rule.Dbrule.Instefficiency.Library_hit))
+							entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,Library Hit命中率%.2f%%小于%.2f%%,\n建议: 适当增加SHAREDPOOL或SGA,优化库缓存命中率", instshtp.Instname.Contents, libraryHit, rule.Dbrule.Instefficiency.Library_hit))
 						}
 					}
 				}
@@ -260,8 +260,8 @@ func Ana_INSTEFFICIENCY(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 					if softParse, err := strconv.ParseFloat(softParseStr, 64); err == nil {
 						if softParse < rule.Dbrule.Instefficiency.Soft_parse {
 							hasWarning = true
-							instshtp.Instefficiency.Alarm = "G"
-							entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,Soft Parse命中率%.2f%%小于%.2f%%,建议优化软解析命中率", instshtp.Instname.Contents, softParse, rule.Dbrule.Instefficiency.Soft_parse))
+							instshtp.Instefficiency.Alarm = "B"
+							entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s实例,Soft Parse命中率%.2f%%小于%.2f%%,\n建议: 改造SQL常量为绑定变量减少硬解析", instshtp.Instname.Contents, softParse, rule.Dbrule.Instefficiency.Soft_parse))
 						}
 					}
 				}
@@ -295,7 +295,7 @@ func Ana_DBtopSQL(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntri
 	if strings.TrimSpace(msgdata) == "" {
 		// 数据采集异常，设置为G级告警
 		instshtp.Topsql_by_ela.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,Top SQL数据采集异常", instshtp.Instname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,Top SQL数据采集异常", instshtp.Instname.Contents))
 		return
 	}
 
@@ -329,7 +329,7 @@ func Ana_DBtopSQL(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntri
 					if executions > 10000 && avgTime > 10 {
 						hasWarning = true
 						instshtp.Topsql_by_ela.Alarm = "G"
-						entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,SQL_ID:%s,执行次数%d次,平均耗时%.2f秒,建议对高频执行的SQL语句进行优化提升单次执行效率", instshtp.Instname.Contents, sqlID, executions, avgTime))
+						entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,SQL_ID:%s,执行次数%d次,平均耗时%.2f秒,\n建议: 对高频执行的SQL语句进行优化提升单次执行效率", instshtp.Instname.Contents, sqlID, executions, avgTime))
 						break // 找到第一个符合条件的SQL就停止
 					}
 				}
@@ -364,7 +364,7 @@ func Ana_CursorShareMem(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 	} else {
 		// 有记录说明存在游标共享内存使用过大的情况，设置为G级告警
 		instshtp.Cursor_share_mem.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,游标共享内存使用过大,建议对游标共享内存使用>300M的SQL语句优化", instshtp.Instname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,游标共享内存使用过大,\n建议: 对游标共享内存使用>300M的SQL语句优化", instshtp.Instname.Contents))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {

@@ -3,7 +3,6 @@ package anadata
 import (
 	"autochk/structs"
 	"autochk/utils"
-	"log"
 	"strings"
 )
 
@@ -11,19 +10,19 @@ import (
 func Ana(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.InstShts, summaryEntries *structs.SummaryEntries) {
 	rules, err := utils.GetRule()
 	if err != nil {
-		log.Printf("rule err: #%v", err)
+		utils.LogErrorf("rule err: #%v", err)
 		return
 	}
 
-	// 添加调试信息
-	log.Printf("开始分析 - OS节点数: %d, 实例数: %d", len(*osshts), len(*instshts))
+	// 调试信息（默认不输出）
+	utils.LogDebugf("开始分析 - OS节点数: %d, 实例数: %d", len(*osshts), len(*instshts))
 	if len(*osshts) > 0 {
-		log.Printf("第一个OS节点: %s, 主机名: %s", (*osshts)[0].NodeID, (*osshts)[0].Hostname.Contents)
+		utils.LogDebugf("第一个OS节点: %s, 主机名: %s", (*osshts)[0].NodeID, (*osshts)[0].Hostname.Contents)
 	}
 
 	// 分析 OS 指标 - 遍历所有节点
 	for i := range *osshts {
-		log.Printf("分析节点 %s (索引: %d)", (*osshts)[i].NodeID, i)
+		utils.LogDebugf("分析节点 %s (索引: %d)", (*osshts)[i].NodeID, i)
 
 		// 为每个节点创建独立的分析上下文
 		Ana_Osparameter(rules, &(*osshts)[i], summaryEntries)
@@ -34,7 +33,7 @@ func Ana(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.In
 		Ana_Memstat(rules, &(*osshts)[i], summaryEntries)
 		Ana_Iostat(rules, &(*osshts)[i], summaryEntries)
 		Ana_Thpstat(rules, &(*osshts)[i], summaryEntries)
-		Ana_Hugpage(rules, &(*osshts)[i], summaryEntries)
+		Ana_Hugepage(rules, &(*osshts)[i], summaryEntries)
 		Ana_Numa(rules, &(*osshts)[i], summaryEntries)
 		Ana_Ntp(rules, &(*osshts)[i], summaryEntries)
 		Ana_Selinux(rules, &(*osshts)[i], summaryEntries)
@@ -77,7 +76,7 @@ func Ana(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.In
 
 	// 分析实例相关指标 - 遍历所有实例
 	for i := range *instshts {
-		log.Printf("分析实例 %s (索引: %d)", (*instshts)[i].NodeID, i)
+		utils.LogDebugf("分析实例 %s (索引: %d)", (*instshts)[i].NodeID, i)
 
 		// 实例相关的分析
 		Ana_RDF(rules, &(*instshts)[i], summaryEntries)
@@ -93,10 +92,9 @@ func Ana(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.In
 		Ana_DBShpPct(rules, &(*instshts)[i], summaryEntries)
 		Ana_DB4031check(rules, &(*instshts)[i], summaryEntries)
 		Ana_DBPSU(rules, &(*instshts)[i], summaryEntries)
-		// Ana_DBPATCH(rules, &(*instshts)[i], summaryEntries)
+		Ana_DBPATCH(rules, &(*instshts)[i], summaryEntries)
 		Ana_DBLSNRINFO(rules, &(*instshts)[i], summaryEntries)
 		Ana_DBparameter(rules, &(*instshts)[i], summaryEntries)
-		Ana_DBParameterFile(rules, &(*instshts)[i], summaryEntries)
 		Ana_DBERRLOG(rules, &(*instshts)[i], summaryEntries)
 
 		// DataGuard相关检查 - 只有当数据库角色为STANDBY且是第一个Node时才执行

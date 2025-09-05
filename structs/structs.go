@@ -14,14 +14,13 @@ type OsShts struct {
 	Swaptotal        Tpstrc
 	Osparameter      Tpstrc
 	Ulimit           Tpstrc
-	Oslog            Tpstrc
 	Filesystem       Tpstrc
 	Inodeusage       Tpstrc
 	Cpustat          Tpstrc
 	Memstat          Tpstrc
 	Iostat           Tpstrc
 	Thpstat          Tpstrc
-	Hugpage          Tpstrc
+	Hugepage         Tpstrc
 	Numa             Tpstrc
 	Ntp              Tpstrc
 	Tmzone           Tpstrc
@@ -33,6 +32,7 @@ type OsShts struct {
 	CPU_PERF_MODE    Tpstrc
 	NOZEROCONF       Tpstrc
 	RPM_PACKAGES     Tpstrc
+	Oslog            Tpstrc
 }
 
 // DbSht 用于存储TAG1中NODE1的DATABASE相关信息

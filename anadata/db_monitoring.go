@@ -31,7 +31,7 @@ func Ana_DBERRLOG(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntri
 	} else {
 		// 有内容说明存在错误日志，设置为G级告警
 		instshtp.Dberrlog.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,近期数据库日志存在重要报错信息,建议检查并处理相关错误", instshtp.Instname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,近期数据库日志存在重要报错信息,\n建议: 根据错误信息定位问题处理相关错误", instshtp.Instname.Contents))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -53,7 +53,7 @@ func Ana_DBLSNRINFO(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEnt
 	if strings.TrimSpace(msgdata) == "" {
 		// 数据采集异常，设置为G级告警
 		instshtp.Dblsnrinfo.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,监听信息数据采集异常", instshtp.Instname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,监听信息数据采集异常", instshtp.Instname.Contents))
 		return
 	}
 
@@ -66,7 +66,7 @@ func Ana_DBLSNRINFO(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEnt
 		firstLine := strings.TrimSpace(lines[0])
 		if !strings.Contains(firstLine, "tnslsnr") {
 			instshtp.Dblsnrinfo.Alarm = "B"
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,未检测到监听,建议核查监听是否正常运行", instshtp.Instname.Contents))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s实例,未检测到监听,\n建议: 核查监听是否正常运行", instshtp.Instname.Contents))
 			hasWarning = true
 		}
 	}
@@ -95,7 +95,7 @@ func Ana_DBLSNRINFO(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEnt
 						if instshtp.Dblsnrinfo.Alarm != "G" {
 							instshtp.Dblsnrinfo.Alarm = "G"
 						}
-						entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,监听日志文件较大(%d bytes),影响监听响应性能,建议定期清理保持在2G以下", instshtp.Instname.Contents, size))
+						entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,监听日志文件较大(%d bytes),影响监听响应性能,\n建议: 定期清理或归档监听日志保持在2G以下", instshtp.Instname.Contents, size))
 						hasWarning = true
 					}
 				}
@@ -143,7 +143,7 @@ Looop:
 			vDay, _ := strconv.Atoi(values2[0])
 			if vDay >= rule.Dbrule.Dbdglagcheck.ResultB {
 				instshtp.Dbdglagcheck.Alarm = "B"
-				entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,DataGuard同步延迟当前%d超过阈值%d,建议检查网络连接和数据库状态", instshtp.Instname.Contents, vDay, rule.Dbrule.Dbdglagcheck.ResultB))
+				entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s实例,DataGuard同步延迟当前%d超过阈值%d,\n建议: 检查网络连接和数据库状态", instshtp.Instname.Contents, vDay, rule.Dbrule.Dbdglagcheck.ResultB))
 				break Looop
 			}
 		}
@@ -166,7 +166,7 @@ func Ana_DBDGERRCHECK(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryE
 	// if value != "" {
 	if value != "" && !strings.Contains(value, "no rows selected") && !strings.Contains(value, "无记录") {
 		instshtp.Dbdgerrcheck.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,DataGuard日志存在同步错误信息,建议检查并处理相关错误", instshtp.Instname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,DataGuard日志存在同步错误信息,\n建议: 检查并处理相关错误", instshtp.Instname.Contents))
 	}
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
@@ -189,7 +189,7 @@ func Ana_DBPSU(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries 
 	if strings.TrimSpace(msgdata) == "" {
 		// 数据采集异常，设置为G级告警
 		instshtp.Dbpsu.Alarm = "G"
-		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,PSU使用情况数据采集异常", instshtp.Instname.Contents))
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,PSU使用情况数据采集异常", instshtp.Instname.Contents))
 	} else {
 		// 按行分割数据
 		lines := strings.Split(msgdata, "\n")
@@ -198,7 +198,7 @@ func Ana_DBPSU(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries 
 		if len(lines) <= 3 {
 			// 只有标题行+1行数据，说明未安装PSU或RU
 			instshtp.Dbpsu.Alarm = "B"
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,未安装PSU或RU,建议生产系统定期安装和更新PSU或RU", instshtp.Instname.Contents))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s实例,未安装PSU或RU,\n建议: 生产系统定期安装和更新PSU或RU", instshtp.Instname.Contents))
 		} else {
 			// 从第4行开始检查日期（跳过标题行）
 			var maxDate time.Time
@@ -232,7 +232,7 @@ func Ana_DBPSU(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries 
 
 				if yearsDiff > 2 {
 					instshtp.Dbpsu.Alarm = "G"
-					entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,PSU/RU更新日期为%s,超过2年未更新,建议重要生产系统最少两年更新一次PSU或RU", instshtp.Instname.Contents, maxDate.Format("2006-01-02")))
+					entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s实例,PSU/RU最后更新日期为%s,超过2年未更新,\n建议: 重要生产系统最少两年更新一次PSU或RU", instshtp.Instname.Contents, maxDate.Format("2006-01-02")))
 				} else {
 					// 正常情况，不设置告警
 					instshtp.Dbpsu.Alarm = ""
@@ -240,7 +240,7 @@ func Ana_DBPSU(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries 
 			} else {
 				// 没有找到有效日期，设置为B级告警
 				instshtp.Dbpsu.Alarm = "B"
-				entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,无法解析PSU/RU更新日期,建议检查数据格式", instshtp.Instname.Contents))
+				entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s实例,无法解析PSU/RU更新日期,\n建议: 重要生产系统最少两年更新一次PSU或RU", instshtp.Instname.Contents))
 			}
 		}
 	}
@@ -263,7 +263,7 @@ func Ana_DBPATCH(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntrie
 	// 实现补丁分析逻辑
 	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
 		instshtp.Dbpatch.Alarm = "G"
-		entry.Minor = append(entry.Minor, "数据库补丁信息检查")
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s实例,未检测到补丁安装记录,\n建议: 生产系统定期安装和更新补丁", instshtp.Instname.Contents))
 	}
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)

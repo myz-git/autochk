@@ -25,7 +25,7 @@ func Ana_DB_status(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *
 	if len(lines) < 3 {
 		// 数据行数不足，数据采集异常
 		dbshtp.Dbstatus.Alarm = "B"
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,数据库状态检查数据采集异常", dbshtp.Dbname.Contents))
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,数据库状态检查数据采集异常", dbshtp.Dbname.Contents))
 		return
 	}
 
@@ -34,13 +34,13 @@ func Ana_DB_status(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *
 	if dataLine == "" {
 		// 第三行为空，数据采集异常
 		dbshtp.Dbstatus.Alarm = "B"
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,数据库状态检查数据采集异常", dbshtp.Dbname.Contents))
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,数据库状态检查数据采集异常", dbshtp.Dbname.Contents))
 		return
 	}
 
 	if !strings.Contains(dataLine, rule.Dbrule.Dbstatus.Status) {
 		dbshtp.Dbstatus.Alarm = "R"
-		entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,当前状态异常，建议尽快确认数据库是否正常", dbshtp.Dbname.Contents))
+		entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,当前状态异常,\n建议: 尽快确认数据库是否运行正常", dbshtp.Dbname.Contents))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -60,8 +60,8 @@ func Ana_DB_logmode(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries 
 
 	// 检查数据库是否开启归档
 	if strings.TrimSpace(msgdata) != rule.Dbrule.Logmode.Status {
-		dbshtp.Logmode.Alarm = "B"
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,当前日志模式为%s，建议开启归档模式(ARCHIVELOG)以确保数据安全", dbshtp.Dbname.Contents, strings.TrimSpace(msgdata)))
+		dbshtp.Logmode.Alarm = "R"
+		entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,当前未开启归档模式,\n建议: 生产环境需要开启归档模式以确保数据安全", dbshtp.Dbname.Contents))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -84,7 +84,7 @@ func Ana_DBF_CNT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *st
 	if len(lines) < 3 {
 		// 数据行数不足，数据采集异常
 		dbshtp.Dbf_cnt.Alarm = "B"
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,数据文件数量检查数据采集异常", dbshtp.Dbname.Contents))
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,数据文件数量检查数据采集异常", dbshtp.Dbname.Contents))
 		return
 	}
 
@@ -93,7 +93,7 @@ func Ana_DBF_CNT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *st
 	if dataLine == "" {
 		// 第三行为空，数据采集异常
 		dbshtp.Dbf_cnt.Alarm = "B"
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,数据文件数量检查数据采集异常", dbshtp.Dbname.Contents))
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,数据文件数量检查数据采集异常", dbshtp.Dbname.Contents))
 		return
 	}
 
@@ -117,7 +117,7 @@ func Ana_DBF_CNT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *st
 	// 当文件数使用率超过90%时设置为严重告警
 	if usagePercent >= 90 {
 		dbshtp.Dbf_cnt.Alarm = "R"
-		entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库数据文件数量%d接近限制%d，使用率%.1f%%，建议及时调整增加db_files参数值", dbshtp.Dbname.Contents, fileCnt, dbFilesLimit, usagePercent))
+		entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库数据文件数量%d接近限制%d，使用率%.1f%%,\n建议: 及时调整增加db_files参数值", dbshtp.Dbname.Contents, fileCnt, dbFilesLimit, usagePercent))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -148,7 +148,7 @@ Looop:
 			dbfstatus := msgs[1]
 			if dbfstatus != rule.Dbrule.Dbf_stat.Status {
 				dbshtp.Dbf_stat.Alarm = "R"
-				entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,数据文件%s当前状态为%s非AVAILABLE,需立即检查并修复", dbshtp.Dbname.Contents, msgs[0], dbfstatus))
+				entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,数据文件%s当前状态为%s非AVAILABLE,\n建议: 需立即检查并修复", dbshtp.Dbname.Contents, msgs[0], dbfstatus))
 				break Looop
 			}
 		}
@@ -184,11 +184,11 @@ Looop:
 			switch {
 			case percent >= rule.Dbrule.Dbtbsusage.Tbsutil_ge2 && (maxsize-usedsize) < rule.Dbrule.Dbtbsusage.Freesize_le2:
 				dbshtp.Dbtbsusage.Alarm = "R"
-				entry.Severe = append(entry.Severe, fmt.Sprintf("%s数据库,表空间%s使用率%.2f%%超过%.0f%%且剩余空间%.2fGB小于%.0fGB,需要及时扩容或清理数据", dbshtp.Dbname.Contents, msgs[0], percent, rule.Dbrule.Dbtbsusage.Tbsutil_ge2, maxsize-usedsize, rule.Dbrule.Dbtbsusage.Freesize_le2))
+				entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,表空间%s使用率%.2f%%超过%.0f%%且剩余空间%.2fGB小于%.0fGB,\n建议: 需要及时扩容或清理数据", dbshtp.Dbname.Contents, msgs[0], percent, rule.Dbrule.Dbtbsusage.Tbsutil_ge2, maxsize-usedsize, rule.Dbrule.Dbtbsusage.Freesize_le2))
 				break Looop
 			case percent >= rule.Dbrule.Dbtbsusage.Tbsutil_ge1 && (maxsize-usedsize) < rule.Dbrule.Dbtbsusage.Freesize_le1:
 				dbshtp.Dbtbsusage.Alarm = "B"
-				entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,表空间%s使用率%.2f%%超过%.0f%%且剩余空间%.2fGB小于%.0fGB,建议持续关注并准备扩容", dbshtp.Dbname.Contents, msgs[0], percent, rule.Dbrule.Dbtbsusage.Tbsutil_ge1, maxsize-usedsize, rule.Dbrule.Dbtbsusage.Freesize_le1))
+				entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,表空间%s使用率%.2f%%超过%.0f%%且剩余空间%.2fGB小于%.0fGB,\n建议: 持续关注并计划扩容", dbshtp.Dbname.Contents, msgs[0], percent, rule.Dbrule.Dbtbsusage.Tbsutil_ge1, maxsize-usedsize, rule.Dbrule.Dbtbsusage.Freesize_le1))
 			}
 		}
 	}
@@ -209,14 +209,14 @@ func Ana_DBCTRF(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *str
 	}
 	if index < rule.Dbrule.Dbcontrolfile.Cnt_le1 {
 		dbshtp.Dbcontrolfile.Alarm = "B"
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,控制文件数量当前%d个小于阈值%d个,建议配置至少2路冗余控制文件", dbshtp.Dbname.Contents, index, rule.Dbrule.Dbcontrolfile.Cnt_le1))
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,控制文件数量当前%d个小于阈值%d个,\n建议: 配置至少2路冗余控制文件", dbshtp.Dbname.Contents, index, rule.Dbrule.Dbcontrolfile.Cnt_le1))
 	}
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
 }
 
-// Ana_Tab_parallel 检查是否存在并行度大于0的表
+// Ana_Tab_parallel 检查是否存在并行度大于1的表
 func Ana_Tab_parallel(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Tab_parallel.Contents
 	entry := structs.SummaryEntry{
@@ -235,7 +235,7 @@ Looop:
 		if rd.MatchString(value) {
 			dbshtp.Tab_parallel.Alarm = "B"
 			msgs := strings.Fields(value)
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,表%s并行度当前值%s大于0,建议设置并行度为0", dbshtp.Dbname.Contents, msgs[1], msgs[len(msgs)-1]))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,表%s并行度当前值%s大于1,\n建议: 对于并行度大于1的表关闭并行属性", dbshtp.Dbname.Contents, msgs[1], msgs[len(msgs)-1]))
 			break Looop
 		}
 	}
@@ -244,7 +244,7 @@ Looop:
 	}
 }
 
-// Ana_Inx_parallel 检查是否存在并行度大于0的索引
+// Ana_Inx_parallel 检查是否存在并行度大于1的索引
 func Ana_Inx_parallel(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
 	msgdata := dbshtp.Inx_parallel.Contents
 	entry := structs.SummaryEntry{
@@ -263,7 +263,7 @@ Looop:
 		if rd.MatchString(value) {
 			dbshtp.Inx_parallel.Alarm = "B"
 			msgs := strings.Fields(value)
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,索引%s并行度当前值%s大于0,建议设置并行度为0", dbshtp.Dbname.Contents, msgs[2], msgs[len(msgs)-1]))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,索引%s并行度当前值%s大于1,\n建议: 对于并行度大于1的索引关闭并行属性", dbshtp.Dbname.Contents, msgs[2], msgs[len(msgs)-1]))
 			break Looop
 		}
 	}
@@ -296,9 +296,8 @@ func Ana_Invalid_obj(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 				// 检查第3列（OBJ_COUNT）是否大于规则中设定的阈值
 				if objCount, err := strconv.Atoi(fields[2]); err == nil {
 					if threshold, err2 := strconv.Atoi(rule.Dbrule.Invalid_obj.Result); err2 == nil && objCount > threshold {
-						dbshtp.Invalid_obj.Alarm = "B"
-						entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,%s用户存在%d个无效对象,建议重新编译或及时清理",
-							dbshtp.Dbname.Contents, fields[0], objCount, fields[1]))
+						dbshtp.Invalid_obj.Alarm = "G"
+						entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,%s用户存在%d个无效对象,\n建议: 对无效对象进行重新编译或及时清理", dbshtp.Dbname.Contents, fields[0], objCount))
 					}
 				}
 			}
@@ -329,7 +328,7 @@ Looop:
 		if rd.MatchString(value) {
 			dbshtp.Invalid_inx.Alarm = "B"
 			msgs := strings.Fields(value)
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,索引%s当前状态为无效,建议重建或删除该索引", dbshtp.Dbname.Contents, msgs[2]))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,索引%s当前状态为无效,\n建议: 重建或删除失效索引", dbshtp.Dbname.Contents, msgs[2]))
 			break Looop
 		}
 	}
@@ -359,7 +358,7 @@ Looop:
 			msgs := strings.Fields(value)
 			cache, _ := strconv.Atoi(msgs[1])
 			if cache < 400 {
-				entry.Minor = append(entry.Minor, fmt.Sprintf("%s数据库,序列 %s cache %d 小于 400，建议设置为 400 或以上并使用 NOORDER", dbshtp.Dbname.Contents, msgs[0], cache))
+				entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,序列 %s cache %d 小于 400,\n建议: 设置CACHE为400或以上并使用NOORDER", dbshtp.Dbname.Contents, msgs[0], cache))
 			}
 			break Looop
 		}
@@ -388,7 +387,7 @@ Looop:
 		if rd.MatchString(value) {
 			dbshtp.Dbsequence.Alarm = "B"
 			msgs := strings.Fields(value)
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s数据库,SEQUENCE %s 当前值达到最大值限制的80%%,建议尽快修改", dbshtp.Dbname.Contents, msgs[0]))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,SEQUENCE %s 当前值达到最大值限制的80%%,\n建议: 尽快修改", dbshtp.Dbname.Contents, msgs[0]))
 			break Looop
 		}
 	}
