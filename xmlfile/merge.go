@@ -16,13 +16,15 @@ import (
 
 // XML文件信息结构
 type XMLFileInfo struct {
-	FilePath   string
-	FileName   string
-	Date       string
-	Hostname   string
-	DBName     string
-	InstName   string
-	InstNumber int
+	FilePath    string
+	FileName    string
+	Date        string
+	Hostname    string
+	DBName      string
+	InstName    string
+	InstNumber  int
+	IsRAC       bool
+	InstPattern string // 实例名模式，如 "racdb", "oradb"
 }
 
 // RAC组结构
@@ -34,6 +36,23 @@ type RACGroup struct {
 }
 
 // MergeXMLFiles 合并XML文件的主函数
+//
+// 文件合并规则：
+// 1. 单实例文件处理：
+//   - XML内容不包含 <DBMAA>RAC</DBMAA> 标签，或
+//   - 实例名不以数字结尾（如 oradb, mydb），或
+//   - 没有相同日期、数据库名和实例名模式的其他文件
+//   - 输出格式：原文件名.S.xml
+//
+// 2. RAC文件合并：
+//   - XML内容必须包含 <DBMAA>RAC</DBMAA> 标签
+//   - 实例名必须以数字结尾（如 racdb1, racdb2, racdb21, racdb22）
+//   - 相同日期、数据库名和实例名模式的文件会被合并
+//   - 实例名模式：racdb1, racdb2 属于 "racdb" 模式
+//   - 实例名模式：racdb21, racdb22 属于 "racdb" 模式（但数字不同，不会合并）
+//   - 输出格式：日期_主机名1.主机名2_数据库名.R.xml
+//
+// 3. 文件命名格式：yyyymmdd_hostname_dbname_instname.xml
 func MergeXMLFiles() error {
 	// 输入和输出目录
 	inputDir := "xmlfile/input_xml"
@@ -115,6 +134,18 @@ func parseFileInfos(files []string) []XMLFileInfo {
 		if info != nil {
 			info.FilePath = file
 			info.FileName = fileName
+
+			// 检查XML内容是否包含RAC字样
+			isRAC, err := checkRACInXML(file)
+			if err != nil {
+				log.Printf("检查文件 %s 的RAC信息失败: %v", fileName, err)
+				isRAC = false
+			}
+			info.IsRAC = isRAC
+
+			// 提取实例名模式
+			info.InstPattern = extractInstPattern(info.InstName)
+
 			fileInfos = append(fileInfos, *info)
 		}
 	}
@@ -158,12 +189,50 @@ func extractInstNumber(instName string) int {
 	return 999 // 默认值，表示无法解析
 }
 
+// 检查XML文件中是否包含RAC字样
+// 通过正则表达式查找 <DBMAA>RAC</DBMAA> 标签
+// 支持标签内可能有空白字符的情况
+func checkRACInXML(filePath string) (bool, error) {
+	content, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return false, err
+	}
+
+	// 查找 <DBMAA> 标签并检查是否包含 RAC 字样
+	// 匹配格式：<DBMAA>RAC</DBMAA> 或 <DBMAA> RAC </DBMAA>
+	re := regexp.MustCompile(`<DBMAA>\s*RAC\s*</DBMAA>`)
+	return re.Match(content), nil
+}
+
+// 提取实例名模式
+// 从实例名中提取数字前的部分作为模式
+// 例如：racdb1 -> "racdb", racdb21 -> "racdb", oradb -> "oradb"
+func extractInstPattern(instName string) string {
+	// 提取数字前的部分作为模式
+	re := regexp.MustCompile(`^(.+?)\d+$`)
+	matches := re.FindStringSubmatch(instName)
+	if len(matches) > 1 {
+		return matches[1]
+	}
+	// 如果没有数字结尾，返回原实例名
+	return instName
+}
+
 // 分组RAC文件
+// 将符合RAC条件的文件按日期、数据库名和实例名模式进行分组
+// RAC条件：XML内容包含RAC字样 且 实例名以数字结尾
 func groupRACFiles(fileInfos []XMLFileInfo) []RACGroup {
 	groups := make(map[string]RACGroup)
 
 	for _, info := range fileInfos {
-		key := fmt.Sprintf("%s_%s", info.Date, info.DBName)
+		// 只有XML内容包含RAC字样且实例名以数字结尾的文件才参与RAC分组
+		if !info.IsRAC || !isNumericEnding(info.InstName) {
+			continue
+		}
+
+		// 使用日期、数据库名和实例名模式作为分组键
+		// 例如：20250907_racdb_racdb 表示2025年9月7日racdb数据库的racdb模式实例
+		key := fmt.Sprintf("%s_%s_%s", info.Date, info.DBName, info.InstPattern)
 
 		group, exists := groups[key]
 		if !exists {
@@ -182,12 +251,13 @@ func groupRACFiles(fileInfos []XMLFileInfo) []RACGroup {
 	var result []RACGroup
 	for _, group := range groups {
 		if len(group.Files) > 1 {
-			// 按实例号排序
+			// 按实例号排序，确保合并时顺序正确
 			sort.Slice(group.Files, func(i, j int) bool {
 				return group.Files[i].InstNumber < group.Files[j].InstNumber
 			})
 
-			// 生成输出文件名
+			// 生成输出文件名：日期_主机名1.主机名2_数据库名.R.xml
+			// 例如：20250907_rac19c1.rac19c2_racdb.R.xml
 			var hostnames []string
 			for _, file := range group.Files {
 				hostnames = append(hostnames, file.Hostname)
@@ -201,20 +271,40 @@ func groupRACFiles(fileInfos []XMLFileInfo) []RACGroup {
 	return result
 }
 
+// 检查实例名是否以数字结尾
+// 用于判断实例是否为RAC环境（如 racdb1, racdb2, racdb21）
+func isNumericEnding(instName string) bool {
+	re := regexp.MustCompile(`\d+$`)
+	return re.MatchString(instName)
+}
+
 // 处理单实例文件
+// 将所有不符合RAC合并条件的文件作为单实例处理
 func processSingleInstanceFiles(fileInfos []XMLFileInfo, outputDir string) {
 	for _, info := range fileInfos {
-		// 检查是否是单实例（没有相同日期和数据库名的其他文件）
-		isSingle := true
-		for _, other := range fileInfos {
-			if other.Date == info.Date && other.DBName == info.DBName && other.FilePath != info.FilePath {
-				isSingle = false
-				break
+		// 检查是否是单实例：
+		// 1. XML内容不包含RAC字样，或
+		// 2. 实例名不以数字结尾，或
+		// 3. 没有相同日期、数据库名和实例名模式的其他文件
+		isSingle := !info.IsRAC || !isNumericEnding(info.InstName)
+
+		if !isSingle {
+			// 检查是否有相同模式的其他文件
+			// 如果存在相同模式的其他文件，则不是单实例
+			for _, other := range fileInfos {
+				if other.Date == info.Date &&
+					other.DBName == info.DBName &&
+					other.InstPattern == info.InstPattern &&
+					other.FilePath != info.FilePath {
+					isSingle = false
+					break
+				}
 			}
 		}
 
 		if isSingle {
 			// 生成单实例输出文件名（添加_S.xml后缀）
+			// 例如：20250907_myzdb100_oradb_oradb.xml -> 20250907_myzdb100_oradb_oradb.S.xml
 			baseName := strings.TrimSuffix(info.FileName, ".xml")
 			outputFileName := baseName + ".S.xml"
 			outputPath := filepath.Join(outputDir, outputFileName)
@@ -228,12 +318,14 @@ func processSingleInstanceFiles(fileInfos []XMLFileInfo, outputDir string) {
 }
 
 // 合并RAC文件
+// 将RAC组中的多个XML文件合并为一个文件
+// 合并策略：以第一个文件为主文件，将其他文件的NODE1内容复制为NODE2、NODE3等
 func mergeRACFiles(group RACGroup, outputDir string) error {
 	if len(group.Files) < 2 {
 		return fmt.Errorf("RAC组文件数量不足")
 	}
 
-	// 以第一个文件为主文件
+	// 以第一个文件为主文件（NODE1）
 	mainFile := group.Files[0]
 	mainDoc := etree.NewDocument()
 	if err := mainDoc.ReadFromFile(mainFile.FilePath); err != nil {
@@ -253,7 +345,7 @@ func mergeRACFiles(group RACGroup, outputDir string) error {
 		return fmt.Errorf("未找到TAG0或TAG2元素")
 	}
 
-	// 处理其他文件
+	// 处理其他文件，将其NODE1内容复制为NODE2、NODE3等
 	for i, file := range group.Files[1:] {
 		nodeNum := i + 2 // NODE2, NODE3, ...
 
@@ -264,7 +356,7 @@ func mergeRACFiles(group RACGroup, outputDir string) error {
 			continue
 		}
 
-		// 处理TAG0
+		// 处理TAG0：将源文件的NODE1复制为主文件的NODE2、NODE3等
 		sourceTag0 := doc.FindElement("./EACHK/TAG0/NODE1")
 		if sourceTag0 != nil {
 			// 创建新的NODE元素
@@ -275,7 +367,7 @@ func mergeRACFiles(group RACGroup, outputDir string) error {
 			}
 		}
 
-		// 处理TAG2
+		// 处理TAG2：将源文件的NODE1复制为主文件的NODE2、NODE3等
 		sourceTag2 := doc.FindElement("./EACHK/TAG2/NODE1")
 		if sourceTag2 != nil {
 			// 创建新的NODE元素
@@ -299,6 +391,7 @@ func mergeRACFiles(group RACGroup, outputDir string) error {
 }
 
 // 复制文件
+// 用于将单实例文件复制到输出目录
 func copyFile(src, dst string) error {
 	input, err := ioutil.ReadFile(src)
 	if err != nil {

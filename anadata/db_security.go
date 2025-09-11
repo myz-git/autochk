@@ -4,7 +4,6 @@ import (
 	"autochk/structs"
 	"autochk/utils"
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -372,21 +371,21 @@ func Ana_DBSCNHEALTHCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEn
 		}
 
 		// 判断是否检测到版本信息
-		rdv19 := regexp.MustCompile(`^Version:\s+19\.`)          // 判断是否检测版本19
-		rdv1124 := regexp.MustCompile(`^Version:\s+11\.2\.0\.4`) // 判断是否检测版本11.2.0.4
+		// rdv19 := regexp.MustCompile(`^Version:\s+19\.`)          // 判断是否检测版本19
+		// rdv1124 := regexp.MustCompile(`^Version:\s+11\.2\.0\.4`) // 判断是否检测版本11.2.0.4
 
 		// 判断是否检测到结果
 		rdb := regexp.MustCompile(`^Result: B`) // 判断是否检测到结果B
 		rdc := regexp.MustCompile(`^Result: C`) // 判断是否检测到结果C
 
-		if rdv19.MatchString(line) || rdv1124.MatchString(line) {
-			// 检测到版本信息，记录版本
-			dbvstr := strings.Split(line, ":")
-			if len(dbvstr) > 1 {
-				log.Printf("检测到数据库版本: %s", strings.TrimSpace(dbvstr[1]))
-			}
-			continue
-		}
+		// if rdv19.MatchString(line) || rdv1124.MatchString(line) {
+		// 	// 检测到版本信息，记录版本
+		// 	dbvstr := strings.Split(line, ":")
+		// 	if len(dbvstr) > 1 {
+		// 		log.Printf("检测到数据库版本: %s", strings.TrimSpace(dbvstr[1]))
+		// 	}
+		// 	continue
+		// }
 
 		if rdc.MatchString(line) { // 匹配到结果C
 			scnHealthStatus = "C"

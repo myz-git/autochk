@@ -93,6 +93,8 @@ type InstShts struct {
 	Topevent          Tpstrc
 	Topsql_by_ela     Tpstrc
 	Cursor_share_mem  Tpstrc
+	Db_shp_size       Tpstrc
+	Db_shp_pct        Tpstrc
 	Dbresource        Tpstrc
 	Dbpsu             Tpstrc
 	Dbpatch           Tpstrc

@@ -371,3 +371,64 @@ func Ana_CursorShareMem(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
 }
+
+// Ana_DB_Shp_pct 分析共享池使用率百分比
+func Ana_DB_Shp_pct(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
+	msgdata := instshtp.Db_shp_pct.Contents
+	entry := structs.SummaryEntry{
+		Category: "数据库性能",
+		Nm:       rule.Dbrule.Db_shp_pct.Nm,
+		Title:    rule.Dbrule.Db_shp_pct.Title,
+		Desc:     rule.Dbrule.Db_shp_pct.Desc,
+	}
+
+	// 检查是否为空或包含"无记录"
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		// 正常情况，无告警
+		instshtp.Db_shp_pct.Alarm = ""
+		return
+	}
+
+	// 按行分割数据，取第3行（索引为2）的数字
+	lines := strings.Split(msgdata, "\n")
+	if len(lines) >= 3 {
+		line3 := strings.TrimSpace(lines[2])
+		if value, err := strconv.ParseFloat(line3, 64); err == nil {
+			// 检查是否超过阈值
+			if value >= rule.Dbrule.Db_shp_pct.Result {
+				instshtp.Db_shp_pct.Alarm = "B"
+				entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s实例,sharedpool占SGA比率%.2f%%较高,\n建议: 评估SGA中SHAREDPOOL与BUFFERCACHE分配是否合理,可考虑增加SGA", instshtp.Instname.Contents, value))
+			} else {
+				// 未超过阈值，正常
+				instshtp.Db_shp_pct.Alarm = ""
+			}
+		}
+	}
+
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
+}
+
+// Ana_Db_shp_size 分析共享池大小
+func Ana_Db_shp_size(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
+	// entry := structs.SummaryEntry{
+	// 	Category: "实例分析",
+	// 	Nm:       rule.Dbrule.Db_shp_size.Nm,
+	// 	Title:    rule.Dbrule.Db_shp_size.Title,
+	// 	Desc:     rule.Dbrule.Db_shp_size.Desc,
+	// }
+	// if strings.Contains(msgdata, "shared_pool_size") {
+	// 	re := regexp.MustCompile(`shared_pool_size\s*=\s*(\d+)`)
+	// 	if matches := re.FindStringSubmatch(msgdata); len(matches) > 1 {
+	// 		size, _ := strconv.Atoi(matches[1])
+	// 		if size < 1000000000 {
+	// 			dbshtp.Dbrecoverydest.Alarm = "B"
+	// 			entry.Moderate = append(entry.Moderate, fmt.Sprintf("共享池大小 %d 字节过小,\n建议: 调整", size))
+	// 		}
+	// 	}
+	// }
+	// if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+	// 	summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	// }
+}

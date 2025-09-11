@@ -940,7 +940,7 @@ func Ana_RPM_PACKAGES(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntri
 	if strings.TrimSpace(msgdata) != "" && !strings.Contains(msgdata, "No item detected") {
 		// 检测到安装了RPM包，普通告警
 		osshtp.RPM_PACKAGES.Alarm = "B"
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s主机,检测到安装了存在安全风险的RPM包,\n建议: 移除存在安全隐患的RPM包以提升系统安全性", osshtp.Hostname.Contents))
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s主机,检测到安装了存在安全风险的RPM包\n%s,\n建议: 移除存在安全隐患的RPM包以提升系统安全性", osshtp.Hostname.Contents, strings.TrimSpace(msgdata)))
 	} else {
 		// 未检测到RPM包，正常状态
 		osshtp.RPM_PACKAGES.Alarm = ""

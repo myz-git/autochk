@@ -4,7 +4,9 @@ import (
 	"autochk/structs"
 	"autochk/utils"
 	"fmt"
+	"os"
 	"strings"
+	"time" // 添加time包导入
 
 	"github.com/xuri/excelize/v2"
 )
@@ -56,17 +58,23 @@ func getCellStyles(f *excelize.File) (styleB, styleR, styleG int) {
 	return
 }
 
-func Xlsx(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.InstShts, summaryEntries *structs.SummaryEntries, xlsnm string, colcnt int, sglf bool) {
+func Xlsx(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.InstShts, summaryEntries *structs.SummaryEntries, xlsnm string, colcnt int, sglf bool, custNm string) {
+	// 确保report目录存在
+	if err := os.MkdirAll("report", 0755); err != nil {
+		utils.LogErrorf("创建report目录失败: %v", err)
+		return
+	}
+
 	// 确定输出文件名
 	var newfnm string
 	if sglf {
-		newfnm = xlsnm + ".Done.xlsx"
+		newfnm = "report/" + xlsnm + ".xlsx"
 	} else {
-		newfnm = "HealthCheckReport.ALLDone.xlsx"
+		newfnm = "report/HealthCheckReport.ALL.xlsx"
 	}
 
 	// 加载模板文件
-	f, err := excelize.OpenFile("HealthReport.xlsx")
+	f, err := excelize.OpenFile("local/HealthReport.xlsx")
 	if err != nil {
 		utils.LogErrorf("打开模板文件失败: %v", err)
 		return
@@ -78,7 +86,7 @@ func Xlsx(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.I
 	}()
 
 	// 填充 HealthReport Sheet 的 Server Info 和 DataBase Info
-	PutSht_INFO(f, osshts, dbshtp, colcnt)
+	PutSht_INFO(f, osshts, dbshtp, colcnt, custNm)
 
 	// 填充 OS Sheet - 支持多节点
 	PutSht_OS(f, osshts, summaryEntries, colcnt)
@@ -102,8 +110,18 @@ func Xlsx(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.I
 	}
 }
 
-func PutSht_INFO(f *excelize.File, osshts *[]structs.OsShts, dbshtp *structs.DbSht, colcnt int) {
+func PutSht_INFO(f *excelize.File, osshts *[]structs.OsShts, dbshtp *structs.DbSht, colcnt int, custNm string) {
 	shnm := "HealthReport"
+
+	// 分开填写：客户名称填写到C2，报告日期填写到K2和H80
+	currentDate := time.Now().Format("2006-01-02")
+
+	// 客户名称填写到C2，格式："客户: custNm"
+	f.SetCellStr(shnm, "C2", fmt.Sprintf("客户: %s", custNm))
+
+	// 报告日期填写到K2和H80，格式："报告日期: currentDate"
+	f.SetCellStr(shnm, "K2", fmt.Sprintf("报告日期: %s", currentDate))
+	f.SetCellStr(shnm, "H80", fmt.Sprintf("报告日期: %s", currentDate))
 
 	// 填充 Server Info - 支持多节点信息
 	if len(*osshts) > 0 {
@@ -126,7 +144,6 @@ func PutSht_INFO(f *excelize.File, osshts *[]structs.OsShts, dbshtp *structs.DbS
 	f.SetCellStr(shnm, "K8", dbshtp.Logmode.Contents)
 	f.SetCellStr(shnm, "K9", dbshtp.Dblang.Contents)
 	f.SetCellStr(shnm, "K10", dbshtp.Dbcursize.Contents)
-
 }
 
 // getCommentForField 根据字段名获取对应的注释内容
@@ -438,13 +455,13 @@ func PutSht_OS(f *excelize.File, osshts *[]structs.OsShts, summaryEntries *struc
 				comment := getCommentForField(field.fieldName, summaryEntries)
 				utils.LogDebugf("获取到的注释内容: %s", comment)
 				if comment != "" {
-					// 创建带样式的注释
+					// 创建注释，尝试设置合适的尺寸
 					commentObj := excelize.Comment{
 						Cell:   cell,
 						Text:   comment,
 						Author: "健康检查系统",
-						Width:  400, // 注释框宽度
-						Height: 100, // 注释框高度
+						Width:  300, // 设置较宽的注释框
+						Height: 100, // 设置较高的注释框
 					}
 
 					// 添加调试信息
@@ -709,13 +726,13 @@ func PutSht_DB(f *excelize.File, dbshtp *structs.DbSht, osshts *[]structs.OsShts
 			comment := getCommentForField(field.fieldName, summaryEntries)
 			utils.LogDebugf("获取到的DB注释内容: %s", comment)
 			if comment != "" {
-				// 创建带样式的注释
+				// 创建注释，尝试设置合适的尺寸
 				commentObj := excelize.Comment{
 					Cell:   cell,
 					Text:   comment,
 					Author: "健康检查系统",
-					Width:  400, // 注释框宽度
-					Height: 100, // 注释框高度
+					Width:  300, // 设置较宽的注释框
+					Height: 100, // 设置较高的注释框
 				}
 
 				// 添加调试信息
@@ -967,6 +984,26 @@ func PutSht_Issuelist(f *excelize.File, summaryEntries *structs.SummaryEntries) 
 		rowIndex++
 		itemIndex++
 	}
+
+	// 删除最后一个问题所在行到75行之间的空白行
+	lastProblemRow := rowIndex - 1 // 最后一个问题所在的行号
+	utils.LogDebugf("最后一个问题所在行: %d", lastProblemRow)
+
+	if lastProblemRow < 75 {
+		// 需要删除的行范围：lastProblemRow+1 到 75
+		deleteStartRow := lastProblemRow + 1
+		deleteEndRow := 75
+
+		utils.LogDebugf("删除空白行范围: %d 到 %d", deleteStartRow, deleteEndRow)
+
+		// 删除空白行
+		for i := deleteEndRow; i >= deleteStartRow; i-- {
+			err := f.RemoveRow(shnm, i)
+			if err != nil {
+				utils.LogWarnf("删除第 %d 行失败: %v", i, err)
+			}
+		}
+	}
 }
 
 func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts, summaryEntries *structs.SummaryEntries) {
@@ -987,19 +1024,21 @@ func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts, summaryEntries 
 		{"Topevent", 5},
 		{"Topsql_by_ela", 6},
 		{"Cursor_share_mem", 7},
-		{"Dbresource", 8},
-		{"Dbpsu", 9},
-		{"Dbpatch", 10},
-		{"Dblsnrinfo", 11},
-		{"Dbparameter", 12},
-		{"Db_parameter_file", 13},
-		{"Dbredocheck", 14},
-		{"Dbredoswitch", 15},
-		{"Recovery_usage", 16},
-		{"Recovery_detail", 17},
-		{"Dberrlog", 18},
-		{"Dbdglagcheck", 19},
-		{"Dbdgerrcheck", 20},
+		{"Db_shp_size", 8},
+		{"Db_shp_pct", 9},
+		{"Dbresource", 10},
+		{"Dbpsu", 11},
+		{"Dbpatch", 12},
+		{"Dblsnrinfo", 13},
+		{"Dbparameter", 14},
+		{"Db_parameter_file", 15},
+		{"Dbredocheck", 16},
+		{"Dbredoswitch", 17},
+		{"Recovery_usage", 18},
+		{"Recovery_detail", 19},
+		{"Dberrlog", 20},
+		{"Dbdglagcheck", 21},
+		{"Dbdgerrcheck", 22},
 	}
 
 	// 遍历所有实例节点
@@ -1036,6 +1075,12 @@ func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts, summaryEntries 
 			case "Cursor_share_mem":
 				content = instsht.Cursor_share_mem.Contents
 				alarm = instsht.Cursor_share_mem.Alarm
+			case "Db_shp_size":
+				content = instsht.Db_shp_size.Contents
+				alarm = instsht.Db_shp_size.Alarm
+			case "Db_shp_pct":
+				content = instsht.Db_shp_pct.Contents
+				alarm = instsht.Db_shp_pct.Alarm
 			case "Dbresource":
 				content = instsht.Dbresource.Contents
 				alarm = instsht.Dbresource.Alarm
@@ -1086,13 +1131,13 @@ func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts, summaryEntries 
 				comment := getCommentForField(field.fieldName, summaryEntries)
 				utils.LogDebugf("获取到的INST注释内容: %s", comment)
 				if comment != "" {
-					// 创建带样式的注释
+					// 创建注释，尝试设置合适的尺寸
 					commentObj := excelize.Comment{
 						Cell:   cell,
 						Text:   comment,
 						Author: "健康检查系统",
-						Width:  400, // 注释框宽度
-						Height: 100, // 注释框高度
+						Width:  300, // 设置较宽的注释框
+						Height: 100, // 设置较高的注释框
 					}
 
 					// 添加调试信息
@@ -1434,7 +1479,7 @@ func getHyperlinkForProblem(nm string, category string, problem string) string {
 	// 检查字段是否属于Inst sheet
 	instFields := []string{
 		"INSTNAME", "LOADPROFILE", "INSTEFFICIENCY", "TOPEVENT", "TOPSQL_BY_ELA",
-		"CURSOR_SHARE_MEM", "DBRESOURCE", "DBPSU", "DBPATCH", "DBLSNRINFO",
+		"CURSOR_SHARE_MEM", "DB_SHP_SIZE", "DB_SHP_PCT", "DBRESOURCE", "DBPSU", "DBPATCH", "DBLSNRINFO",
 		"DBPARAMETER", "DB_PARAMETER_FILE", "DBREDOCHECK", "DBREDOSWITCH",
 		"RECOVERY_USAGE", "RECOVERY_DETAIL", "DBERRLOG", "DBDGLAGCHECK", "DBDGERRCHECK",
 	}

@@ -510,6 +510,8 @@ func processTag2Node(node *etree.Element, instshts *[]structs.InstShts) {
 	instSht.Topevent = structs.Tpstrc{}
 	instSht.Topsql_by_ela = structs.Tpstrc{}
 	instSht.Cursor_share_mem = structs.Tpstrc{}
+	instSht.Db_shp_size = structs.Tpstrc{}
+	instSht.Db_shp_pct = structs.Tpstrc{}
 	instSht.Dbresource = structs.Tpstrc{}
 	instSht.Dbpsu = structs.Tpstrc{}
 	instSht.Dbpatch = structs.Tpstrc{}
@@ -562,6 +564,20 @@ func processTag2Node(node *etree.Element, instshts *[]structs.InstShts) {
 				instSht.Cursor_share_mem.Contents = "无记录"
 			} else {
 				instSht.Cursor_share_mem.Contents = content
+			}
+		case "DB_SHP_SIZE":
+			content := strings.TrimSpace(tag.Text())
+			if content == "" {
+				instSht.Db_shp_size.Contents = "无记录"
+			} else {
+				instSht.Db_shp_size.Contents = content
+			}
+		case "DB_SHP_PCT":
+			content := strings.TrimSpace(tag.Text())
+			if content == "" {
+				instSht.Db_shp_pct.Contents = "无记录"
+			} else {
+				instSht.Db_shp_pct.Contents = content
 			}
 		case "DBRESOURCE":
 			content := strings.TrimSpace(tag.Text())

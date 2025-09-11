@@ -4,41 +4,75 @@ import (
 	"autochk/anadata"
 	"autochk/readxml"
 	"autochk/structs"
-
 	"autochk/toxls"
 	"autochk/utils"
 	"autochk/xmlfile"
+	"bufio"
 	"flag"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 )
 
-func main() {
-	// var arg string
-	// if len(os.Args) == 1 {
-	// 	fmt.Println("请输入参数")
-	// 	// os.Exit(0)
-	// 	flg = "0"  //0 默认一个文件
-	// } else {
-	// }
+var (
+	Version   = "0.0.0-dev"
+	Commit    = "unknown"
+	BuildDate = ""
+)
 
-	//加入-s 的参数. 默认为 false
-	singlefile := flag.Bool("s", true, "single file: true|false , default false")
+func main() {
+	// 先行处理 --version / version
+	if len(os.Args) > 1 && (os.Args[1] == "--version" || os.Args[1] == "version") {
+		fmt.Printf("autochk version %s (commit %s, built %s)\n", Version, Commit, BuildDate)
+		return
+	}
+
+	// 定义命令行参数
+	custNm := flag.String("u", "", "customer name: specify customer name")
 
 	flag.Parse()
-	// log.Println("use single file mode: ", *singlefile)
 
-	// 判断是否 输入参数, 没有参数则退出
-	// if len(os.Args) < 2 {
-	// 	fmt.Println("expected parameter")
-	// 	os.Exit(0)
-	// }
+	// 显示使用说明
+	if len(os.Args) > 1 && (os.Args[1] == "-h" || os.Args[1] == "--help") {
+		showUsage()
+		return
+	}
+
+	// 处理客户名称逻辑
+	var finalCustNm string
+
+	// 检查是否使用了-u参数（不管是否有值）
+	hasUFlag := false
+	for i, arg := range os.Args {
+		if arg == "-u" && i < len(os.Args)-1 {
+			hasUFlag = true
+			break
+		}
+	}
+
+	if hasUFlag {
+		// 如果使用了-u参数
+		if *custNm != "" {
+			// 如果-u参数有值，直接使用
+			finalCustNm = *custNm
+			utils.LogInfof("使用命令行指定的客户名称: %s", finalCustNm)
+		} else {
+			// 如果-u参数没有值，提示用户输入
+			finalCustNm = getCustomerName()
+		}
+	} else {
+		// 如果没有使用-u参数，直接使用默认值
+		finalCustNm = "    " // 4个空格
+		utils.LogInfof("使用默认客户名称: %s", finalCustNm)
+	}
 
 	start := time.Now()
 
 	utils.LogInfof("######---Start---######")
+	utils.LogInfof("Version: %s, Commit: %s, Build: %s", Version, Commit, BuildDate)
+	utils.LogInfof("客户名称: %s", finalCustNm)
 
 	// 首先执行XML文件合并
 	utils.LogInfof("开始执行XML文件合并...")
@@ -49,22 +83,14 @@ func main() {
 	utils.LogInfof("XML文件合并完成")
 
 	//删除*Done.xlsx文件
-	ClearFile(*singlefile)
-
-	// if !*singlefile {
-	// 	toxls.NewXlsx("xxx", *singlefile)
-	// }
+	ClearFile()
 
 	files := GetXMLS("R")
 	files = append(files, GetXMLS("S")...)
-	// colInxp := &utils.ColInx
 
 	//循环打开文件名为*.R.xml或*.S.xml的文件
 	colcnt := 1
 	for _, fnm := range files {
-		if *singlefile {
-			colcnt = 1
-		}
 		utils.LogInfof("开始处理---> %s", fnm)
 		fileName := filepath.Base(fnm)
 		prex := strings.Replace(fileName, ".R.xml", "", -1)
@@ -78,16 +104,48 @@ func main() {
 
 		readxml.ReadXml(fnm, &osshts, &dbsht, &instshts)
 		anadata.Ana(&osshts, &dbsht, &instshts, summaryEntries)
-		toxls.Xlsx(&osshts, &dbsht, &instshts, summaryEntries, prex, colcnt, *singlefile)
-		// todocx.Todocx(&osshts, &dbsht, &instshts, summaryEntries, prex, colcnt, *singlefile)
-		// tohtml.GenerateHTML(&osshts, &dbsht, &instshts, summaryEntries, prex, *singlefile)
+		// 传递客户名称参数，使用单文件模式
+		toxls.Xlsx(&osshts, &dbsht, &instshts, summaryEntries, prex, colcnt, true, finalCustNm)
 		colcnt++
 	}
 	elapsed := time.Since(start)
 	utils.LogInfof("#####---Completed! Elapsed Time:%v---#####", elapsed)
-	utils.LogInfof("Anaylze Check Data (ACD) release 1.8")
-	// fmt.Printf("执行完成,请按任意键退出...")
+	utils.LogInfof("Anaylze Check Data (ACD) %s", Version)
+}
 
+// 获取客户名称输入
+func getCustomerName() string {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Please Input Customer Name: ")
+	input, _ := reader.ReadString('\n')
+	input = strings.TrimSpace(input)
+
+	// 如果直接回车，默认赋值为4个空格
+	if input == "" {
+		return "    " // 4个空格
+	}
+	return input
+}
+
+// 显示使用说明
+func showUsage() {
+	fmt.Println("健康检查报告生成工具")
+	fmt.Println("")
+	fmt.Println("使用方法:")
+	fmt.Println("  autochk.exe                    # 不带参数执行，使用默认客户名称(4个空格)")
+	fmt.Println("  autochk.exe -u 客户名称         # 指定客户名称，不提示输入")
+	fmt.Println("  autochk.exe -u                  # 使用-u参数但不指定值，提示输入客户名称")
+	fmt.Println("  autochk.exe --version           # 显示版本信息")
+	fmt.Println("  autochk.exe -h, --help          # 显示帮助信息")
+	fmt.Println("")
+	fmt.Println("参数说明:")
+	fmt.Println("  -u string    客户名称 (可选，不指定则提示输入)")
+	fmt.Println("  -h, --help   显示帮助信息")
+	fmt.Println("")
+	fmt.Println("示例:")
+	fmt.Println("  autochk.exe                    # 使用默认客户名称，不提示输入")
+	fmt.Println("  autochk.exe -u ABC公司          # 直接使用ABC公司作为客户名称")
+	fmt.Println("  autochk.exe -u                  # 使用-u参数但提示输入客户名称")
 }
 
 func GetXMLS(typ string) (xmlnms []string) {
@@ -116,17 +174,11 @@ func GetXMLS(typ string) (xmlnms []string) {
 	return xmlnms
 }
 
-func ClearFile(sglf bool) {
+func ClearFile() {
 	//遍历打开当前路径下的文件
 	dirname := "."
-	var xlsxTyp, htmlTyp string
-	if sglf {
-		xlsxTyp = ".Done.xlsx"
-		htmlTyp = ".Done.html"
-	} else {
-		xlsxTyp = ".ALLDone.xlsx"
-		htmlTyp = ".ALLDone.html"
-	}
+	xlsxTyp := ".Done.xlsx"
+	htmlTyp := ".Done.html"
 
 	f, err := os.Open(dirname)
 	if err != nil {

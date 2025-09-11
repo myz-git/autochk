@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EACHK>
+<VER>chk2509.0</VER>
+<COLLECT_TM>2025-09-09 10:05</COLLECT_TM>
+<TAG0>
+<NODE1>
+<HOSTNAME>wewinpri</HOSTNAME>
+<OS>Linux x86_64</OS>
+<RELVER> Linux.NAME="Kylin Linux Advanced Server" </RELVER>
+<CORES> Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz 2 </CORES>
+<CPUCOUNT>2</CPUCOUNT>
+<CPUMHZ> 2111.998</CPUMHZ>
+<MEMTOTAL> 6847460 kB</MEMTOTAL>
+<SWAPTOTAL> 8388604 kB</SWAPTOTAL>
+<OSPARAMETER><![CDATA[
+fs.file-max                    = 6815744
+fs.aio-max-nr                  = 1048576
+kernel.shmmni                  = 4096
+kernel.shmmax                  = 3505899520
+kernel.shmall                  = 2097152
+kernel.sem                     = 250	32000	100	128
+kernel.panic_on_oops           = 1
+kernel.randomize_va_space      = 2
+kernel.numa_balancing          = 0
+net.ipv4.conf.all.rp_filter    = 1
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.ip_local_port_range   = 9000	65500
+net.ipv4.ipfrag_high_thresh    = 4194304
+net.ipv4.ipfrag_low_thresh     = 3145728
+net.ipv4.tcp_keepalive_time    = 7200
+net.core.rmem_default          = 262144
+net.core.rmem_max              = 4194304
+net.core.wmem_default          = 262144
+net.core.wmem_max              = 1048576
+vm.dirty_ratio                 = 30
+vm.dirty_background_ratio      = 10
+vm.dirty_expire_centisecs      = 3000
+vm.dirty_writeback_centisecs   = 500
+vm.swappiness                  = 5
+vm.min_free_kbytes             = 204800
+]]></OSPARAMETER>
+<ULIMIT>
+core file size          (blocks, -c) unlimited
+data seg size           (kbytes, -d) unlimited
+scheduling priority             (-e) 0
+file size               (blocks, -f) unlimited
+pending signals                 (-i) 26620
+max locked memory       (kbytes, -l) 64
+max memory size         (kbytes, -m) unlimited
+open files                      (-n) 524288
+pipe size            (512 bytes, -p) 8
+POSIX message queues     (bytes, -q) 819200
+real-time priority              (-r) 0
+stack size              (kbytes, -s) 10240
+cpu time               (seconds, -t) unlimited
+max user processes              (-u) 16384
+virtual memory          (kbytes, -v) unlimited
+file locks                      (-x) unlimited
+</ULIMIT>
+<IPADDR>
+10.20.17.81
+</IPADDR>
+<OSLOG><![CDATA[
+]]></OSLOG>
+<FILESYSTEM><![CDATA[
+Filesystem     Type      Size  Used Avail Use% Mounted on
+devtmpfs       devtmpfs  3.3G     0  3.3G   0% /dev
+tmpfs          tmpfs     3.0G     0  3.0G   0% /dev/shm
+tmpfs          tmpfs     3.3G  8.8M  3.3G   1% /run
+tmpfs          tmpfs     3.3G     0  3.3G   0% /sys/fs/cgroup
+/dev/sda3      xfs        40G   26G   15G  64% /
+tmpfs          tmpfs     3.3G   16K  3.3G   1% /tmp
+/dev/sda1      xfs       2.0G  181M  1.9G   9% /boot
+tmpfs          tmpfs     669M     0  669M   0% /run/user/0
+]]></FILESYSTEM>
+<INODEUSAGE><![CDATA[
+Filesystem     Inodes IUsed IFree IUse% Mounted on
+devtmpfs         832K   458  832K    1% /dev
+tmpfs            836K     1  836K    1% /dev/shm
+tmpfs            836K   698  836K    1% /run
+tmpfs            836K    17  836K    1% /sys/fs/cgroup
+/dev/sda3         20M  214K   20M    2% /
+tmpfs            836K    19  836K    1% /tmp
+/dev/sda1        1.0M   340  1.0M    1% /boot
+tmpfs            836K     6  836K    1% /run/user/0
+]]></INODEUSAGE>
+<CPUSTAT>
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ 0  0      0   3489      2   3049    0    0   947    98  401  449  5 21 62 13  0
+ 0  0      0   3489      2   3049    0    0     0    36  329  480  1 13 80  6  0
+ 0  0      0   3489      2   3049    0    0     0     4  305  445  1  7 91  1  0
+ 2  1      0   3489      2   3049    0    0     0     4  278  401  0 11 89  1  0
+ 2  1      0   3489      2   3049    0    0     0    16  239  339  1  3 94  2  0
+</CPUSTAT>
+<MEMSTAT>
+              total        used        free      shared  buff/cache   available
+Mem:           6686         448        3328        1992        2910        3642
+Swap:          8191           0        8191
+available=3642 MB
+</MEMSTAT>
+<IOSTAT>
+sar -d 3 2
+</IOSTAT>
+<THPSTAT>
+AnonHugePages:         0 kB
+always madvise [never]
+</THPSTAT>
+<HUGEPAGE>
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+</HUGEPAGE>
+<NUMA>
+NUMA turned off
+</NUMA>
+<NTP>
+ntpd|chronyd is running
+chrony       741       1  0 09:57 ?        00:00:00 /usr/sbin/chronyd
+</NTP>
+<TMZONE>
+2025-09-09 10:05:25 CST +0800
+</TMZONE>
+<SELINUX>
+SELinux status:                 disabled
+/etc/selinux/config
+SELINUX=disabled
+</SELINUX>
+<FIREWALL>
+firewalld/iptables is not running
+</FIREWALL>
+<NSSWITCH>
+No NIS configuration found in /etc/nsswitch.conf
+</NSSWITCH>
+<LO_MTU>
+mtu 65536
+</LO_MTU>
+<MACHINE_PLATFORM>
+Virtual Machine (oracle)
+</MACHINE_PLATFORM>
+<CPU_PERF_MODE>
+Virtual machine detected - CPU performance mode check skipped
+</CPU_PERF_MODE>
+<NOZEROCONF>
+NOZEROCONF is not configured
+</NOZEROCONF>
+<RPM_PACKAGES>
+ghostscript-9.52-6.ky10.x86_64
+samba-client-4.11.12-15.p01.ky10.x86_64
+libsmbclient-4.11.12-15.p01.ky10.x86_64
+freetype-2.10.2-3.ky10.x86_64
+libwbclient-4.11.12-15.p01.ky10.x86_64
+freetype-help-2.10.2-3.ky10.noarch
+freetype-devel-2.10.2-3.ky10.x86_64
+pcp-pmda-samba-4.1.3-13.p04.ky10.x86_64
+samba-common-4.11.12-15.p01.ky10.x86_64
+</RPM_PACKAGES>
+</NODE1>
+</TAG0>
+<TAG1>
+<NODE1>
+<DBNAME><![CDATA[wewin]]></DBNAME>
+<DBMAA>SINGLE INSTANCE</DBMAA>
+
+Session altered.
+
+<DBSTATUS><![CDATA[
+
+DB_UNIQUE_NAME   OPEN_MODE  LOG_MODE     PROTECTION_LEVEL     DATABASE_ROLE    SWITCHOVER_STATUS
+---------------- ---------- ------------ -------------------- ---------------- ------------------
+wewin            READ WRITE ARCHIVELOG   MAXIMUM PERFORMANCE  PRIMARY          FAILED DESTINATION
+]]></DBSTATUS>
+<DBVER><![CDATA[
+select product||'Version '||version_full from product_component_version
+                            *
+ERROR at line 1:
+ORA-00904: "VERSION_FULL": invalid identifier
+
+
+]]></DBVER>
+<DBOSINFO><![CDATA[
+
+NUM_CPUS
+--------
+       2
+
+NUM_CPU_CORES
+-------------
+            2
+
+      MEM_GB
+------------
+       6.530
+]]></DBOSINFO>
+<LOGMODE><![CDATA[
+ARCHIVELOG
+]]></LOGMODE>
+<DBLANG><![CDATA[
+AMERICAN_AMERICA.WE8MSWIN1252
+]]></DBLANG>
+<FLASHBACK><![CDATA[
+NO
+]]></FLASHBACK>
+<DBCURSIZE><![CDATA[
+2GB
+]]></DBCURSIZE>
+<DBF_SIZE><![CDATA[
+8.26GB
+]]></DBF_SIZE>
+<DBF_CNT><![CDATA[
+
+  FILE_CNT DB_FILES_LIMIT
+---------- ----------------
+         7 200
+]]></DBF_CNT>
+<TMPFILE_SIZE><![CDATA[
+
+ TMP_CNT          GB
+-------- -----------
+       2         .87
+]]></TMPFILE_SIZE>
+<DBF_STAT><![CDATA[
+
+FILE_NAME                                                              STATUS        CUR_GB AUTOEX    MAX_GB
+---------------------------------------------------------------------- ------------ ------- ------ ---------
+/oradata/wewin/sysaux01.dbf                                            AVAILABLE        .54 YES        32.00
+/oradata/wewin/system01.dbf                                            AVAILABLE       4.56 YES        32.00
+/oradata/wewin/ts_comp_001.dbf                                         AVAILABLE       1.00 NO           .00
+/oradata/wewin/undotbs01.dbf                                           AVAILABLE       1.14 YES        32.00
+/oradata/wewin/users01.dbf                                             AVAILABLE        .00 YES        32.00
+]]></DBF_STAT>
+<DBTBLCOUNT><![CDATA[
+       1,601
+]]></DBTBLCOUNT>
+<DBROLE><![CDATA[
+PRIMARY,MAXIMUM PERFORMANCE
+]]></DBROLE>
+<DBTBSUSAGE><![CDATA[
+
+TABLESPACE_NAME          MAXEXTEND(GB) ALLOCATED(GB)  USED(GB)  Free(GB) USED_RATE(%)
+------------------------ ------------- ------------- --------- --------- ------------
+TS_COMP                           1.00          1.00       .01       .99          .98
+UNDOTBS1                         32.00          1.14       .03      1.11          .09
+SYSTEM                           32.00          4.56      2.08      2.48         6.49
+SYSAUX                           32.00           .54       .36       .17         1.14
+USERS                            32.00           .00       .00       .00          .00
+]]></DBTBSUSAGE>
+<USER_INFO> <![CDATA[
+
+USERNAME                  ACCOUNT_STATUS   DEFAULT_TABLESPACE   TEMPORARY_TABLESPACE PROFILE
+------------------------- ---------------- -------------------- -------------------- ------------
+COMPUSER                  OPEN             TS_COMP              TEMP                 DEFAULT
+MONITOR                   OPEN             USERS                TEMP                 DEFAULT
+OTHER_USER                OPEN             USERS                TEMP                 DEFAULT
+QY                        OPEN             USERS                TEMP                 DEFAULT
+SOET                      OPEN             SOET                 TEMP                 DEFAULT
+SYSADM                    OPEN             SYSTEM               TEMP                 DEFAULT
+SYSBENCH                  OPEN             DBTEST               TEMP                 DEFAULT
+USER_A                    OPEN             USERS                TEMP                 DEFAULT
+USER_A_PROXY              OPEN             USERS                TEMP                 DEFAULT
+USER_B                    OPEN             USERS                TEMP                 DEFAULT
+USER_C                    OPEN             USERS                TEMP                 DEFAULT
+U_TEST10                  OPEN             USERS                TEMP                 DEFAULT
+WEWIN                     OPEN             USERS                TEMP                 DEFAULT
+YEBTA                     OPEN             YEBTA                TEMP                 DEFAULT
+]]></USER_INFO>
+<USER_SIZE><![CDATA[
+
+OWNER                             GB
+------------------------- ----------
+COMPUSER                         .01
+USER_A                           .00
+U_TEST10                         .00
+WEWIN                            .00
+]]></USER_SIZE>
+<TAB_INFO><![CDATA[
+
+OWNER                      TABLE_CNT
+------------------------- ----------
+COMPUSER                           1
+USER_A                             4
+U_TEST10                           1
+WEWIN                              1
+]]></TAB_INFO>
+<TAB_PARALLEL><![CDATA[
+]]></TAB_PARALLEL>
+<INX_PARALLEL><![CDATA[
+]]></INX_PARALLEL>
+<INVALID_OBJ><![CDATA[
+]]></INVALID_OBJ>
+<INVALID_INX><![CDATA[
+]]></INVALID_INX>
+<DBRMANCHECK><![CDATA[
+]]></DBRMANCHECK>
+<DBSEQUENCE><![CDATA[
+
+SEQUENCE_OWNER  CNT_LESS_200
+--------------- ------------
+SYSBENCH                   4
+USER_A                     1
+]]></DBSEQUENCE>
+<DB_SEQ_USAGE><![CDATA[
+]]></DB_SEQ_USAGE>
+<DBOPTION><![CDATA[
+
+OPTION                                        VALUE
+--------------------------------------------- --------
+ASM Proxy Instance                            FALSE
+Active Data Guard                             TRUE
+Adaptive Execution Plans                      TRUE
+Advanced Analytics                            TRUE
+Advanced Compression                          TRUE
+Advanced Index Compression                    TRUE
+Advanced replication                          TRUE
+Application Role                              TRUE
+Automatic Data Optimization                   TRUE
+Automatic Storage Management                  FALSE
+Backup Encryption                             TRUE
+Basic Compression                             TRUE
+Bit-mapped indexes                            TRUE
+Block Change Tracking                         TRUE
+Block Media Recovery                          TRUE
+Cache Fusion Lock Accelerator                 TRUE
+Change Data Capture                           TRUE
+Coalesce Index                                TRUE
+Connection multiplexing                       TRUE
+Connection pooling                            TRUE
+Cross Transportable Backups                   TRUE
+DICOM                                         TRUE
+Data Mining                                   TRUE
+Data Redaction                                TRUE
+Database queuing                              TRUE
+Database resource manager                     TRUE
+Deferred Segment Creation                     TRUE
+Duplexed backups                              TRUE
+Enterprise User Security                      TRUE
+Exadata Discovery                             TRUE
+Export transportable tablespaces              TRUE
+Fast-Start Fault Recovery                     TRUE
+File Mapping                                  TRUE
+Fine-grained Auditing                         TRUE
+Fine-grained access control                   TRUE
+Flashback Data Archive                        TRUE
+Flashback Database                            TRUE
+Flashback Table                               TRUE
+Global Data Services                          TRUE
+Heat Map                                      TRUE
+I/O Server                                    FALSE
+In-Memory Aggregation                         TRUE
+In-Memory Column Store                        TRUE
+Incremental backup and recovery               TRUE
+Instead-of triggers                           TRUE
+Java                                          TRUE
+Join index                                    TRUE
+Managed Standby                               TRUE
+Management Database                           FALSE
+Materialized view rewrite                     TRUE
+OLAP                                          TRUE
+OLAP Window Functions                         TRUE
+Objects                                       TRUE
+Online Index Build                            TRUE
+Online Redefinition                           TRUE
+Oracle Data Guard                             TRUE
+Oracle Database Vault                         FALSE
+Oracle Label Security                         FALSE
+Parallel backup and recovery                  TRUE
+Parallel execution                            TRUE
+Parallel load                                 TRUE
+Partitioning                                  TRUE
+Plan Stability                                TRUE
+Point-in-time tablespace recovery             TRUE
+Privilege Analysis                            TRUE
+Proxy authentication/authorization            TRUE
+Real Application Clusters                     FALSE
+Real Application Security                     TRUE
+Real Application Testing                      TRUE
+Result Cache                                  TRUE
+SQL Plan Management                           TRUE
+Sample Scan                                   TRUE
+SecureFiles Encryption                        TRUE
+Server Flash Cache                            TRUE
+Snapshot time recovery                        TRUE
+Spatial                                       TRUE
+Streams Capture                               TRUE
+Table Clustering                              TRUE
+Transparent Application Failover              TRUE
+Transparent Data Encryption                   TRUE
+Transparent Sensitive Data Protection         TRUE
+Trial Recovery                                TRUE
+Unified Auditing                              FALSE
+Unused Block Compression                      TRUE
+XStream                                       TRUE
+Zone Maps                                     TRUE
+]]></DBOPTION>
+<DBFEATURES><![CDATA[
+
+NAME                                                         LAST_USAGE_DATE
+------------------------------------------------------------ --------------------
+Unified Audit                                                2025-06-13 22:26:28
+Traditional Audit                                            2025-06-13 22:26:28
+Server Parameter File                                        2025-06-13 22:26:28
+SecureFiles (user)                                           2025-06-13 22:26:28
+SecureFiles (system)                                         2025-06-13 22:26:28
+SQL Tuning Advisor                                           2025-06-13 22:26:28
+SQL Plan Directive                                           2025-06-13 22:26:28
+Result Cache                                                 2025-06-13 22:26:28
+Recovery Area                                                2025-06-13 22:26:28
+Real-Time SQL Monitoring                                     2025-06-13 22:26:28
+Partitioning (system)                                        2025-06-13 22:26:28
+Locally Managed Tablespaces (user)                           2025-06-13 22:26:28
+Locally Managed Tablespaces (system)                         2025-06-13 22:26:28
+HeapCompression                                              2025-06-13 22:26:28
+Duplicate Db from Active Db using BackupSet                  2025-06-13 22:26:28
+Deferred Segment Creation                                    2025-06-13 22:26:28
+Character Set                                                2025-06-13 22:26:28
+Automatic Undo Management                                    2025-06-13 22:26:28
+Automatic Segment Space Management (user)                    2025-06-13 22:26:28
+Automatic Segment Space Management (system)                  2025-06-13 22:26:28
+Automatic SQL Tuning Advisor                                 2025-06-13 22:26:28
+Automatic SQL Execution Memory                               2025-06-13 22:26:28
+Automatic SGA Tuning                                         2025-06-13 22:26:28
+Automatic Reoptimization                                     2025-06-13 22:26:28
+Automatic Maintenance - Space Advisor                        2025-06-13 22:26:28
+Automatic Maintenance - SQL Tuning Advisor                   2025-06-13 22:26:28
+Automatic Maintenance - Optimizer Statistics Gathering       2025-06-13 22:26:28
+Advanced Index Compression                                   2025-06-13 22:26:28
+Adaptive Plans                                               2025-06-13 22:26:28
+]]></DBFEATURES>
+<DB_EXPIR_USER><![CDATA[
+
+USERNAME                       EXPIRY_DATE
+------------------------------ -------------------
+COMPUSER                       2025-04-16 12:15:25
+YEBTA                          2025-04-09 20:00:06
+SOET                           2025-03-08 18:11:36
+QY                             2025-05-06 08:47:38
+OTHER_USER                     2025-04-09 20:23:21
+MONITOR                        2025-05-07 10:31:34
+WEWIN                          2025-05-06 09:00:09
+]]></DB_EXPIR_USER>
+<DB_PASSWORD_VERIF><![CDATA[
+
+PROFILE              LIMIT
+-------------------- ------------------------------
+DEFAULT              NULL
+]]></DB_PASSWORD_VERIF>
+<DBDBAPRIV><![CDATA[
+
+GRANTEE                   GRANTED_ROLE    ADMIN_OPTION
+------------------------- --------------- ---------------
+USER_A                    DBA             NO
+YEBTA                     DBA             NO
+OTHER_USER                DBA             NO
+COMPUSER                  DBA             NO
+QY                        DBA             NO
+WEWIN                     DBA             NO
+]]></DBDBAPRIV>
+<DBSYSDBA><![CDATA[
+]]></DBSYSDBA>
+<DBAUDITSEGMENT><![CDATA[
+]]></DBAUDITSEGMENT>
+<DBAUDITCONT><![CDATA[
+
+       AUDCNT
+-------------
+            0
+
+]]></DBAUDITCONT>
+<DBCONTROLFILE><![CDATA[
+/oradata/wewin/control01.ctl
+/oracle/app/oracle/fast_recovery_area/wewin/control02.ctl
+]]></DBCONTROLFILE>
+<DB_NOSYS_IN_SYSTEM><![CDATA[
+]]></DB_NOSYS_IN_SYSTEM>
+<USERFAILEDLOGIN><![CDATA[
+
+USERNAME                  PROFILE      RESOURCE_NAME             RESOURCE_TYP LIMIT
+------------------------- ------------ ------------------------- ------------ ----------
+COMPUSER                  DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+YEBTA                     DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+SOET                      DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+SYSBENCH                  DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+USER_B                    DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+WEWIN                     DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+MONITOR                   DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+OTHER_USER                DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+QY                        DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+USER_C                    DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+USER_A                    DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+USER_A_PROXY              DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+U_TEST10                  DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+SYSADM                    DEFAULT      FAILED_LOGIN_ATTEMPTS     PASSWORD     10
+]]></USERFAILEDLOGIN>
+<DBVIRSCHECK><![CDATA[
+]]></DBVIRSCHECK>
+<DBSCNHEALTHCHECK><![CDATA[
+--------------------------------------------------------------
+ScnHealthCheck
+--------------------------------------------------------------
+Current Date: 2025/09/09 10:06:04
+Current SCN:   2676741
+Version:       12.1.0.2.0
+--------------------------------------------------------------
+Result: A - SCN Headroom is good
+Apply the latest recommended patches
+based on your maintenance schedule
+For further information review MOS document id 1393363.1
+--------------------------------------------------------------
+]]></DBSCNHEALTHCHECK>
+<CRS_STAT></CRS_STAT>
+<CRS_INIT_STAT></CRS_INIT_STAT>
+</NODE1>
+</TAG1>
+<TAG2>
+<NODE1>
+<INSTNAME><![CDATA[wewin]]></INSTNAME>
+
+Session altered.
+
+<CURSOR_SHARE_MEM><![CDATA[
+]]></CURSOR_SHARE_MEM>
+<TOPSQL_BY_ELA><![CDATA[
+
+SQL_ID        SQL_TEXT                                                 ELAPSED_SECONDS       EXECUTIONS Ela(s)_per Cpu(s)_per
+------------- ------------------------------------------------------- ---------------- ---------------- ---------- ----------
+b9p45hkcx0pwh select dbms_qopatch.get_opatch_lsinventory() from dual                26                1      25.63        .55
+c3hf67suvpu8c SELECT       D.TABLESPACE_NAME,       MAX_SPACE "MAXEXT               23                1       23.4       3.78
+              END(GB)",       SPACE "AL
+
+20x4skzx6dbjm INSERT INTO OPATCH_XINV_TAB(XML_INVENTORY) SELECT * FRO               21                1      20.77        .37
+              M OPATCH_XML_INV
+
+2xucgknahj256 DECLARE job BINARY_INTEGER := :job;  next_date TIMESTAM               14                1      13.86        .95
+              P WITH TIME ZONE := :myda
+
+cvn54b7yz0s8u select /*+ index(idl_ub1$ i_idl_ub11) +*/ piece#,length               14              184        .07          0
+              ,piece from idl_ub1$ wher
+
+]]></TOPSQL_BY_ELA>
+<DBRESOURCE><![CDATA[
+
+RESOURCE_NAME             CURRENT_UTILIZATION  MAX_UTILIZATION LIMIT_VALUE
+------------------------- ------------------- ---------------- ---------------
+processes                                  50               75        300
+sessions                                   55               89        472
+ges_procs                                   0                0          0
+ges_rsv_msgs                                0                0          0
+parallel_max_servers                        8                8      32767
+]]></DBRESOURCE>
+<DBREDOCHECK><![CDATA[
+
+GROUP# THREAD#                  SEQUENCE#         MB ARCHIVED   STATUS
+------ ------- -------------------------- ---------- ---------- --------------------------------
+     1       1                        937       50.0 YES        INACTIVE
+     2       1                        938       50.0 NO         CURRENT
+     3       1                        936       50.0 YES        INACTIVE
+]]></DBREDOCHECK>
+<DBREDOSWITCH><![CDATA[
+]]></DBREDOSWITCH>
+<RECOVERY_USAGE><![CDATA[
+
+NAME                                               LIMIT_GB     USED_GB USED_PERCENT(%)
+--------------------------------------------- ------------- ----------- ---------------
+/oracle/app/oracle/fast_recovery_area                  4.70         .00               0
+]]></RECOVERY_USAGE>
+<RECOVERY_DETAIL><![CDATA[
+
+FILE_TYPE                                PERCENT_SPACE_RECLAIMABLE PERCENT_SPACE_USED
+---------------------------------------- ------------------------- ------------------
+CONTROL FILE                                                     0                  0
+REDO LOG                                                         0                  0
+ARCHIVED LOG                                                     0                  0
+BACKUP PIECE                                                     0                  0
+IMAGE COPY                                                       0                  0
+FLASHBACK LOG                                                    0                  0
+FOREIGN ARCHIVED LOG                                             0                  0
+AUXILIARY DATAFILE COPY                                          0                  0
+]]></RECOVERY_DETAIL>
+<DB_SGA_SIZE><![CDATA[
+
+SGA_SIZE_GB
+-----------
+       1.94
+]]></DB_SGA_SIZE>
+<DB_SHP_SIZE><![CDATA[
+
+SGA_MAX_SIZE(G) SGA_TARGET(G) SHARED_POOL_SIZE(G) SHARED_POOL_FREE(G) CACHE_SIZE(G)
+--------------- ------------- ------------------- ------------------- -------------
+           1.94          1.94                 .41                 .16          1.34
+]]></DB_SHP_SIZE>
+<DB_SHP_PCT><![CDATA[
+
+SHARED_POOL_USAGE_PCT(%)
+------------------------
+                      14
+]]></DB_SHP_PCT>
+<DB_4031CHECK><![CDATA[
+
+TOTAL_SHARED_POOL_USAGE(GB) ABORTED_REQUESTS
+--------------------------- ----------------
+                        .24                0
+]]></DB_4031CHECK>
+<DBPARAMETER><![CDATA[
+
+PARAMETER
+--------------------------------------------------------------------------------------------------------------------------------------------
+background_dump_dest = /oracle/app/oracle/product/12c/db_1/rdbms/log
+control_file_record_keep_time = 7
+db_cache_size = 0
+db_file_name_convert = /oradata/wewinsty, /oradata/wewin
+db_files = 200
+deferred_segment_creation = TRUE
+event =
+fal_server = wewinsty
+log_archive_config = DG_CONFIG=(wewin,wewinsty)
+log_archive_dest_1 = LOCATION=/archive VALID_FOR=(ALL_LOGFILES,ALL_ROLES) DB_UNIQUE_NAME=wewin
+log_archive_dest_2 = SERVICE=wewinsty LGWR ASYNC VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=wewinsty
+log_archive_dest_3 =
+log_archive_dest_4 =
+log_archive_dest_state_1 = enable
+log_archive_dest_state_2 = ENABLE
+log_archive_dest_state_3 = enable
+log_archive_dest_state_4 = enable
+log_file_name_convert = /oradata/wewinsty, /oradata/wewin
+max_dump_file_size = unlimited
+memory_max_target = 0
+memory_target = 0
+parallel_force_local = FALSE
+parallel_max_servers = 80
+pga_aggregate_target = 692060160
+processes = 300
+session_cached_cursors = 50
+sga_max_size = 2080374784
+sga_target = 2080374784
+shared_pool_size = 0
+streams_pool_size = 0
+undo_retention = 900
+user_dump_dest = /oracle/app/oracle/product/12c/db_1/rdbms/log
+]]></DBPARAMETER>
+<LOADPROFILE>
+</LOADPROFILE>
+<INSTEFFICIENCY>
+</INSTEFFICIENCY>
+<TOPEVENT><![CDATA[
+]]></TOPEVENT>
+<DBPSU><![CDATA[
+                                                                                
+]]></DBPSU>
+<DBPATCH><![CDATA[
+There are no Interim patches installed in this Oracle Home "/oracle/app/oracle/product/12c/db_1".
+]]></DBPATCH>
+<DBDGLAGCHECK><![CDATA[
+
+   THREAD# Last Primary Seq Generated
+---------- --------------------------
+         1                        937
+]]></DBDGLAGCHECK>
+<DBDGERRCHECK><![CDATA[
+]]></DBDGERRCHECK>
+<DBLSNRINFO><![CDATA[
+]]></DBLSNRINFO>
+<DBERRLOG><![CDATA[
+
+no rows selected
+
+]]></DBERRLOG>
+<DB_PARAMETER_FILE><![CDATA[
+/tmp/eav2/20250909_wewinpri/20250909_wewinpri.wewin.ora
+]]></DB_PARAMETER_FILE>
+</NODE1>
+</TAG2>
+</EACHK>

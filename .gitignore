@@ -1,4 +1,6 @@
 local/
+xmlfile/
+report/
 *.log
 ~
 *~

@@ -66,6 +66,8 @@ type Dbrule struct {
 	Db_seq_usage  Db_seq_usage  `yaml:"db_seq_usage"`
 
 	// 数据库性能分析
+	Db_shp_size    Db_shp_size    `yaml:"db_shp_size"`
+	Db_shp_pct     Db_shp_pct     `yaml:"db_shp_pct"`
 	Db_4031check   Db_4031check   `yaml:"db_4031check"`
 	Dbresource     Dbresource     `yaml:"dbresource"`
 	Loadprofile    Loadprofile    `yaml:"loadprofile"`
@@ -79,8 +81,6 @@ type Dbrule struct {
 	Dbredoswitch      Dbredoswitch      `yaml:"dbredoswitch"`
 	Dbparameter       Dbparameter       `yaml:"dbparameter"`
 	Db_parameter_file Db_parameter_file `yaml:"db_parameter_file"`
-	Db_shp_size       Db_shp_size       `yaml:"db_shp_size"`
-	Db_shp_pct        Db_shp_pct        `yaml:"db_shp_pct"`
 	Recovery_usage    Recovery_usage    `yaml:"recovery_usage"`
 	Recovery_detail   Recovery_detail   `yaml:"recovery_detail"`
 
@@ -608,9 +608,10 @@ type Db_shp_size struct {
 }
 
 type Db_shp_pct struct {
-	Nm    string `yaml:"nm"`
-	Title string `yaml:"title"`
-	Desc  string `yaml:"desc"`
+	Nm     string  `yaml:"nm"`
+	Title  string  `yaml:"title"`
+	Desc   string  `yaml:"desc"`
+	Result float64 `yaml:"result"`
 }
 
 type Db_4031check struct {
@@ -703,7 +704,7 @@ func GetRule() (c *RuleInfo, err error) {
 func init() {
 	var err error
 	// configFile, err = ioutil.ReadFile("./rule.yaml")
-	configFile, err = os.ReadFile("./rule.yaml")
+	configFile, err = os.ReadFile("./local/rule.yaml")
 	if err != nil {
 		log.Fatalf("yamlFile.Get err %v ", err)
 	}

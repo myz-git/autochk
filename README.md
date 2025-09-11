@@ -510,7 +510,7 @@ net.ipv4.ip_local_port_range = 9000 65500，增加可用端口范围。
 4. 在stucts.go中填加type 
 5. 在xlsx模板中填入指标标签
 6. ##在xlsx.NewXlsx() 写入初始化值, 并相应修改sheet下的style单元格生效范围
-7. 在xlsx.PutSht_INFO|PutSht_OS|PutSht_DB (2处)
+7. 在xlsx.PutSht_INFO|PutSht_OS|PutSht_DB , 及 检查字段是否属于* sheet(3处)
 8. 在readXml.go processTag0Node或processTag1Node相应位置添加解析 (2处)
 9. 在分析函数中增加指标分析,在analyzer中添加调用
 
@@ -520,8 +520,19 @@ net.ipv4.ip_local_port_range = 9000 65500，增加可用端口范围。
 
 2. 如果是检查指标,在confg中添加检查规则名称, 要和yaml完全一致, 注意数据类型
 
-# 调试
- 打开调试打印: set AUTOCHK_LOG_LEVEL=debug|warn|info  关闭: set AUTOCHK_LOG_LEVEL= 
+# 部署
+##windows
+go build -ldflags="-s -w" -o autochk.exe main.go
+
+##linux  ,在Windows上编译Linux版本时禁用CGO
+set GOOS=linux
+set GOARCH=amd64
+set CGO_ENABLED=0
+go build -ldflags="-s -w" -o autochk main.go
+
+###  调试
+打开调试打印: set AUTOCHK_LOG_LEVEL=debug|warn|info  
+关闭: set AUTOCHK_LOG_LEVEL= 
 
 # Bug List
 关于3.3.18序列最大值使用检查这一块的，当MAXVALUE为0时查询语句select sequence_owner,sequence_name, max_value,last_number,cache_size,round(last_number/max_value ,2) percent_use from dba_sequences 
@@ -579,3 +590,59 @@ OS字段（每节点一组）：
 预留 INST1_* 到 INST4_* 占位符
 节点3-4的行设置为最小行高，段前后距为0
 现在程序已经支持多节点模板切换，你可以准备这两个模板文件了！
+
+
+
+### 增加ssh节点
+```
+在WIn  powershell:
+cat ~/.ssh/id_rsa.pub 
+复制其内容:
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC+t+Z1AiS ... . ail.com
+
+ssh oracle@1.1.1.112
+vi  ~/.ssh/authorized_keys
+粘贴在最后
+
+测试 ssh oracle@1.1.1.112 date
+```
+
+
+## 版本管理
+```
+git tag v2509.0
+git push origin v2509.0      # 推到远端，供其他人/流水线使用
+```
+发布流程（以后每次都一样）:
+
+1. 完成代码改动，更新 CHANGELOG.md。
+2. 决定下一个版本号（先拉 tag 列表）。
+```
+查看本地tag
+git tag -l
+查看源端tag
+git ls-remote --tags origin
+```
+3. 执行：
+```
+   git tag v<新版本>
+   git push origin v<新版本>
+   运行 build.bat
+````
+或者:
+```
+git tag v2509.0 && git push --tags
+build.bat
+```
+生成：
+autochk.exe（普通文件）
+autochk-v<新版本>.exe（带版本号）
+用 autochk.exe --version 可验证版本信息
+
+想改错的 tag？
+```
+   git tag -d v2509.0
+   git push origin :refs/tags/v2509.0   # 删除远端同名 tag
+   git tag v2509.0                      # 重新打
+   git push origin v2509.0
+```
