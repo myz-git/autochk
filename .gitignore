@@ -4,6 +4,7 @@ report/
 *.log
 ~
 *~
+~$*di
 .DS_Store
 *Done.xlsx
 *Done.docx
