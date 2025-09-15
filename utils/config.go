@@ -19,6 +19,15 @@ type RuleInfo struct {
 
 // //*** Lv2***////
 type Osrule struct {
+	Hostname         Hostname         `yaml:"hostname"`
+	Ipaddr           Ipaddr           `yaml:"ipaddr"`
+	Os               Os               `yaml:"os"`
+	Relver           Relver           `yaml:"relver"`
+	Cpu_model        Cpu_model        `yaml:"cpu_model"`
+	Cpucount         Cpucount         `yaml:"cpucount"`
+	Cpumhz           Cpumhz           `yaml:"cpumhz"`
+	Memtotal         Memtotal         `yaml:"memtotal"`
+	Swaptotal        Swaptotal        `yaml:"swaptotal"`
 	Osparameter      Osparameter      `yaml:"osparameter"`
 	Ulimit           Ulimit           `yaml:"ulimit"`
 	Filesystem       Filesystem       `yaml:"filesystem"`
@@ -119,6 +128,69 @@ type Dbrule struct {
 }
 
 // ///*** Lv3 OS Start***/////
+type Hostname struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
+}
+
+type Ipaddr struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
+}
+
+type Os struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
+}
+
+type Relver struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
+}
+
+type Cpu_model struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
+}
+
+type Cpucount struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
+}
+
+type Cpumhz struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
+}
+
+type Memtotal struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
+}
+
+type Swaptotal struct {
+	Nm    string `yaml:"nm"`
+	Title string `yaml:"title"`
+	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
+}
+
 type Osparameter struct {
 	Nm                        string   `yaml:"nm"`
 	Title                     string   `yaml:"title"`
@@ -149,6 +221,7 @@ type Osparameter struct {
 	Dirty_expire_centisecs    int      `yaml:"dirty_expire_centisecs"`
 	Dirty_writeback_centisecs int      `yaml:"dirty_writeback_centisecs"`
 	Disable_ism_large_pages   []string `yaml:"disable_ism_large_pages,flow"` //返回字符串数组, flow为固定词
+	Level                     string   `yaml:"level"`
 }
 
 type Ulimit struct {
@@ -158,6 +231,7 @@ type Ulimit struct {
 	Memlock           int    `yaml:"memlock"`
 	Open_files        int    `yaml:"open_files"`
 	Max_user_rocesses int    `yaml:"max_user_rocesses"`
+	Level             string `yaml:"level"`
 }
 
 type Filesystem struct {
@@ -166,6 +240,7 @@ type Filesystem struct {
 	Desc     string `yaml:"desc"`
 	Disk_ge1 string `yaml:"disk_ge1"`
 	Disk_ge2 string `yaml:"disk_ge2"`
+	Level    string `yaml:"level"`
 }
 
 type Inodeusage struct {
@@ -174,6 +249,7 @@ type Inodeusage struct {
 	Desc      string `yaml:"desc"`
 	Inode_ge1 string `yaml:"inode_ge1"`
 	Inode_ge2 string `yaml:"inode_ge2"`
+	Level     string `yaml:"level"`
 }
 
 type Cpustat struct {
@@ -184,6 +260,7 @@ type Cpustat struct {
 	Idle_le2 int    `yaml:"idle_le2"`
 	Swap_ge1 int    `yaml:"swap_ge1"`
 	Swap_ge2 int    `yaml:"swap_ge2"`
+	Level    string `yaml:"level"`
 }
 type Memstat struct {
 	Nm            string `yaml:"nm"`
@@ -191,6 +268,7 @@ type Memstat struct {
 	Desc          string `yaml:"desc"`
 	Available_le1 int    `yaml:"available_le1"`
 	Available_le2 int    `yaml:"available_le2"`
+	Level         string `yaml:"level"`
 }
 
 type Iostat struct {
@@ -199,6 +277,7 @@ type Iostat struct {
 	Desc         string  `yaml:"desc"`
 	Diskutil_ge1 float64 `yaml:"diskutil_ge1"`
 	Diskutil_ge2 float64 `yaml:"diskutil_ge2"`
+	Level        string  `yaml:"level"`
 }
 
 type Thpstat struct {
@@ -206,12 +285,14 @@ type Thpstat struct {
 	Title      string `yaml:"title"`
 	Desc       string `yaml:"desc"`
 	Anpages_gt int    `yaml:"anpages_gt"`
+	Level      string `yaml:"level"`
 }
 
 type Hugepage struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Numa struct {
@@ -220,72 +301,84 @@ type Numa struct {
 	Desc  string `yaml:"desc"`
 	Flg1  string `yaml:"flg1"`
 	Flg2  string `yaml:"flg2"`
+	Level string `yaml:"level"`
 }
 
 type Ntp struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Tmzone struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Selinux struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Firewall struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Nsswitch struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Lo_mtu struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Machine_platform struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type CPU_PERF_MODE struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type NOZEROCONF struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type RPM_PACKAGES struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Oslog struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 /////*** Lv3 os End***/////
@@ -298,6 +391,7 @@ type Dbstatus struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Status string `yaml:"status"`
+	Level  string `yaml:"level"`
 }
 
 type Logmode struct {
@@ -305,6 +399,7 @@ type Logmode struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Status string `yaml:"status"`
+	Level  string `yaml:"level"`
 }
 
 type Dbtbsusage struct {
@@ -315,24 +410,28 @@ type Dbtbsusage struct {
 	Tbsutil_ge2  float64 `yaml:"tbsutil_ge2"`
 	Freesize_le1 float64 `yaml:"freesize_le1"`
 	Freesize_le2 float64 `yaml:"freesize_le2"`
+	Level        string  `yaml:"level"`
 }
 
 type Dbcursize struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Dbf_size struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Dbf_cnt struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Dbf_stat struct {
@@ -340,12 +439,14 @@ type Dbf_stat struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Status string `yaml:"status"`
+	Level  string `yaml:"level"`
 }
 
 type Tmpfile_size struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Dbcontrolfile struct {
@@ -353,24 +454,28 @@ type Dbcontrolfile struct {
 	Title   string `yaml:"title"`
 	Desc    string `yaml:"desc"`
 	Cnt_le1 int    `yaml:"cnt_le1"`
+	Level   string `yaml:"level"`
 }
 
 type User_info struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type User_size struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Tab_info struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Tab_parallel struct {
@@ -378,6 +483,7 @@ type Tab_parallel struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Inx_parallel struct {
@@ -385,6 +491,7 @@ type Inx_parallel struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Invalid_obj struct {
@@ -392,6 +499,7 @@ type Invalid_obj struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Invalid_inx struct {
@@ -399,6 +507,7 @@ type Invalid_inx struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Dbredocheck struct {
@@ -408,6 +517,7 @@ type Dbredocheck struct {
 	Rdf_size float64 `yaml:"rdf_size"`
 	// Rdf_status   string `yaml:"rdf_status"`
 	Rdf_status_list []string `yaml:"rdf_status_list,flow"` //返回字符串数组, flow为固定词
+	Level           string   `yaml:"level"`
 }
 
 type Dbredoswitch struct {
@@ -415,6 +525,7 @@ type Dbredoswitch struct {
 	Title      string `yaml:"title"`
 	Desc       string `yaml:"desc"`
 	Sw_cnt_ge1 int    `yaml:"sw_cnt_ge1"`
+	Level      string `yaml:"level"`
 }
 
 type Dbresource struct {
@@ -422,6 +533,7 @@ type Dbresource struct {
 	Title       string `yaml:"title"`
 	Desc        string `yaml:"desc"`
 	Res_use_ge1 int    `yaml:"res_use_ge1"`
+	Level       string `yaml:"level"`
 }
 
 type Loadprofile struct {
@@ -430,6 +542,7 @@ type Loadprofile struct {
 	Desc     string  `yaml:"desc"`
 	Redosize float64 `yaml:"redosize"`
 	Logon    float64 `yaml:"logon"`
+	Level    string  `yaml:"level"`
 }
 
 type Instefficiency struct {
@@ -439,6 +552,7 @@ type Instefficiency struct {
 	Buffer_hit  float64 `yaml:"buffer_hit"`
 	Library_hit float64 `yaml:"library_hit"`
 	Soft_parse  float64 `yaml:"soft_parse"`
+	Level       string  `yaml:"level"`
 }
 
 type Topevent struct {
@@ -446,6 +560,7 @@ type Topevent struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Topsql_by_ela struct {
@@ -453,12 +568,14 @@ type Topsql_by_ela struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Cursor_share_mem struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Dblsnrinfo struct {
@@ -466,6 +583,7 @@ type Dblsnrinfo struct {
 	Title    string `yaml:"title"`
 	Desc     string `yaml:"desc"`
 	Log_size int    `yaml:"log_size"`
+	Level    string `yaml:"level"`
 }
 
 type Dbsequence struct {
@@ -473,6 +591,7 @@ type Dbsequence struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Db_seq_usage struct {
@@ -480,6 +599,7 @@ type Db_seq_usage struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Recovery_usage struct {
@@ -487,6 +607,7 @@ type Recovery_usage struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result []int  `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Recovery_detail struct {
@@ -494,6 +615,7 @@ type Recovery_detail struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Dberrlog struct {
@@ -501,6 +623,7 @@ type Dberrlog struct {
 	Title   string `yaml:"title"`
 	Desc    string `yaml:"desc"`
 	ResultB string `yaml:"resultB"`
+	Level   string `yaml:"level"`
 }
 
 type Db_expir_user struct {
@@ -508,6 +631,7 @@ type Db_expir_user struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Db_password_verif struct {
@@ -515,6 +639,7 @@ type Db_password_verif struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Userfailedlogin struct {
@@ -522,6 +647,7 @@ type Userfailedlogin struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Dbdbapriv struct {
@@ -529,6 +655,7 @@ type Dbdbapriv struct {
 	Title   string `yaml:"title"`
 	Desc    string `yaml:"desc"`
 	ResultG string `yaml:"resultG"`
+	Level   string `yaml:"level"`
 }
 
 type Dbsysdba struct {
@@ -536,6 +663,7 @@ type Dbsysdba struct {
 	Title   string `yaml:"title"`
 	Desc    string `yaml:"desc"`
 	ResultB string `yaml:"resultB"`
+	Level   string `yaml:"level"`
 }
 
 type Dbdglagcheck struct {
@@ -543,6 +671,7 @@ type Dbdglagcheck struct {
 	Title   string `yaml:"title"`
 	Desc    string `yaml:"desc"`
 	ResultB int    `yaml:"resultB"`
+	Level   string `yaml:"level"`
 }
 
 type Dbdgerrcheck struct {
@@ -550,6 +679,7 @@ type Dbdgerrcheck struct {
 	Title   string `yaml:"title"`
 	Desc    string `yaml:"desc"`
 	ResultG string `yaml:"resultG"`
+	Level   string `yaml:"level"`
 }
 
 type Dbauditsegment struct {
@@ -557,6 +687,7 @@ type Dbauditsegment struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result int    `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Dbauditcont struct {
@@ -564,6 +695,7 @@ type Dbauditcont struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result int    `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Db_Nosys_In_System struct {
@@ -571,6 +703,7 @@ type Db_Nosys_In_System struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Result string `yaml:"result"`
+	Level  string `yaml:"level"`
 }
 
 type Dbvirscheck struct {
@@ -578,6 +711,7 @@ type Dbvirscheck struct {
 	Title   string `yaml:"title"`
 	Desc    string `yaml:"desc"`
 	ResultR string `yaml:"resultR"`
+	Level   string `yaml:"level"`
 }
 
 type Dbscnhealthcheck struct {
@@ -587,24 +721,28 @@ type Dbscnhealthcheck struct {
 	Resulta string `yaml:"resulta"`
 	Resultb string `yaml:"resultb"`
 	Resultc string `yaml:"resultc"`
+	Level   string `yaml:"level"`
 }
 
 type Dbparameter struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Db_parameter_file struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Db_shp_size struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Db_shp_pct struct {
@@ -612,12 +750,14 @@ type Db_shp_pct struct {
 	Title  string  `yaml:"title"`
 	Desc   string  `yaml:"desc"`
 	Result float64 `yaml:"result"`
+	Level  string  `yaml:"level"`
 }
 
 type Db_4031check struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Dbrmancheck struct {
@@ -626,72 +766,84 @@ type Dbrmancheck struct {
 	Desc    string `yaml:"desc"`
 	ResultB string `yaml:"resultB"`
 	ResultR string `yaml:"resultR"`
+	Level   string `yaml:"level"`
 }
 
 type Dbpsu struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Dbpatch struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Dboption struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Dbfeatures struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Db_lang struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Crs_stat struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Crs_stat2 struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Ocr_info struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Ocr_bak_check struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Asm_usage struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 type Asm_offset struct {
 	Nm    string `yaml:"nm"`
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
+	Level string `yaml:"level"`
 }
 
 /////*** Lv3 db End***/////

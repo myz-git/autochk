@@ -7,7 +7,7 @@ type OsShts struct {
 	Ipaddr           Tpstrc
 	Os               Tpstrc
 	Relver           Tpstrc
-	Cores            Tpstrc
+	Cpu_model        Tpstrc
 	Cpucount         Tpstrc
 	Cpumhz           Tpstrc
 	Memtotal         Tpstrc
@@ -37,45 +37,45 @@ type OsShts struct {
 
 // DbSht 用于存储TAG1中NODE1的DATABASE相关信息
 type DbSht struct {
-	NodeID             string // 节点ID，只有一个"NODE1"
-	Dbname             Tpstrc
-	Dbmaa              Tpstrc
-	Dbver              Tpstrc
-	Dbstatus           Tpstrc
-	Dblang             Tpstrc
-	Logmode            Tpstrc
-	Flashback          Tpstrc
-	Dbcursize          Tpstrc
-	Dbf_size           Tpstrc
-	Dbf_cnt            Tpstrc
-	Dbf_stat           Tpstrc
-	Tmpfile_size       Tpstrc
-	Dbtblcount         Tpstrc
-	Dbrole             Tpstrc
-	Dbtbsusage         Tpstrc
-	Dbcontrolfile      Tpstrc
-	User_info          Tpstrc
-	User_size          Tpstrc
-	Tab_info           Tpstrc
-	Tab_parallel       Tpstrc
-	Inx_parallel       Tpstrc
-	Invalid_obj        Tpstrc
-	Invalid_inx        Tpstrc
-	Dbsequence         Tpstrc
-	Db_seq_usage       Tpstrc
-	Dboption           Tpstrc
-	Dbfeatures         Tpstrc
+	NodeID        string // 节点ID，只有一个"NODE1"
+	Dbname        Tpstrc
+	Dbmaa         Tpstrc
+	Dbver         Tpstrc
+	Dbstatus      Tpstrc
+	Dbrole        Tpstrc
+	Dblang        Tpstrc
+	Logmode       Tpstrc
+	Flashback     Tpstrc
+	Dbcursize     Tpstrc
+	Dbf_size      Tpstrc
+	Dbf_cnt       Tpstrc
+	Dbf_stat      Tpstrc
+	Dbcontrolfile Tpstrc
+	Tmpfile_size  Tpstrc
+	Dbtbsusage    Tpstrc
+	User_info     Tpstrc
+	User_size     Tpstrc
+	Tab_info      Tpstrc
+	// Dbtblcount         Tpstrc
+	Tab_parallel Tpstrc
+	Inx_parallel Tpstrc
+	Invalid_obj  Tpstrc
+	Invalid_inx  Tpstrc
+	Dbsequence   Tpstrc
+	Db_seq_usage Tpstrc
+	// Dboption           Tpstrc
+	// Dbfeatures         Tpstrc
 	Db_expir_user      Tpstrc
 	Db_password_verif  Tpstrc
+	Userfailedlogin    Tpstrc
 	Dbdbapriv          Tpstrc
 	Dbsysdba           Tpstrc
 	Dbauditsegment     Tpstrc
 	Dbauditcont        Tpstrc
 	Db_Nosys_In_System Tpstrc
-	Userfailedlogin    Tpstrc
 	Dbvirscheck        Tpstrc
-	Dbscnhealthcheck   Tpstrc
 	Dbrmancheck        Tpstrc
+	Dbscnhealthcheck   Tpstrc
 	Crs_stat           Tpstrc
 	Crs_stat2          Tpstrc
 	Ocr_info           Tpstrc
@@ -92,22 +92,23 @@ type InstShts struct {
 	Instefficiency    Tpstrc
 	Topevent          Tpstrc
 	Topsql_by_ela     Tpstrc
-	Cursor_share_mem  Tpstrc
 	Db_shp_size       Tpstrc
 	Db_shp_pct        Tpstrc
+	Cursor_share_mem  Tpstrc
+	Db_4031check      Tpstrc
 	Dbresource        Tpstrc
-	Dbpsu             Tpstrc
-	Dbpatch           Tpstrc
-	Dblsnrinfo        Tpstrc
-	Dbparameter       Tpstrc
-	Db_parameter_file Tpstrc
 	Dbredocheck       Tpstrc
 	Dbredoswitch      Tpstrc
 	Recovery_usage    Tpstrc
 	Recovery_detail   Tpstrc
+	Dblsnrinfo        Tpstrc
+	Dbparameter       Tpstrc
+	Db_parameter_file Tpstrc
 	Dberrlog          Tpstrc
 	Dbdglagcheck      Tpstrc
 	Dbdgerrcheck      Tpstrc
+	Dbpsu             Tpstrc
+	Dbpatch           Tpstrc
 }
 
 type Tpstrc struct {

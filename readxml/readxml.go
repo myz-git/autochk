@@ -58,7 +58,7 @@ func processTag0Node(node *etree.Element, osshts *[]structs.OsShts) {
 	osSht.Ipaddr = structs.Tpstrc{}
 	osSht.Os = structs.Tpstrc{}
 	osSht.Relver = structs.Tpstrc{}
-	osSht.Cores = structs.Tpstrc{}
+	osSht.Cpu_model = structs.Tpstrc{}
 	osSht.Cpucount = structs.Tpstrc{}
 	osSht.Cpumhz = structs.Tpstrc{}
 	osSht.Memtotal = structs.Tpstrc{}
@@ -95,8 +95,8 @@ func processTag0Node(node *etree.Element, osshts *[]structs.OsShts) {
 			osSht.Os.Contents = strings.TrimSpace(tag.Text())
 		case "RELVER":
 			osSht.Relver.Contents = strings.TrimSpace(tag.Text())
-		case "CORES":
-			osSht.Cores.Contents = strings.TrimSpace(tag.Text())
+		case "CPU_MODEL":
+			osSht.Cpu_model.Contents = strings.TrimSpace(tag.Text())
 		case "CPUCOUNT":
 			osSht.Cpucount.Contents = strings.TrimSpace(tag.Text())
 		case "CPUMHZ":
@@ -172,7 +172,7 @@ func processTag1Node(node *etree.Element, dbshtp *structs.DbSht) {
 	dbshtp.Dbf_cnt = structs.Tpstrc{}
 	dbshtp.Dbf_stat = structs.Tpstrc{}
 	dbshtp.Tmpfile_size = structs.Tpstrc{}
-	dbshtp.Dbtblcount = structs.Tpstrc{}
+	// dbshtp.Dbtblcount = structs.Tpstrc{}
 	dbshtp.Dblang = structs.Tpstrc{}
 	dbshtp.Dbtbsusage = structs.Tpstrc{}
 	dbshtp.Dbcontrolfile = structs.Tpstrc{}
@@ -185,8 +185,8 @@ func processTag1Node(node *etree.Element, dbshtp *structs.DbSht) {
 	dbshtp.Invalid_inx = structs.Tpstrc{}
 	dbshtp.Dbsequence = structs.Tpstrc{}
 	dbshtp.Db_seq_usage = structs.Tpstrc{}
-	dbshtp.Dboption = structs.Tpstrc{}
-	dbshtp.Dbfeatures = structs.Tpstrc{}
+	// dbshtp.Dboption = structs.Tpstrc{}
+	// dbshtp.Dbfeatures = structs.Tpstrc{}
 	dbshtp.Db_expir_user = structs.Tpstrc{}
 	dbshtp.Db_password_verif = structs.Tpstrc{}
 	dbshtp.Userfailedlogin = structs.Tpstrc{}
@@ -291,13 +291,6 @@ func processTag1Node(node *etree.Element, dbshtp *structs.DbSht) {
 			} else {
 				dbshtp.Tmpfile_size.Contents = content
 			}
-		case "DBTBLCOUNT":
-			content := strings.TrimSpace(tag.Text())
-			if content == "" {
-				dbshtp.Dbtblcount.Contents = "无记录"
-			} else {
-				dbshtp.Dbtblcount.Contents = content
-			}
 		case "DBLANG":
 			content := strings.TrimSpace(tag.Text())
 			if content == "" {
@@ -381,20 +374,6 @@ func processTag1Node(node *etree.Element, dbshtp *structs.DbSht) {
 				dbshtp.Db_seq_usage.Contents = "无记录"
 			} else {
 				dbshtp.Db_seq_usage.Contents = content
-			}
-		case "DBOPTION":
-			content := strings.TrimSpace(tag.Text())
-			if content == "" {
-				dbshtp.Dboption.Contents = "无记录"
-			} else {
-				dbshtp.Dboption.Contents = content
-			}
-		case "DBFEATURES":
-			content := strings.TrimSpace(tag.Text())
-			if content == "" {
-				dbshtp.Dbfeatures.Contents = "无记录"
-			} else {
-				dbshtp.Dbfeatures.Contents = content
 			}
 		case "DB_EXPIR_USER":
 			content := strings.TrimSpace(tag.Text())

@@ -32,7 +32,7 @@ xml命名规则：yyyymmdd_hostname_dbname_instname.xml
 			<HOSTNAME></HOSTNAME>
 			<OS>
 			<RELVER>
-			<CORES>
+			<CPU_MODEL>
 			<CPUCOUNT>
 			<CPUMHZ>
 			<MEMTOTAL>

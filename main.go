@@ -31,8 +31,14 @@ func main() {
 
 	// 定义命令行参数
 	custNm := flag.String("u", "", "customer name: specify customer name")
+	reportType := flag.String("type", "basic", "report type: basic | deep")
 
 	flag.Parse()
+
+	if *reportType != "basic" && *reportType != "deep" {
+		fmt.Fprintln(os.Stderr, "invalid --type, must be basic or deep")
+		os.Exit(1)
+	}
 
 	// 显示使用说明
 	if len(os.Args) > 1 && (os.Args[1] == "-h" || os.Args[1] == "--help") {
@@ -103,9 +109,9 @@ func main() {
 		summaryEntries := &structs.SummaryEntries{}
 
 		readxml.ReadXml(fnm, &osshts, &dbsht, &instshts)
-		anadata.Ana(&osshts, &dbsht, &instshts, summaryEntries)
+		anadata.Ana(&osshts, &dbsht, &instshts, summaryEntries, *reportType)
 		// 传递客户名称参数，使用单文件模式
-		toxls.Xlsx(&osshts, &dbsht, &instshts, summaryEntries, prex, colcnt, true, finalCustNm)
+		toxls.Xlsx(&osshts, &dbsht, &instshts, summaryEntries, prex, colcnt, true, finalCustNm, *reportType)
 		colcnt++
 	}
 	elapsed := time.Since(start)

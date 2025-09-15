@@ -5,6 +5,7 @@ import (
 	"autochk/utils"
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
 	"time" // 添加time包导入
 
@@ -58,7 +59,7 @@ func getCellStyles(f *excelize.File) (styleB, styleR, styleG int) {
 	return
 }
 
-func Xlsx(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.InstShts, summaryEntries *structs.SummaryEntries, xlsnm string, colcnt int, sglf bool, custNm string) {
+func Xlsx(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.InstShts, summaryEntries *structs.SummaryEntries, xlsnm string, colcnt int, sglf bool, custNm string, reportType string) {
 	// 确保report目录存在
 	if err := os.MkdirAll("report", 0755); err != nil {
 		utils.LogErrorf("创建report目录失败: %v", err)
@@ -68,13 +69,25 @@ func Xlsx(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.I
 	// 确定输出文件名
 	var newfnm string
 	if sglf {
-		newfnm = "report/" + xlsnm + ".xlsx"
+		if reportType == "deep" {
+			newfnm = "report/" + xlsnm + "_Deep.xlsx"
+		} else {
+			newfnm = "report/" + xlsnm + ".xlsx"
+		}
 	} else {
-		newfnm = "report/HealthCheckReport.ALL.xlsx"
+		if reportType == "deep" {
+			newfnm = "report/HealthCheckReport.ALL_Deep.xlsx"
+		} else {
+			newfnm = "report/HealthCheckReport.ALL.xlsx"
+		}
 	}
 
 	// 加载模板文件
-	f, err := excelize.OpenFile("local/HealthReport.xlsx")
+	tpl := "local/HealthReport.xlsx"
+	if reportType == "deep" {
+		tpl = "local/HealthReportDeep.xlsx"
+	}
+	f, err := excelize.OpenFile(tpl)
 	if err != nil {
 		utils.LogErrorf("打开模板文件失败: %v", err)
 		return
@@ -131,7 +144,7 @@ func PutSht_INFO(f *excelize.File, osshts *[]structs.OsShts, dbshtp *structs.DbS
 		f.SetCellStr(shnm, "F5", firstOs.Ipaddr.Contents)
 		f.SetCellStr(shnm, "F6", firstOs.Os.Contents)
 		f.SetCellStr(shnm, "F7", firstOs.Relver.Contents)
-		f.SetCellStr(shnm, "F8", firstOs.Cores.Contents)
+		f.SetCellStr(shnm, "F8", firstOs.Cpu_model.Contents)
 		f.SetCellStr(shnm, "F9", firstOs.Memtotal.Contents)
 		f.SetCellStr(shnm, "F10", firstOs.Machine_platform.Contents)
 	}
@@ -150,115 +163,9 @@ func PutSht_INFO(f *excelize.File, osshts *[]structs.OsShts, dbshtp *structs.DbS
 func getCommentForField(fieldName string, summaryEntries *structs.SummaryEntries) string {
 	utils.LogDebugf("查找字段 %s 的注释，SummaryEntries 总数: %d", fieldName, len(summaryEntries.Entries))
 
-	// 字段名到检查项Nm的映射（直接使用SummaryEntries中的Nm字段）
-	fieldToCheckMap := map[string]string{
-		// OS字段
-		"Hostname":         "HOSTNAME",
-		"Ipaddr":           "IPADDR",
-		"Os":               "OS",
-		"Relver":           "RELVER",
-		"Cores":            "CORES",
-		"Cpucount":         "CPUCOUNT",
-		"Cpumhz":           "CPUMHZ",
-		"Memtotal":         "MEMTOTAL",
-		"Swaptotal":        "SWAPTOTAL",
-		"Osparameter":      "OSPARAMETER",
-		"Ulimit":           "ULIMIT",
-		"Oslog":            "OSLOG",
-		"Filesystem":       "FILESYSTEM",
-		"Inodeusage":       "INODEUSAGE",
-		"Cpustat":          "CPUSTAT",
-		"Memstat":          "MEMSTAT",
-		"Iostat":           "IOSTAT",
-		"Thpstat":          "THPSTAT",
-		"Hugepage":         "HUGEPAGE",
-		"Numa":             "NUMA",
-		"Ntp":              "NTP",
-		"Tmzone":           "TMZONE",
-		"Selinux":          "SELINUX",
-		"Firewall":         "FIREWALL",
-		"Nsswitch":         "NSSWITCH",
-		"Lo_mtu":           "LO_MTU",
-		"Machine_platform": "MACHINE_PLATFORM",
-		"CPU_PERF_MODE":    "CPU_PERF_MODE",
-		"NOZEROCONF":       "NOZEROCONF",
-		"RPM_PACKAGES":     "RPM_PACKAGES",
-
-		// DB字段
-		"Dbname":             "DBNAME",
-		"Dbmaa":              "DBMAA",
-		"Dbver":              "DBVER",
-		"Dbstatus":           "DBSTATUS",
-		"Dblang":             "DBLANG",
-		"Logmode":            "LOGMODE",
-		"Flashback":          "FLASHBACK",
-		"Dbcursize":          "DBCURSIZE",
-		"Dbf_size":           "DBF_SIZE",
-		"Dbf_cnt":            "DBF_CNT",
-		"Dbf_stat":           "DBF_STAT",
-		"Tmpfile_size":       "TMPFILE_SIZE",
-		"Dbtblcount":         "DBTBLCOUNT",
-		"Dbrole":             "DBROLE",
-		"Dbtbsusage":         "DBTBSUSAGE",
-		"Dbcontrolfile":      "DBCONTROLFILE",
-		"User_info":          "USER_INFO",
-		"User_size":          "USER_SIZE",
-		"Tab_info":           "TAB_INFO",
-		"Tab_parallel":       "TAB_PARALLEL",
-		"Inx_parallel":       "INX_PARALLEL",
-		"Invalid_obj":        "INVALID_OBJ",
-		"Invalid_inx":        "INVALID_INX",
-		"Dbsequence":         "DBSEQUENCE",
-		"Db_seq_usage":       "DB_SEQ_USAGE",
-		"Dboption":           "DBOPTION",
-		"Dbfeatures":         "DBFEATURES",
-		"Db_expir_user":      "DB_EXPIR_USER",
-		"Db_password_verif":  "DB_PASSWORD_VERIF",
-		"Dbdbapriv":          "DBDBAPRIV",
-		"Dbsysdba":           "DBSYSDBA",
-		"Dbauditsegment":     "DBAUDITSEGMENT",
-		"Dbauditcont":        "DBAUDITCONT",
-		"Db_Nosys_In_System": "DB_NOSYS_IN_SYSTEM",
-		"Userfailedlogin":    "USERFAILEDLOGIN",
-		"Dbvirscheck":        "DBVIRSCHECK",
-		"Dbscnhealthcheck":   "DBSCNHEALTHCHECK",
-		"Dbrmancheck":        "DBRMANCHECK",
-		"Crs_stat":           "CRS_STAT",
-		"Crs_stat2":          "CRS_STAT2",
-		"Ocr_info":           "OCR_INFO",
-		"Ocr_bak_check":      "OCR_BAK_CHECK",
-		"Asm_usage":          "ASM_USAGE",
-		"Asm_offset":         "ASM_OFFSET",
-
-		// INST字段
-		"Instname":          "INSTNAME",
-		"Loadprofile":       "LOADPROFILE",
-		"Instefficiency":    "INSTEFFICIENCY",
-		"Topevent":          "TOPEVENT",
-		"Topsql_by_ela":     "TOPSQL_BY_ELA",
-		"Cursor_share_mem":  "CURSOR_SHARE_MEM",
-		"Dbresource":        "DBRESOURCE",
-		"Dbpsu":             "DBPSU",
-		"Dbpatch":           "DBPATCH",
-		"Dblsnrinfo":        "DBLSNRINFO",
-		"Dbparameter":       "DBPARAMETER",
-		"Db_parameter_file": "DB_PARAMETER_FILE",
-		"Dbredocheck":       "DBREDOCHECK",
-		"Dbredoswitch":      "DBREDOSWITCH",
-		"Recovery_usage":    "RECOVERY_USAGE",
-		"Recovery_detail":   "RECOVERY_DETAIL",
-		"Dberrlog":          "DBERRLOG",
-		"Dbdglagcheck":      "DBDGLAGCHECK",
-		"Dbdgerrcheck":      "DBDGERRCHECK",
-	}
-
-	checkName := fieldToCheckMap[fieldName]
+	// 动态生成检查项名（将字段名转换为大写）
+	checkName := strings.ToUpper(fieldName)
 	utils.LogDebugf("字段 %s 映射到检查项: %s", fieldName, checkName)
-
-	if checkName == "" {
-		utils.LogDebugf("字段 %s 没有对应的检查项映射", fieldName)
-		return ""
-	}
 
 	// 在SummaryEntries中查找对应的检查项
 	for i, entry := range summaryEntries.Entries {
@@ -292,488 +199,200 @@ func getCommentForField(fieldName string, summaryEntries *structs.SummaryEntries
 	return ""
 }
 
-func PutSht_OS(f *excelize.File, osshts *[]structs.OsShts, summaryEntries *structs.SummaryEntries, colcnt int) {
-	shnm := "OS"
+// anchorRow finds the sheet and row index for a named range (anchor at A column).
+// name is the defined name (e.g., HOSTNAME). If not found, ok=false.
+func anchorRow(f *excelize.File, name string) (string, int, bool) {
+	for _, dn := range f.GetDefinedName() {
+		if dn.Name == name {
+			// dn.RefersTo example: =OS!$A$12 or 'OS'!$A$12
+			refers := dn.RefersTo
+			if len(refers) == 0 {
+				return "", 0, false
+			}
+			// remove leading '='
+			if refers[0] == '=' {
+				refers = refers[1:]
+			}
+			// split sheet and cell by '!'
+			parts := strings.Split(refers, "!")
+			if len(parts) != 2 {
+				return "", 0, false
+			}
+			sheet := strings.Trim(parts[0], "'")
+			cell := parts[1]
+			// get row from A1 notation
+			_, row, err := excelize.CellNameToCoordinates(cell)
+			if err != nil {
+				return "", 0, false
+			}
+			return sheet, row, true
+		}
+	}
+	return "", 0, false
+}
 
+// colByNode returns the column letter for node index: 0->C, 1->D, ...
+func colByNode(nodeIndex int) string {
+	return fmt.Sprintf("%c", 'C'+nodeIndex)
+}
+
+func PutSht_OS(f *excelize.File, osshts *[]structs.OsShts, summaryEntries *structs.SummaryEntries, colcnt int) {
 	// 定义单元格样式
 	styleB, styleR, styleG := getCellStyles(f)
 
-	// 按照OsShts结构体的字段顺序定义
-	osFields := []struct {
-		fieldName string
-		row       int
-	}{
-		{"NodeID", 1},
-		{"Hostname", 2},
-		{"Ipaddr", 3},
-		{"Os", 4},
-		{"Relver", 5},
-		{"Cores", 6},
-		{"Cpumhz", 7},
-		{"Memtotal", 8},
-		{"Machine_platform", 9},
-		{"Swaptotal", 10},
-		{"Osparameter", 11},
-		{"Ulimit", 12},
-		{"Oslog", 13},
-		{"Filesystem", 14},
-		{"Inodeusage", 15},
-		{"Cpustat", 16},
-		{"Memstat", 17},
-		{"Iostat", 18},
-		{"Thpstat", 19},
-		{"Hugepage", 20},
-		{"Numa", 21},
-		{"Ntp", 22},
-		{"Tmzone", 23},
-		{"Selinux", 24},
-		{"Firewall", 25},
-		{"Nsswitch", 26},
-		{"Lo_mtu", 27},
-		{"CPU_PERF_MODE", 28},
-		{"NOZEROCONF", 29},
-		{"RPM_PACKAGES", 30},
-	}
-
 	// 遍历所有OS节点
 	for nodeIndex, ossht := range *osshts {
-		// 确定列位置：C列对应NODE1，D列对应NODE2，以此类推
-		col := fmt.Sprintf("%c", 'C'+nodeIndex)
+		col := colByNode(nodeIndex)
 
-		// 填充每个字段
-		for _, field := range osFields {
-			cell := fmt.Sprintf("%s%d", col, field.row)
-			var content string
-			var alarm string
+		// 使用反射遍历结构体字段
+		v := reflect.ValueOf(ossht)
+		t := reflect.TypeOf(ossht)
 
-			// 根据字段名获取对应的内容和告警级别
-			switch field.fieldName {
-			case "NodeID":
-				content = ossht.NodeID
-				alarm = ""
-			case "Hostname":
-				content = ossht.Hostname.Contents
-				alarm = ossht.Hostname.Alarm
-			case "Ipaddr":
-				content = ossht.Ipaddr.Contents
-				alarm = ossht.Ipaddr.Alarm
-			case "Os":
-				content = ossht.Os.Contents
-				alarm = ossht.Os.Alarm
-			case "Relver":
-				content = ossht.Relver.Contents
-				alarm = ossht.Relver.Alarm
-			case "Cores":
-				content = ossht.Cores.Contents
-				alarm = ossht.Cores.Alarm
-			case "Cpucount":
-				content = ossht.Cpucount.Contents
-				alarm = ossht.Cpucount.Alarm
-			case "Cpumhz":
-				content = ossht.Cpumhz.Contents
-				alarm = ossht.Cpumhz.Alarm
-			case "Memtotal":
-				content = ossht.Memtotal.Contents
-				alarm = ossht.Memtotal.Alarm
-			case "Swaptotal":
-				content = ossht.Swaptotal.Contents
-				alarm = ossht.Swaptotal.Alarm
-			case "Osparameter":
-				content = ossht.Osparameter.Contents
-				alarm = ossht.Osparameter.Alarm
-			case "Ulimit":
-				content = ossht.Ulimit.Contents
-				alarm = ossht.Ulimit.Alarm
-			case "Oslog":
-				content = ossht.Oslog.Contents
-				alarm = ossht.Oslog.Alarm
-			case "Filesystem":
-				content = ossht.Filesystem.Contents
-				alarm = ossht.Filesystem.Alarm
-			case "Inodeusage":
-				content = ossht.Inodeusage.Contents
-				alarm = ossht.Inodeusage.Alarm
-			case "Cpustat":
-				content = ossht.Cpustat.Contents
-				alarm = ossht.Cpustat.Alarm
-			case "Memstat":
-				content = ossht.Memstat.Contents
-				alarm = ossht.Memstat.Alarm
-			case "Iostat":
-				content = ossht.Iostat.Contents
-				alarm = ossht.Iostat.Alarm
-			case "Thpstat":
-				content = ossht.Thpstat.Contents
-				alarm = ossht.Thpstat.Alarm
-			case "Hugepage":
-				content = ossht.Hugepage.Contents
-				alarm = ossht.Hugepage.Alarm
-			case "Numa":
-				content = ossht.Numa.Contents
-				alarm = ossht.Numa.Alarm
-			case "Ntp":
-				content = ossht.Ntp.Contents
-				alarm = ossht.Ntp.Alarm
-			case "Tmzone":
-				content = ossht.Tmzone.Contents
-				alarm = ossht.Tmzone.Alarm
-			case "Selinux":
-				content = ossht.Selinux.Contents
-				alarm = ossht.Selinux.Alarm
-			case "Firewall":
-				content = ossht.Firewall.Contents
-				alarm = ossht.Firewall.Alarm
-			case "Nsswitch":
-				content = ossht.Nsswitch.Contents
-				alarm = ossht.Nsswitch.Alarm
-			case "Lo_mtu":
-				content = ossht.Lo_mtu.Contents
-				alarm = ossht.Lo_mtu.Alarm
-			case "Machine_platform":
-				content = ossht.Machine_platform.Contents
-				alarm = ossht.Machine_platform.Alarm
-			case "CPU_PERF_MODE":
-				content = ossht.CPU_PERF_MODE.Contents
-				alarm = ossht.CPU_PERF_MODE.Alarm
-			case "NOZEROCONF":
-				content = ossht.NOZEROCONF.Contents
-				alarm = ossht.NOZEROCONF.Alarm
-			case "RPM_PACKAGES":
-				content = ossht.RPM_PACKAGES.Contents
-				alarm = ossht.RPM_PACKAGES.Alarm
-			}
+		for i := 0; i < v.NumField(); i++ {
+			field := v.Field(i)
+			fieldName := t.Field(i).Name
 
-			// 在样式设置前添加调试信息
-			utils.LogDebugf("节点: %s, 字段: %s, 告警级别: %s", ossht.NodeID, field.fieldName, alarm)
-
-			// 设置单元格内容
-			f.SetCellStr(shnm, cell, content)
-
-			// 添加单元格注释（如果有告警）
-			if alarm != "" {
-				utils.LogDebugf("尝试为字段 %s 添加注释，告警级别: %s", field.fieldName, alarm)
-				comment := getCommentForField(field.fieldName, summaryEntries)
-				utils.LogDebugf("获取到的注释内容: %s", comment)
-				if comment != "" {
-					// 创建注释，尝试设置合适的尺寸
-					commentObj := excelize.Comment{
-						Cell:   cell,
-						Text:   comment,
-						Author: "健康检查系统",
-						Width:  300, // 设置较宽的注释框
-						Height: 100, // 设置较高的注释框
-					}
-
-					// 添加调试信息
-					utils.LogDebugf("注释对象: Cell=%s, Width=%d, Height=%d, Text长度=%d",
-						commentObj.Cell, commentObj.Width, commentObj.Height, len(commentObj.Text))
-
-					err := f.AddComment(shnm, commentObj)
-					if err != nil {
-						utils.LogErrorf("添加注释失败: %v", err)
-					} else {
-						utils.LogDebugf("成功添加注释到单元格: %s", cell)
-					}
-				} else {
-					utils.LogDebugf("未找到字段 %s 对应的注释内容", field.fieldName)
+			// 跳过NodeID字段
+			if fieldName == "NodeID" {
+				// 直接处理NodeID
+				shnm, row, ok := anchorRow(f, "NODEID")
+				if ok {
+					cell := fmt.Sprintf("%s%d", col, row)
+					f.SetCellStr(shnm, cell, ossht.NodeID)
 				}
+				continue
 			}
 
-			// 设置B列检查结果分数 (从B2开始，B1是标题行，跳过NodeID)
-			if field.fieldName != "NodeID" {
-				bCell := fmt.Sprintf("B%d", field.row)
+			// 生成nm（将字段名转换为大写）
+			nm := strings.ToUpper(fieldName)
+
+			// 使用anchorRow定位
+			shnm, row, ok := anchorRow(f, nm)
+			if !ok {
+				// 命名区域不存在：可能是 basic 模板缺少 deep 项，跳过
+				continue
+			}
+
+			// 获取字段内容
+			if tpstrc, ok := field.Interface().(structs.Tpstrc); ok {
+				cell := fmt.Sprintf("%s%d", col, row)
+				content := tpstrc.Contents
+				alarm := tpstrc.Alarm
+
+				// 写值
+				f.SetCellStr(shnm, cell, content)
+
+				// 注释
+				if alarm != "" {
+					comment := getCommentForField(fieldName, summaryEntries)
+					if comment != "" {
+						_ = f.AddComment(shnm, excelize.Comment{Cell: cell, Text: comment, Author: "健康检查系统", Width: 300, Height: 100})
+					}
+				}
+
+				// 分数（B列，按锚点行）
+				bCell := fmt.Sprintf("B%d", row)
 				var score int
 				switch alarm {
 				case "R":
-					score = 0 // 严重影响
+					score = 0
 				case "B":
-					score = 5 // 普通影响
+					score = 5
 				case "G":
-					score = 8 // 轻微影响
+					score = 8
 				default:
-					score = 10 // 正常
+					score = 10
 				}
 				f.SetCellInt(shnm, bCell, int64(score))
-			}
 
-			// 设置单元格样式（根据告警级别）
-			if alarm == "R" {
-				f.SetCellStyle(shnm, cell, cell, styleR)
-				utils.LogDebugf("应用红色样式到单元格: %s (节点: %s, 字段: %s)", cell, ossht.NodeID, field.fieldName)
-			} else if alarm == "B" {
-				f.SetCellStyle(shnm, cell, cell, styleB)
-				utils.LogDebugf("应用蓝色样式到单元格: %s (节点: %s, 字段: %s)", cell, ossht.NodeID, field.fieldName)
-			} else if alarm == "G" {
-				f.SetCellStyle(shnm, cell, cell, styleG)
-				utils.LogDebugf("应用绿色样式到单元格: %s (节点: %s, 字段: %s)", cell, ossht.NodeID, field.fieldName)
+				// 样式
+				if alarm == "R" {
+					f.SetCellStyle(shnm, cell, cell, styleR)
+				} else if alarm == "B" {
+					f.SetCellStyle(shnm, cell, cell, styleB)
+				} else if alarm == "G" {
+					f.SetCellStyle(shnm, cell, cell, styleG)
+				}
 			}
 		}
 	}
 }
 
 func PutSht_DB(f *excelize.File, dbshtp *structs.DbSht, osshts *[]structs.OsShts, summaryEntries *structs.SummaryEntries, colcnt int) {
-	shnm := "DB"
-
 	// 定义单元格样式
 	styleB, styleR, styleG := getCellStyles(f)
 
-	// 按照DbSht结构体的字段顺序定义
-	dbFields := []struct {
-		fieldName string
-		row       int
-	}{
-		{"NodeID", 1},
-		{"Dbname", 2},
-		{"Dbmaa", 3},
-		{"Dbver", 4},
-		{"Dbstatus", 5},
-		{"Dblang", 6},
-		{"Logmode", 7},
-		{"Flashback", 8},
-		{"Dbcursize", 9},
-		{"Dbf_size", 10},
-		{"Dbf_cnt", 11},
-		{"Dbf_stat", 12},
-		{"Tmpfile_size", 13},
-		{"Dbtblcount", 14},
-		{"Dbrole", 15},
-		{"Dbtbsusage", 16},
-		{"Dbcontrolfile", 17},
-		{"User_info", 18},
-		{"User_size", 19},
-		{"Tab_info", 20},
-		{"Tab_parallel", 21},
-		{"Inx_parallel", 22},
-		{"Invalid_obj", 23},
-		{"Invalid_inx", 24},
-		{"Dbsequence", 25},
-		{"Db_seq_usage", 26},
-		{"Dboption", 27},
-		{"Dbfeatures", 28},
-		{"Db_expir_user", 29},
-		{"Db_password_verif", 30},
-		{"Dbdbapriv", 31},
-		{"Dbsysdba", 32},
-		{"Dbauditsegment", 33},
-		{"Dbauditcont", 34},
-		{"Db_Nosys_In_System", 35},
-		{"Userfailedlogin", 36},
-		{"Dbvirscheck", 37},
-		{"Dbscnhealthcheck", 38},
-		{"Dbrmancheck", 39},
-		{"Crs_stat", 40},
-		{"Crs_stat2", 41},
-		{"Ocr_info", 42},
-		{"Ocr_bak_check", 43},
-		{"Asm_usage", 44},
-		{"Asm_offset", 45},
-	}
-
-	// 只在第一列（C列）填充DB信息，因为DB信息只有一个NODE1
+	// 只在第一列（C列）填充DB信息（按设计 DB 只对应 NODE1）
 	col := "C"
 
-	// 填充每个字段
-	for _, field := range dbFields {
-		cell := fmt.Sprintf("%s%d", col, field.row)
-		var content string
-		var alarm string
+	// 使用反射遍历结构体字段
+	v := reflect.ValueOf(dbshtp).Elem()
+	t := reflect.TypeOf(dbshtp).Elem()
 
-		// 根据字段名获取对应的内容和告警级别
-		switch field.fieldName {
-		case "NodeID":
-			content = "NODE1" // DB信息固定为NODE1
-			alarm = ""
-		case "Dbname":
-			content = dbshtp.Dbname.Contents
-			alarm = dbshtp.Dbname.Alarm
-		case "Dbmaa":
-			content = dbshtp.Dbmaa.Contents
-			alarm = dbshtp.Dbmaa.Alarm
-		case "Dbver":
-			content = dbshtp.Dbver.Contents
-			alarm = dbshtp.Dbver.Alarm
-		case "Dbstatus":
-			content = dbshtp.Dbstatus.Contents
-			alarm = dbshtp.Dbstatus.Alarm
-		case "Dblang":
-			content = dbshtp.Dblang.Contents
-			alarm = dbshtp.Dblang.Alarm
-		case "Logmode":
-			content = dbshtp.Logmode.Contents
-			alarm = dbshtp.Logmode.Alarm
-		case "Flashback":
-			content = dbshtp.Flashback.Contents
-			alarm = dbshtp.Flashback.Alarm
-		case "Dbcursize":
-			content = dbshtp.Dbcursize.Contents
-			alarm = dbshtp.Dbcursize.Alarm
-		case "Dbf_size":
-			content = dbshtp.Dbf_size.Contents
-			alarm = dbshtp.Dbf_size.Alarm
-		case "Dbf_cnt":
-			content = dbshtp.Dbf_cnt.Contents
-			alarm = dbshtp.Dbf_cnt.Alarm
-		case "Dbf_stat":
-			content = dbshtp.Dbf_stat.Contents
-			alarm = dbshtp.Dbf_stat.Alarm
-		case "Tmpfile_size":
-			content = dbshtp.Tmpfile_size.Contents
-			alarm = dbshtp.Tmpfile_size.Alarm
-		case "Dbtblcount":
-			content = dbshtp.Dbtblcount.Contents
-			alarm = dbshtp.Dbtblcount.Alarm
-		case "Dbrole":
-			content = dbshtp.Dbrole.Contents
-			alarm = dbshtp.Dbrole.Alarm
-		case "Dbtbsusage":
-			content = dbshtp.Dbtbsusage.Contents
-			alarm = dbshtp.Dbtbsusage.Alarm
-		case "Dbcontrolfile":
-			content = dbshtp.Dbcontrolfile.Contents
-			alarm = dbshtp.Dbcontrolfile.Alarm
-		case "User_info":
-			content = dbshtp.User_info.Contents
-			alarm = dbshtp.User_info.Alarm
-		case "User_size":
-			content = dbshtp.User_size.Contents
-			alarm = dbshtp.User_size.Alarm
-		case "Tab_info":
-			content = dbshtp.Tab_info.Contents
-			alarm = dbshtp.Tab_info.Alarm
-		case "Tab_parallel":
-			content = dbshtp.Tab_parallel.Contents
-			alarm = dbshtp.Tab_parallel.Alarm
-		case "Inx_parallel":
-			content = dbshtp.Inx_parallel.Contents
-			alarm = dbshtp.Inx_parallel.Alarm
-		case "Invalid_obj":
-			content = dbshtp.Invalid_obj.Contents
-			alarm = dbshtp.Invalid_obj.Alarm
-		case "Invalid_inx":
-			content = dbshtp.Invalid_inx.Contents
-			alarm = dbshtp.Invalid_inx.Alarm
-		case "Dbsequence":
-			content = dbshtp.Dbsequence.Contents
-			alarm = dbshtp.Dbsequence.Alarm
-		case "Db_seq_usage":
-			content = dbshtp.Db_seq_usage.Contents
-			alarm = dbshtp.Db_seq_usage.Alarm
-		case "Dboption":
-			content = dbshtp.Dboption.Contents
-			alarm = dbshtp.Dboption.Alarm
-		case "Dbfeatures":
-			content = dbshtp.Dbfeatures.Contents
-			alarm = dbshtp.Dbfeatures.Alarm
-		case "Db_expir_user":
-			content = dbshtp.Db_expir_user.Contents
-			alarm = dbshtp.Db_expir_user.Alarm
-		case "Db_password_verif":
-			content = dbshtp.Db_password_verif.Contents
-			alarm = dbshtp.Db_password_verif.Alarm
-		case "Dbdbapriv":
-			content = dbshtp.Dbdbapriv.Contents
-			alarm = dbshtp.Dbdbapriv.Alarm
-		case "Dbsysdba":
-			content = dbshtp.Dbsysdba.Contents
-			alarm = dbshtp.Dbsysdba.Alarm
-		case "Dbauditsegment":
-			content = dbshtp.Dbauditsegment.Contents
-			alarm = dbshtp.Dbauditsegment.Alarm
-		case "Dbauditcont":
-			content = dbshtp.Dbauditcont.Contents
-			alarm = dbshtp.Dbauditcont.Alarm
-		case "Db_Nosys_In_System":
-			content = dbshtp.Db_Nosys_In_System.Contents
-			alarm = dbshtp.Db_Nosys_In_System.Alarm
-		case "Userfailedlogin":
-			content = dbshtp.Userfailedlogin.Contents
-			alarm = dbshtp.Userfailedlogin.Alarm
-		case "Dbvirscheck":
-			content = dbshtp.Dbvirscheck.Contents
-			alarm = dbshtp.Dbvirscheck.Alarm
-		case "Dbscnhealthcheck":
-			content = dbshtp.Dbscnhealthcheck.Contents
-			alarm = dbshtp.Dbscnhealthcheck.Alarm
-		case "Dbrmancheck":
-			content = dbshtp.Dbrmancheck.Contents
-			alarm = dbshtp.Dbrmancheck.Alarm
-		case "Crs_stat":
-			content = dbshtp.Crs_stat.Contents
-			alarm = dbshtp.Crs_stat.Alarm
-		case "Crs_stat2":
-			content = dbshtp.Crs_stat2.Contents
-			alarm = dbshtp.Crs_stat2.Alarm
-		case "Ocr_info":
-			content = dbshtp.Ocr_info.Contents
-			alarm = dbshtp.Ocr_info.Alarm
-		case "Ocr_bak_check":
-			content = dbshtp.Ocr_bak_check.Contents
-			alarm = dbshtp.Ocr_bak_check.Alarm
-		case "Asm_usage":
-			content = dbshtp.Asm_usage.Contents
-			alarm = dbshtp.Asm_usage.Alarm
-		case "Asm_offset":
-			content = dbshtp.Asm_offset.Contents
-			alarm = dbshtp.Asm_offset.Alarm
-		}
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		fieldName := t.Field(i).Name
 
-		// 设置单元格内容
-		f.SetCellStr(shnm, cell, content)
-
-		// 添加单元格注释（如果有告警）
-		if alarm != "" {
-			utils.LogDebugf("尝试为DB字段 %s 添加注释，告警级别: %s", field.fieldName, alarm)
-			comment := getCommentForField(field.fieldName, summaryEntries)
-			utils.LogDebugf("获取到的DB注释内容: %s", comment)
-			if comment != "" {
-				// 创建注释，尝试设置合适的尺寸
-				commentObj := excelize.Comment{
-					Cell:   cell,
-					Text:   comment,
-					Author: "健康检查系统",
-					Width:  300, // 设置较宽的注释框
-					Height: 100, // 设置较高的注释框
-				}
-
-				// 添加调试信息
-				utils.LogDebugf("DB注释对象: Cell=%s, Width=%d, Height=%d, Text长度=%d",
-					commentObj.Cell, commentObj.Width, commentObj.Height, len(commentObj.Text))
-
-				err := f.AddComment(shnm, commentObj)
-				if err != nil {
-					utils.LogErrorf("添加DB注释失败: %v", err)
-				} else {
-					utils.LogDebugf("成功添加DB注释到单元格: %s", cell)
-				}
-			} else {
-				utils.LogDebugf("未找到DB字段 %s 对应的注释内容", field.fieldName)
+		// 跳过NodeID字段
+		if fieldName == "NodeID" {
+			// 直接处理NodeID
+			shnm, row, ok := anchorRow(f, "NODEID")
+			if ok {
+				cell := fmt.Sprintf("%s%d", col, row)
+				f.SetCellStr(shnm, cell, dbshtp.NodeID)
 			}
+			continue
 		}
 
-		// 设置B列检查结果分数 (从B2开始，B1是标题行，跳过NodeID)
-		if field.fieldName != "NodeID" {
-			bCell := fmt.Sprintf("B%d", field.row)
+		// 生成nm（将字段名转换为大写）
+		nm := strings.ToUpper(fieldName)
+
+		// 使用anchorRow定位
+		shnm, row, ok := anchorRow(f, nm)
+		if !ok {
+			continue
+		}
+
+		// 获取字段内容
+		if tpstrc, ok := field.Interface().(structs.Tpstrc); ok {
+			cell := fmt.Sprintf("%s%d", col, row)
+			content := tpstrc.Contents
+			alarm := tpstrc.Alarm
+
+			// 写值
+			f.SetCellStr(shnm, cell, content)
+
+			// 注释
+			if alarm != "" {
+				comment := getCommentForField(fieldName, summaryEntries)
+				if comment != "" {
+					_ = f.AddComment(shnm, excelize.Comment{Cell: cell, Text: comment, Author: "健康检查系统", Width: 300, Height: 100})
+				}
+			}
+
+			// 分数（B列）
+			bCell := fmt.Sprintf("B%d", row)
 			var score int
 			switch alarm {
 			case "R":
-				score = 0 // 严重影响
+				score = 0
 			case "B":
-				score = 5 // 普通影响
+				score = 5
 			case "G":
-				score = 8 // 轻微影响
+				score = 8
 			default:
-				score = 10 // 正常
+				score = 10
 			}
 			f.SetCellInt(shnm, bCell, int64(score))
-		}
 
-		// 设置单元格样式（根据告警级别）
-		if alarm == "R" {
-			f.SetCellStyle(shnm, cell, cell, styleR)
-		} else if alarm == "B" {
-			f.SetCellStyle(shnm, cell, cell, styleB)
-		} else if alarm == "G" {
-			f.SetCellStyle(shnm, cell, cell, styleG)
+			// 样式
+			if alarm == "R" {
+				f.SetCellStyle(shnm, cell, cell, styleR)
+			} else if alarm == "B" {
+				f.SetCellStyle(shnm, cell, cell, styleB)
+			} else if alarm == "G" {
+				f.SetCellStyle(shnm, cell, cell, styleG)
+			}
 		}
 	}
 }
@@ -976,7 +595,7 @@ func PutSht_Issuelist(f *excelize.File, summaryEntries *structs.SummaryEntries) 
 		f.SetCellStr(shnm, fmt.Sprintf("H%d", rowIndex), item.Description)  // H列：检查项说明
 
 		// L列：添加超链接到具体问题位置
-		hyperlink := getHyperlinkForProblem(item.Nm, item.Category, item.Description)
+		hyperlink := getHyperlinkForProblem(item.Nm, item.Category, item.Description, f)
 		if hyperlink != "" {
 			f.SetCellFormula(shnm, fmt.Sprintf("L%d", rowIndex), hyperlink)
 		}
@@ -1007,511 +626,110 @@ func PutSht_Issuelist(f *excelize.File, summaryEntries *structs.SummaryEntries) 
 }
 
 func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts, summaryEntries *structs.SummaryEntries) {
-	shnm := "Inst" // 使用专门的Inst sheet
-
 	// 定义单元格样式
 	styleB, styleR, styleG := getCellStyles(f)
 
-	// 按照InstShts结构体的字段顺序定义
-	instFields := []struct {
-		fieldName string
-		row       int
-	}{
-		{"NodeID", 1},
-		{"Instname", 2},
-		{"Loadprofile", 3},
-		{"Instefficiency", 4},
-		{"Topevent", 5},
-		{"Topsql_by_ela", 6},
-		{"Cursor_share_mem", 7},
-		{"Db_shp_size", 8},
-		{"Db_shp_pct", 9},
-		{"Dbresource", 10},
-		{"Dbpsu", 11},
-		{"Dbpatch", 12},
-		{"Dblsnrinfo", 13},
-		{"Dbparameter", 14},
-		{"Db_parameter_file", 15},
-		{"Dbredocheck", 16},
-		{"Dbredoswitch", 17},
-		{"Recovery_usage", 18},
-		{"Recovery_detail", 19},
-		{"Dberrlog", 20},
-		{"Dbdglagcheck", 21},
-		{"Dbdgerrcheck", 22},
-	}
-
 	// 遍历所有实例节点
 	for nodeIndex, instsht := range *instshts {
-		// 确定列位置：C列对应NODE1，D列对应NODE2，以此类推
-		col := fmt.Sprintf("%c", 'C'+nodeIndex)
+		col := colByNode(nodeIndex)
 
-		// 填充每个字段
-		for _, field := range instFields {
-			cell := fmt.Sprintf("%s%d", col, field.row)
-			var content string
-			var alarm string
+		// 使用反射遍历结构体字段
+		v := reflect.ValueOf(instsht)
+		t := reflect.TypeOf(instsht)
 
-			// 根据字段名获取对应的内容和告警级别
-			switch field.fieldName {
-			case "NodeID":
-				content = instsht.NodeID
-				alarm = ""
-			case "Instname":
-				content = instsht.Instname.Contents
-				alarm = instsht.Instname.Alarm
-			case "Loadprofile":
-				content = instsht.Loadprofile.Contents
-				alarm = instsht.Loadprofile.Alarm
-			case "Instefficiency":
-				content = instsht.Instefficiency.Contents
-				alarm = instsht.Instefficiency.Alarm
-			case "Topevent":
-				content = instsht.Topevent.Contents
-				alarm = instsht.Topevent.Alarm
-			case "Topsql_by_ela":
-				content = instsht.Topsql_by_ela.Contents
-				alarm = instsht.Topsql_by_ela.Alarm
-			case "Cursor_share_mem":
-				content = instsht.Cursor_share_mem.Contents
-				alarm = instsht.Cursor_share_mem.Alarm
-			case "Db_shp_size":
-				content = instsht.Db_shp_size.Contents
-				alarm = instsht.Db_shp_size.Alarm
-			case "Db_shp_pct":
-				content = instsht.Db_shp_pct.Contents
-				alarm = instsht.Db_shp_pct.Alarm
-			case "Dbresource":
-				content = instsht.Dbresource.Contents
-				alarm = instsht.Dbresource.Alarm
-			case "Dbpsu":
-				content = instsht.Dbpsu.Contents
-				alarm = instsht.Dbpsu.Alarm
-			case "Dbpatch":
-				content = instsht.Dbpatch.Contents
-				alarm = instsht.Dbpatch.Alarm
-			case "Dblsnrinfo":
-				content = instsht.Dblsnrinfo.Contents
-				alarm = instsht.Dblsnrinfo.Alarm
-			case "Dbparameter":
-				content = instsht.Dbparameter.Contents
-				alarm = instsht.Dbparameter.Alarm
-			case "Db_parameter_file":
-				content = instsht.Db_parameter_file.Contents
-				alarm = instsht.Db_parameter_file.Alarm
-			case "Dbredocheck":
-				content = instsht.Dbredocheck.Contents
-				alarm = instsht.Dbredocheck.Alarm
-			case "Dbredoswitch":
-				content = instsht.Dbredoswitch.Contents
-				alarm = instsht.Dbredoswitch.Alarm
-			case "Recovery_usage":
-				content = instsht.Recovery_usage.Contents
-				alarm = instsht.Recovery_usage.Alarm
-			case "Recovery_detail":
-				content = instsht.Recovery_detail.Contents
-				alarm = instsht.Recovery_detail.Alarm
-			case "Dberrlog":
-				content = instsht.Dberrlog.Contents
-				alarm = instsht.Dberrlog.Alarm
-			case "Dbdglagcheck":
-				content = instsht.Dbdglagcheck.Contents
-				alarm = instsht.Dbdglagcheck.Alarm
-			case "Dbdgerrcheck":
-				content = instsht.Dbdgerrcheck.Contents
-				alarm = instsht.Dbdgerrcheck.Alarm
-			}
+		for i := 0; i < v.NumField(); i++ {
+			field := v.Field(i)
+			fieldName := t.Field(i).Name
 
-			// 设置单元格内容
-			f.SetCellStr(shnm, cell, content)
-
-			// 添加单元格注释（如果有告警）
-			if alarm != "" {
-				utils.LogDebugf("尝试为INST字段 %s 添加注释，告警级别: %s", field.fieldName, alarm)
-				comment := getCommentForField(field.fieldName, summaryEntries)
-				utils.LogDebugf("获取到的INST注释内容: %s", comment)
-				if comment != "" {
-					// 创建注释，尝试设置合适的尺寸
-					commentObj := excelize.Comment{
-						Cell:   cell,
-						Text:   comment,
-						Author: "健康检查系统",
-						Width:  300, // 设置较宽的注释框
-						Height: 100, // 设置较高的注释框
-					}
-
-					// 添加调试信息
-					utils.LogDebugf("INST注释对象: Cell=%s, Width=%d, Height=%d, Text长度=%d",
-						commentObj.Cell, commentObj.Width, commentObj.Height, len(commentObj.Text))
-
-					err := f.AddComment(shnm, commentObj)
-					if err != nil {
-						utils.LogErrorf("添加INST注释失败: %v", err)
-					} else {
-						utils.LogDebugf("成功添加INST注释到单元格: %s", cell)
-					}
-				} else {
-					utils.LogDebugf("未找到INST字段 %s 对应的注释内容", field.fieldName)
+			// 跳过NodeID字段
+			if fieldName == "NodeID" {
+				// 直接处理NodeID
+				shnm, row, ok := anchorRow(f, "NODEID")
+				if ok {
+					cell := fmt.Sprintf("%s%d", col, row)
+					f.SetCellStr(shnm, cell, instsht.NodeID)
 				}
+				continue
 			}
 
-			// 设置B列检查结果分数 (从B2开始，B1是标题行，跳过NodeID)
-			if field.fieldName != "NodeID" {
-				bCell := fmt.Sprintf("B%d", field.row)
+			// 生成nm（将字段名转换为大写）
+			nm := strings.ToUpper(fieldName)
+
+			// 使用anchorRow定位
+			shnm, row, ok := anchorRow(f, nm)
+			if !ok {
+				continue
+			}
+
+			// 获取字段内容
+			if tpstrc, ok := field.Interface().(structs.Tpstrc); ok {
+				cell := fmt.Sprintf("%s%d", col, row)
+				content := tpstrc.Contents
+				alarm := tpstrc.Alarm
+
+				// 写入值
+				f.SetCellStr(shnm, cell, content)
+
+				// 注释
+				if alarm != "" {
+					comment := getCommentForField(fieldName, summaryEntries)
+					if comment != "" {
+						_ = f.AddComment(shnm, excelize.Comment{Cell: cell, Text: comment, Author: "健康检查系统", Width: 300, Height: 100})
+					}
+				}
+
+				// 分数（B列）
+				bCell := fmt.Sprintf("B%d", row)
 				var score int
 				switch alarm {
 				case "R":
-					score = 0 // 严重影响
+					score = 0
 				case "B":
-					score = 5 // 普通影响
+					score = 5
 				case "G":
-					score = 8 // 轻微影响
+					score = 8
 				default:
-					score = 10 // 正常
+					score = 10
 				}
 				f.SetCellInt(shnm, bCell, int64(score))
-			}
 
-			// 设置单元格样式（根据告警级别）
-			if alarm == "R" {
-				f.SetCellStyle(shnm, cell, cell, styleR)
-			} else if alarm == "B" {
-				f.SetCellStyle(shnm, cell, cell, styleB)
-			} else if alarm == "G" {
-				f.SetCellStyle(shnm, cell, cell, styleG)
+				// 样式
+				if alarm == "R" {
+					f.SetCellStyle(shnm, cell, cell, styleR)
+				} else if alarm == "B" {
+					f.SetCellStyle(shnm, cell, cell, styleB)
+				} else if alarm == "G" {
+					f.SetCellStyle(shnm, cell, cell, styleG)
+				}
 			}
 		}
 	}
 }
 
-func NewXlsx(xlsnm string) {
-	f := excelize.NewFile()
-	f.NewSheet("HealthReport")
-	f.NewSheet("OS")
-	f.NewSheet("DB")
-	f.NewSheet("Inst")
-	f.DeleteSheet("Sheet1")
-
-	// 初始化 HealthReport Sheet
-	shnm := "HealthReport"
-	f.SetCellStr(shnm, "C1", "健康检查报告")
-	// f.SetCellStr(shnm, "G1", "Health Report")
-	// f.SetCellStr(shnm, "B13", "Issue summary")
-	// f.SetCellStr(shnm, "C14", "重要")
-	// f.SetCellStr(shnm, "D14", "普通")
-	// f.SetCellStr(shnm, "E14", "轻微")
-	// f.SetCellStr(shnm, "B15", "主机系统分析")
-	// f.SetCellStr(shnm, "B16", "数据库实例分析")
-	// f.SetCellStr(shnm, "B17", "数据库集群检查")
-	// f.SetCellStr(shnm, "B18", "DataGuard检查")
-	// f.SetCellStr(shnm, "B19", "数据库备份检查")
-	// f.SetCellStr(shnm, "B20", "数据库安全检查")
-	// f.SetCellStr(shnm, "B21", "软件使用分析")
-	// f.SetCellStr(shnm, "B22", "其他项检查")
-	// f.SetCellStr(shnm, "B23", "Issue list")
-	// f.SetCellStr(shnm, "B24", "No.")
-	// f.SetCellStr(shnm, "C24", "问题类别")
-	// f.SetCellStr(shnm, "D24", "检查项")
-	// f.SetCellStr(shnm, "E24", "结果")
-	// f.SetCellStr(shnm, "F24", "影响")
-	// f.SetCellStr(shnm, "G24", "问题描述及建议")
-
-	// 初始化 OS Sheet
-	shnm = "OS"
-	// f.SetCellStr(shnm, "A1", "主机名")
-	// f.SetCellStr(shnm, "A2", "IP地址")
-	// f.SetCellStr(shnm, "A3", "主机内核参数")
-	// f.SetCellStr(shnm, "A4", "主机资源限制")
-	// f.SetCellStr(shnm, "A5", "文件系统使用率")
-	// f.SetCellStr(shnm, "A6", "索引资源节点使用率")
-	// f.SetCellStr(shnm, "A7", "CPU负载")
-	// f.SetCellStr(shnm, "A8", "内存使用")
-	// f.SetCellStr(shnm, "A9", "磁盘IO负载检查")
-	// f.SetCellStr(shnm, "A10", "透明大页开启检查")
-	// f.SetCellStr(shnm, "A11", "主机大页使用检查")
-	// f.SetCellStr(shnm, "A12", "NUMA使用检查")
-	// f.SetCellStr(shnm, "A13", "NTP时钟同步检查")
-
-	// 初始化 DB Sheet
-	shnm = "DB"
-	// f.SetCellStr(shnm, "A1", "数据库名称\nDB_UNIQUE_NAME")
-	// f.SetCellStr(shnm, "A2", "主机名")
-	// f.SetCellStr(shnm, "A3", "表空间使用率")
-	// f.SetCellStr(shnm, "A4", "数据文件大小检查")
-	// f.SetCellStr(shnm, "A5", "控制文件检查")
-	// f.SetCellStr(shnm, "A6", "数据库用户大小")
-	// f.SetCellStr(shnm, "A7", "REDO文件性能检查")
-	// f.SetCellStr(shnm, "A8", "归档切换检查")
-	// f.SetCellStr(shnm, "A9", "数据库资源使用限制检查")
-	// f.SetCellStr(shnm, "A10", "数据库性能负载分析")
-	// f.SetCellStr(shnm, "A11", "数据库性能运行效率")
-	// f.SetCellStr(shnm, "A12", "数据库Top等待")
-	// f.SetCellStr(shnm, "A13", "数据库Top SQL(耗时)")
-	// f.SetCellStr(shnm, "A14", "监听状态及日志检查")
-	// f.SetCellStr(shnm, "A15", "并行度>1的表")
-	// f.SetCellStr(shnm, "A16", "并行度>1的索引")
-	// f.SetCellStr(shnm, "A17", "无效索引检查")
-	// f.SetCellStr(shnm, "A18", "Oracle序列检查")
-	// f.SetCellStr(shnm, "A19", "闪回区配置")
-	// f.SetCellStr(shnm, "A20", "FlashRecovery区使用情况")
-	// f.SetCellStr(shnm, "A21", "数据库日志检查")
-	// f.SetCellStr(shnm, "A22", "数据库RMAN备份")
-	// f.SetCellStr(shnm, "A23", "DBA权限用户检查")
-	// f.SetCellStr(shnm, "A24", "SYSDBA权限用户检查")
-	// f.SetCellStr(shnm, "A25", "数据库审计空间检查")
-	// f.SetCellStr(shnm, "A26", "数据库审计对象检查")
-	// f.SetCellStr(shnm, "A27", "业务对象存放系统表空间")
-	// f.SetCellStr(shnm, "A28", "错误口令登录锁定帐户PROFILE检查")
-	// f.SetCellStr(shnm, "A29", "病毒勒索攻击检查")
-	// f.SetCellStr(shnm, "A30", "SCNHealthCheck检查")
-	// f.SetCellStr(shnm, "A31", "DataGuard同步延迟检查")
-	// f.SetCellStr(shnm, "A32", "DataGuard同步报错检查")
-
-	// 初始化 Inst Sheet
-	shnm = "Inst"
-	// f.SetCellStr(shnm, "A1", "节点ID")
-	// f.SetCellStr(shnm, "A2", "实例名称")
-	// f.SetCellStr(shnm, "A3", "负载分析")
-	// f.SetCellStr(shnm, "A4", "实例效率")
-	// f.SetCellStr(shnm, "A5", "游标内存使用")
-	// f.SetCellStr(shnm, "A6", "Top等待事件")
-	// f.SetCellStr(shnm, "A7", "Top SQL(耗时)")
-	// f.SetCellStr(shnm, "A8", "数据库资源使用")
-	// f.SetCellStr(shnm, "A9", "PSU补丁信息")
-	// f.SetCellStr(shnm, "A10", "数据库补丁信息")
-	// f.SetCellStr(shnm, "A11", "监听器信息")
-	// f.SetCellStr(shnm, "A12", "数据库参数")
-	// f.SetCellStr(shnm, "A13", "参数文件")
-	// f.SetCellStr(shnm, "A14", "REDO切换")
-	// f.SetCellStr(shnm, "A15", "错误日志")
-
-	// 设置布局和样式
-	wrapStyle, _ := f.NewStyle(&excelize.Style{
-		Alignment: &excelize.Alignment{
-			Horizontal:      "right",
-			Vertical:        "center",
-			WrapText:        true,
-			ShrinkToFit:     true,
-			JustifyLastLine: true,
-		},
-	})
-	styLeft, _ := f.NewStyle(&excelize.Style{
-		Border: []excelize.Border{
-			{Type: "right", Color: "#000000", Style: 1},
-			{Type: "left", Color: "#000000", Style: 1},
-			{Type: "top", Color: "#000000", Style: 1},
-			{Type: "bottom", Color: "#000000", Style: 1},
-		},
-		Fill: excelize.Fill{
-			Type:    "pattern",
-			Pattern: 1,
-			Color:   []string{"#555555"},
-		},
-		Font: &excelize.Font{
-			Bold:  true,
-			Size:  11,
-			Color: "#E6E6FA",
-		},
-		Alignment: &excelize.Alignment{
-			Horizontal: "center",
-			Vertical:   "center",
-			WrapText:   true,
-		},
-	})
-
-	shnms := f.GetSheetList()
-	for _, shnm := range shnms {
-		f.SetColWidth(shnm, "A", "A", 22)
-		f.SetColStyle(shnm, "B:Z", wrapStyle)
-		switch shnm {
-		case "HealthReport":
-			f.SetCellStyle(shnm, "B1", "B24", styLeft)
-			f.SetColWidth(shnm, "B", "Z", 50)
-		case "OS":
-			f.SetCellStyle(shnm, "A1", "A13", styLeft)
-			f.SetColWidth(shnm, "B", "Z", 80)
-		case "DB":
-			f.SetCellStyle(shnm, "A1", "A32", styLeft)
-			f.SetColWidth(shnm, "B", "Z", 100)
-		case "Inst":
-			f.SetCellStyle(shnm, "A1", "A15", styLeft)
-			f.SetColWidth(shnm, "B", "Z", 80)
-		}
-		f.SetPanes(shnm, &excelize.Panes{
-			Freeze:      true,
-			XSplit:      1,
-			YSplit:      2,
-			TopLeftCell: "B3",
-			ActivePane:  "bottomLeft",
-		})
-	}
-	f.SaveAs(xlsnm)
-}
-
-// getHyperlinkForProblem 根据检查项Nm和Category生成超链接
-func getHyperlinkForProblem(nm string, category string, problem string) string {
-	// 字段名到行号的映射
-	fieldToRowMap := map[string]int{
-		// OS字段
-		"HOSTNAME":         2,
-		"IPADDR":           3,
-		"OS":               4,
-		"RELVER":           5,
-		"CORES":            6,
-		"CPUCOUNT":         6,
-		"CPUMHZ":           7,
-		"MEMTOTAL":         8,
-		"SWAPTOTAL":        10,
-		"OSPARAMETER":      11,
-		"ULIMIT":           12,
-		"OSLOG":            13,
-		"FILESYSTEM":       14,
-		"INODEUSAGE":       15,
-		"CPUSTAT":          16,
-		"MEMSTAT":          17,
-		"IOSTAT":           18,
-		"THPSTAT":          19,
-		"HUGEPAGE":         20,
-		"NUMA":             21,
-		"NTP":              22,
-		"TMZONE":           23,
-		"SELINUX":          24,
-		"FIREWALL":         25,
-		"NSSWITCH":         26,
-		"LO_MTU":           27,
-		"MACHINE_PLATFORM": 9,
-		"CPU_PERF_MODE":    28,
-		"NOZEROCONF":       29,
-		"RPM_PACKAGES":     30,
-
-		// DB字段
-		"DBNAME":             2,
-		"DBMAA":              3,
-		"DBVER":              4,
-		"DBSTATUS":           5,
-		"DBLANG":             6,
-		"LOGMODE":            7,
-		"FLASHBACK":          8,
-		"DBCURSIZE":          9,
-		"DBF_SIZE":           10,
-		"DBF_CNT":            11,
-		"DBF_STAT":           12,
-		"TMPFILE_SIZE":       13,
-		"DBTBLCOUNT":         14,
-		"DBROLE":             15,
-		"DBTBSUSAGE":         16,
-		"DBCONTROLFILE":      17,
-		"USER_INFO":          18,
-		"USER_SIZE":          19,
-		"TAB_INFO":           20,
-		"TAB_PARALLEL":       21,
-		"INX_PARALLEL":       22,
-		"INVALID_OBJ":        23,
-		"INVALID_INX":        24,
-		"DBSEQUENCE":         25,
-		"DB_SEQ_USAGE":       26,
-		"DBOPTION":           27,
-		"DBFEATURES":         28,
-		"DB_EXPIR_USER":      29,
-		"DB_PASSWORD_VERIF":  30,
-		"DBDBAPRIV":          31,
-		"DBSYSDBA":           32,
-		"DBAUDITSEGMENT":     33,
-		"DBAUDITCONT":        34,
-		"DB_NOSYS_IN_SYSTEM": 35,
-		"USERFAILEDLOGIN":    36,
-		"DBVIRSCHECK":        37,
-		"DBSCNHEALTHCHECK":   38,
-		"DBRMANCHECK":        39,
-		"CRS_STAT":           40,
-		"CRS_STAT2":          41,
-		"OCR_INFO":           42,
-		"OCR_BAK_CHECK":      43,
-		"ASM_USAGE":          44,
-		"ASM_OFFSET":         45,
-
-		// INST字段
-		"INSTNAME":          2,
-		"LOADPROFILE":       3,
-		"INSTEFFICIENCY":    4,
-		"TOPEVENT":          5,
-		"TOPSQL_BY_ELA":     6,
-		"CURSOR_SHARE_MEM":  7,
-		"DBRESOURCE":        8,
-		"DBPSU":             9,
-		"DBPATCH":           10,
-		"DBLSNRINFO":        11,
-		"DBPARAMETER":       12,
-		"DB_PARAMETER_FILE": 13,
-		"DBREDOCHECK":       14,
-		"DBREDOSWITCH":      15,
-		"RECOVERY_USAGE":    16,
-		"RECOVERY_DETAIL":   17,
-		"DBERRLOG":          18,
-		"DBDGLAGCHECK":      19,
-		"DBDGERRCHECK":      20,
-	}
-
-	// 根据字段名确定Sheet名称
+// getHyperlinkForProblem 根据检查项Nm生成超链接到对应的工作表位置
+// 使用anchorRow函数获取准确的行号，避免硬编码
+func getHyperlinkForProblem(nm string, category string, problem string, f *excelize.File) string {
+	// 根据Category确定Sheet名称（简化逻辑）
 	var sheetName string
-
-	// 检查字段是否属于OS sheet
-	osFields := []string{
-		"HOSTNAME", "IPADDR", "OS", "RELVER", "CORES", "CPUCOUNT", "CPUMHZ",
-		"MEMTOTAL", "SWAPTOTAL", "OSPARAMETER", "ULIMIT", "OSLOG", "FILESYSTEM",
-		"INODEUSAGE", "CPUSTAT", "MEMSTAT", "IOSTAT", "THPSTAT", "HUGEPAGE",
-		"NUMA", "NTP", "TMZONE", "SELINUX", "FIREWALL", "NSSWITCH", "LO_MTU",
-		"MACHINE_PLATFORM", "CPU_PERF_MODE", "NOZEROCONF", "RPM_PACKAGES",
-	}
-
-	// 检查字段是否属于DB sheet
-	dbFields := []string{
-		"DBNAME", "DBMAA", "DBVER", "DBSTATUS", "DBLANG", "LOGMODE", "FLASHBACK",
-		"DBCURSIZE", "DBF_SIZE", "DBF_CNT", "DBF_STAT", "TMPFILE_SIZE", "DBTBLCOUNT",
-		"DBROLE", "DBTBSUSAGE", "DBCONTROLFILE", "USER_INFO", "USER_SIZE", "TAB_INFO",
-		"TAB_PARALLEL", "INX_PARALLEL", "INVALID_OBJ", "INVALID_INX", "DBSEQUENCE",
-		"DB_SEQ_USAGE", "DBOPTION", "DBFEATURES", "DB_EXPIR_USER", "DB_PASSWORD_VERIF",
-		"DBDBAPRIV", "DBSYSDBA", "DBAUDITSEGMENT", "DBAUDITCONT", "DB_NOSYS_IN_SYSTEM",
-		"USERFAILEDLOGIN", "DBVIRSCHECK", "DBSCNHEALTHCHECK", "DBRMANCHECK", "CRS_STAT",
-		"CRS_STAT2", "OCR_INFO", "OCR_BAK_CHECK", "ASM_USAGE", "ASM_OFFSET",
-	}
-
-	// 检查字段是否属于Inst sheet
-	instFields := []string{
-		"INSTNAME", "LOADPROFILE", "INSTEFFICIENCY", "TOPEVENT", "TOPSQL_BY_ELA",
-		"CURSOR_SHARE_MEM", "DB_SHP_SIZE", "DB_SHP_PCT", "DBRESOURCE", "DBPSU", "DBPATCH", "DBLSNRINFO",
-		"DBPARAMETER", "DB_PARAMETER_FILE", "DBREDOCHECK", "DBREDOSWITCH",
-		"RECOVERY_USAGE", "RECOVERY_DETAIL", "DBERRLOG", "DBDGLAGCHECK", "DBDGERRCHECK",
-	}
-
-	// 根据字段名确定Sheet
-	if contains(osFields, nm) {
+	switch category {
+	case "主机系统":
 		sheetName = "OS"
-	} else if contains(dbFields, nm) {
+	case "数据库分析", "数据库性能", "数据库集群", "数据库备份", "数据库安全":
 		sheetName = "DB"
-	} else if contains(instFields, nm) {
+	case "实例分析", "DataGuard":
 		sheetName = "Inst"
-	} else {
-		// 默认根据Category确定
-		switch category {
-		case "主机系统":
-			sheetName = "OS"
-		case "数据库分析":
-			sheetName = "DB"
-		case "实例分析":
-			sheetName = "Inst"
-		default:
-			sheetName = "OS"
-		}
+	default:
+		sheetName = "OS" // 默认为OS
 	}
 
-	// 获取行号
-	row, exists := fieldToRowMap[nm]
-	if !exists {
+	// 使用anchorRow函数获取准确的行号
+	_, row, ok := anchorRow(f, nm)
+	if !ok {
+		// 如果找不到命名区域，不生成超链接
 		return ""
 	}
 
-	// 从问题描述中解析节点信息
+	// 从问题描述中解析节点信息，确定列号
 	// 问题描述格式通常是："问题: NODE1主机,xxx" 或 "问题: NODE2主机,xxx"
 	var col string = "C" // 默认C列（NODE1）
 
@@ -1529,14 +747,4 @@ func getHyperlinkForProblem(nm string, category string, problem string) string {
 	// 生成超链接公式
 	cellRef := fmt.Sprintf("%s%d", col, row)
 	return fmt.Sprintf("=HYPERLINK(\"#%s!%s\",\"Detail\")", sheetName, cellRef)
-}
-
-// contains 检查字符串切片是否包含指定字符串
-func contains(slice []string, item string) bool {
-	for _, s := range slice {
-		if s == item {
-			return true
-		}
-	}
-	return false
 }

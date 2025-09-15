@@ -39,7 +39,7 @@ func buildPlaceholderMap(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instsh
 			m[nodePrefix+"IPADDR"] = osn.Ipaddr.Contents
 			m[nodePrefix+"OS"] = osn.Os.Contents
 			m[nodePrefix+"RELVER"] = osn.Relver.Contents
-			m[nodePrefix+"CORES"] = osn.Cores.Contents
+			m[nodePrefix+"CPU_MODEL"] = osn.Cpu_model.Contents
 			m[nodePrefix+"CPUCOUNT"] = osn.Cpucount.Contents
 			m[nodePrefix+"CPUMHZ"] = osn.Cpumhz.Contents
 			m[nodePrefix+"MEMTOTAL"] = osn.Memtotal.Contents
@@ -154,7 +154,7 @@ func buildPlaceholderMap(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instsh
 		m["IPADDR"] = osn.Ipaddr.Contents
 		m["OS"] = osn.Os.Contents
 		m["RELVER"] = osn.Relver.Contents
-		m["CORES"] = osn.Cores.Contents
+		m["CPU_MODEL"] = osn.Cpu_model.Contents
 		m["CPUCOUNT"] = osn.Cpucount.Contents
 		m["CPUMHZ"] = osn.Cpumhz.Contents
 		m["MEMTOTAL"] = osn.Memtotal.Contents
