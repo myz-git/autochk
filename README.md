@@ -248,30 +248,34 @@ flowchart TD
 
 # 编译和发布
 
-## 确定版本
-
-1. 完成代码改动，更新 CHANGELOG.md。
-2. 决定下一个版本号（先拉 tag 列表）。
+完成代码改动-> 更新Readme.md-> commit -> tag->push
 
 ```
-查看本地当前tag
-git tag -l
-查看源端tag
-git ls-remote --tags origin
+# 1. 添加变更
+git add .
+
+# 2. 提交变更
+git commit -m "提交说明"
+
+# 3. 创建新的 tag
+    ##先查看本地当前tag
+    git tag -l
+    ##查看源端tag
+    git ls-remote --tags origin
+    ## 打版本
+    git tag v2509.4
+
+# 4. 推送代码及版本到远程仓库
+git push 
+git push origin v2509.4
 ```
 
-3. 执行：
-
 ```
-   git tag v<新版本>
-   git push origin v<新版本>
-````
-
-4. 编译
-
-   
-
-
+#删除本地错误 tag
+git tag -d v1.2.0
+#删除远程错误 tag
+git push origin :refs/tags/v1.2.0
+```
 
 
 

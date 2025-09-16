@@ -431,8 +431,8 @@ func PutSht_Summary(f *excelize.File, summaryEntries *structs.SummaryEntries) {
 	}
 
 	// 写公式（注意使用英文逗号 ,）
-	_ = f.SetCellFormula(shnm, "H13", "=\"Health status (\"&SUM($D$15:$F$24)&\" of \"&85&\")\"")
-	_ = f.SetCellFormula(shnm, "L14", "=1-SUM($D$15:$F$24)/85")
+	// _ = f.SetCellFormula(shnm, "H13", "=\"Health status (\"&SUM($D$15:$F$24)&\" of \"&85&\")\"")
+	_ = f.SetCellFormula(shnm, "L14", "=1-SUM($D$15:$F$24)/90")
 
 	// ——关键：更新/清理缓存值（避免 Excel 以为不需要重算）——
 	_ = f.UpdateLinkedValue()

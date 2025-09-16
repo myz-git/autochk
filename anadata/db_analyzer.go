@@ -134,23 +134,19 @@ func Ana_DBF_STAT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *s
 		Title:    rule.Dbrule.Dbf_stat.Title,
 		Desc:     rule.Dbrule.Dbf_stat.Desc,
 	}
-Looop:
-	for index, value := range strings.Split(msgdata, "\n") {
-		if index < 1 {
+
+	lines := strings.Split(msgdata, "\n")
+	for i := 2; i < len(lines); i++ { // 从第3行开始（索引2）
+		line := strings.TrimSpace(lines[i])
+		if line == "" {
 			continue
 		}
-		rd := regexp.MustCompile(`\d+$`)
-		if rd.MatchString(value) {
-			msgs := strings.Fields(value)
-			if len(msgs) < 5 {
-				continue
-			}
-			dbfstatus := msgs[1]
-			if dbfstatus != rule.Dbrule.Dbf_stat.Status {
-				dbshtp.Dbf_stat.Alarm = "R"
-				entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,数据文件%s当前状态为%s非AVAILABLE,\n建议: 需立即检查并修复", dbshtp.Dbname.Contents, msgs[0], dbfstatus))
-				break Looop
-			}
+
+		// 检查是否包含AVAILABLE状态
+		if !strings.Contains(line, "AVAILABLE") {
+			dbshtp.Dbf_stat.Alarm = "R"
+			entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,数据文件状态异常,\n建议: 需立即检查并修复", dbshtp.Dbname.Contents))
+			break
 		}
 	}
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
