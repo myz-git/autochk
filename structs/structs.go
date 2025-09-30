@@ -12,7 +12,10 @@ type OsShts struct {
 	Cpumhz           Tpstrc
 	Memtotal         Tpstrc
 	Swaptotal        Tpstrc
-	Osparameter      Tpstrc
+	Osparam_fs       Tpstrc
+	Osparam_ker      Tpstrc
+	Osparam_net      Tpstrc
+	Osparam_vm       Tpstrc
 	Ulimit           Tpstrc
 	Filesystem       Tpstrc
 	Inodeusage       Tpstrc
@@ -63,6 +66,8 @@ type DbSht struct {
 	Invalid_inx  Tpstrc
 	Dbsequence   Tpstrc
 	Db_seq_usage Tpstrc
+	Dbparam_b    Tpstrc
+	Dbparam_d    Tpstrc
 	// Dboption           Tpstrc
 	// Dbfeatures         Tpstrc
 	Db_expir_user      Tpstrc

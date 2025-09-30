@@ -28,7 +28,10 @@ type Osrule struct {
 	Cpumhz           Cpumhz           `yaml:"cpumhz"`
 	Memtotal         Memtotal         `yaml:"memtotal"`
 	Swaptotal        Swaptotal        `yaml:"swaptotal"`
-	Osparameter      Osparameter      `yaml:"osparameter"`
+	Osparam_fs       Osparam_fs       `yaml:"osparam_fs"`
+	Osparam_ker      Osparam_ker      `yaml:"osparam_ker"`
+	Osparam_net      Osparam_net      `yaml:"osparam_net"`
+	Osparam_vm       Osparam_vm       `yaml:"osparam_vm"`
 	Ulimit           Ulimit           `yaml:"ulimit"`
 	Filesystem       Filesystem       `yaml:"filesystem"`
 	Inodeusage       Inodeusage       `yaml:"inodeusage"`
@@ -54,13 +57,14 @@ type Osrule struct {
 // //*** Lv2***////
 type Dbrule struct {
 	// 数据库分析
-	Dbstatus      Dbstatus      `yaml:"dbstatus"`
-	Logmode       Logmode       `yaml:"logmode"`
-	Db_lang       Db_lang       `yaml:"db_lang"`
-	Dbtbsusage    Dbtbsusage    `yaml:"dbtbsusage"`
-	Dbcursize     Dbcursize     `yaml:"dbcursize"`
-	Dbf_size      Dbf_size      `yaml:"dbf_size"`
-	Dbf_cnt       Dbf_cnt       `yaml:"dbf_cnt"`
+	Dbstatus   Dbstatus   `yaml:"dbstatus"`
+	Logmode    Logmode    `yaml:"logmode"`
+	Db_lang    Db_lang    `yaml:"db_lang"`
+	Dbtbsusage Dbtbsusage `yaml:"dbtbsusage"`
+	Dbcursize  Dbcursize  `yaml:"dbcursize"`
+	Dbf_size   Dbf_size   `yaml:"dbf_size"`
+	Dbf_cnt    Dbf_cnt    `yaml:"dbf_cnt"`
+
 	Dbf_stat      Dbf_stat      `yaml:"dbf_stat"`
 	Tmpfile_size  Tmpfile_size  `yaml:"tmpfile_size"`
 	Dbcontrolfile Dbcontrolfile `yaml:"dbcontrolfile"`
@@ -89,6 +93,8 @@ type Dbrule struct {
 	Dbredocheck       Dbredocheck       `yaml:"dbredocheck"`
 	Dbredoswitch      Dbredoswitch      `yaml:"dbredoswitch"`
 	Dbparameter       Dbparameter       `yaml:"dbparameter"`
+	Dbparam_b         Dbparam_b         `yaml:"dbparam_b"`
+	Dbparam_d         Dbparam_d         `yaml:"dbparam_d"`
 	Db_parameter_file Db_parameter_file `yaml:"db_parameter_file"`
 	Recovery_usage    Recovery_usage    `yaml:"recovery_usage"`
 	Recovery_detail   Recovery_detail   `yaml:"recovery_detail"`
@@ -191,31 +197,52 @@ type Swaptotal struct {
 	Level string `yaml:"level"`
 }
 
-type Osparameter struct {
+type Osparam_fs struct {
+	Nm         string `yaml:"nm"`
+	Title      string `yaml:"title"`
+	Desc       string `yaml:"desc"`
+	File_max   int    `yaml:"file_max"`
+	Aio_max_nr int    `yaml:"aio_max_nr"`
+	Level      string `yaml:"level"`
+}
+
+type Osparam_ker struct {
+	Nm                 string   `yaml:"nm"`
+	Title              string   `yaml:"title"`
+	Desc               string   `yaml:"desc"`
+	Shmmni             int      `yaml:"shmmni"`
+	Shmmax             int      `yaml:"shmmax"`
+	Shmall             int      `yaml:"shmall"`
+	Sem                []string `yaml:"sem,flow"`
+	Panic_on_oops      int      `yaml:"panic_on_oops"`
+	Randomize_va_space int      `yaml:"randomize_va_space"`
+	Numa_balancing     int      `yaml:"numa_balancing"`
+	Level              string   `yaml:"level"`
+}
+
+type Osparam_net struct {
+	Nm                  string   `yaml:"nm"`
+	Title               string   `yaml:"title"`
+	Desc                string   `yaml:"desc"`
+	Rp_filter_all       int      `yaml:"rp_filter_all"`
+	Rp_filter_default   int      `yaml:"rp_filter_default"`
+	Ip_local_port_range []string `yaml:"ip_local_port_range,flow"`
+	Ipfrag_high_thresh  int      `yaml:"ipfrag_high_thresh"`
+	Ipfrag_low_thresh   int      `yaml:"ipfrag_low_thresh"`
+	Tcp_keepalive_time  int      `yaml:"tcp_keepalive_time"`
+	Rmem_default        int      `yaml:"rmem_default"`
+	Rmem_max            int      `yaml:"rmem_max"`
+	Wmem_default        int      `yaml:"wmem_default"`
+	Wmem_max            int      `yaml:"wmem_max"`
+	Level               string   `yaml:"level"`
+}
+
+type Osparam_vm struct {
 	Nm                        string   `yaml:"nm"`
 	Title                     string   `yaml:"title"`
 	Desc                      string   `yaml:"desc"`
-	File_max                  int      `yaml:"file_max"`
-	Aio_max_nr                int      `yaml:"aio_max_nr"`
-	Shmmni                    int      `yaml:"shmmni"`
-	Shmmax                    int      `yaml:"shmmax"`
-	Shmall                    int      `yaml:"shmall"`
-	Sem                       []string `yaml:"sem,flow"`
-	Panic_on_oops             int      `yaml:"panic_on_oops"`
-	Randomize_va_space        int      `yaml:"randomize_va_space"`
-	Numa_balancing            int      `yaml:"numa_balancing"`
-	Min_free_kbytes           int      `yaml:"min_free_kbytes"`
-	Rp_filter_all             int      `yaml:"rp_filter_all"`
-	Rp_filter_default         int      `yaml:"rp_filter_default"`
-	Ip_local_port_range       []string `yaml:"ip_local_port_range,flow"`
-	Ipfrag_high_thresh        int      `yaml:"ipfrag_high_thresh"`
-	Ipfrag_low_thresh         int      `yaml:"ipfrag_low_thresh"`
-	Tcp_keepalive_time        int      `yaml:"tcp_keepalive_time"`
-	Rmem_default              int      `yaml:"rmem_default"`
-	Rmem_max                  int      `yaml:"rmem_max"`
-	Wmem_default              int      `yaml:"wmem_default"`
-	Wmem_max                  int      `yaml:"wmem_max"`
 	Swappiness                int      `yaml:"swappiness"`
+	Min_free_kbytes           int      `yaml:"min_free_kbytes"`
 	Dirty_ratio               int      `yaml:"dirty_ratio"`
 	Dirty_background_ratio    int      `yaml:"dirty_background_ratio"`
 	Dirty_expire_centisecs    int      `yaml:"dirty_expire_centisecs"`
@@ -482,7 +509,7 @@ type Tab_parallel struct {
 	Nm     string `yaml:"nm"`
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
-	Result string `yaml:"result"`
+	Result int    `yaml:"result"`
 	Level  string `yaml:"level"`
 }
 
@@ -490,7 +517,7 @@ type Inx_parallel struct {
 	Nm     string `yaml:"nm"`
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
-	Result string `yaml:"result"`
+	Result int    `yaml:"result"`
 	Level  string `yaml:"level"`
 }
 
@@ -498,7 +525,7 @@ type Invalid_obj struct {
 	Nm     string `yaml:"nm"`
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
-	Result string `yaml:"result"`
+	Result int    `yaml:"result"`
 	Level  string `yaml:"level"`
 }
 
@@ -506,7 +533,7 @@ type Invalid_inx struct {
 	Nm     string `yaml:"nm"`
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
-	Result string `yaml:"result"`
+	Result int    `yaml:"result"`
 	Level  string `yaml:"level"`
 }
 
@@ -781,6 +808,72 @@ type Dbpatch struct {
 	Title string `yaml:"title"`
 	Desc  string `yaml:"desc"`
 	Level string `yaml:"level"`
+}
+
+type Dbparam_b struct {
+	Nm                      string `yaml:"nm"`
+	Title                   string `yaml:"title"`
+	Desc                    string `yaml:"desc"`
+	Level                   string `yaml:"level"`
+	Db_cache_size           int    `yaml:"db_cache_size"`
+	Db_files                int    `yaml:"db_files"`
+	Memory_max_target       int    `yaml:"memory_max_target"`
+	Memory_target           int    `yaml:"memory_target"`
+	Open_cursors            int    `yaml:"open_cursors"`
+	Open_links              int    `yaml:"open_links"`
+	Open_links_per_instance int    `yaml:"open_links_per_instance"`
+	Pga_aggregate_target    int    `yaml:"pga_aggregate_target"`
+	Processes               int    `yaml:"processes"`
+	Session_cached_cursors  int    `yaml:"session_cached_cursors"`
+	Sga_max_size            int    `yaml:"sga_max_size"`
+	Sga_target              int    `yaml:"sga_target"`
+	Shared_pool_size        int    `yaml:"shared_pool_size"`
+	Streams_pool_size       int    `yaml:"streams_pool_size"`
+	Undo_retention          int    `yaml:"undo_retention"`
+}
+
+type Dbparam_d struct {
+	Nm                                      string `yaml:"nm"`
+	Title                                   string `yaml:"title"`
+	Desc                                    string `yaml:"desc"`
+	Level                                   string `yaml:"level"`
+	U_and_pruning_enabled                   string `yaml:"_and_pruning_enabled"`
+	U_ash_size                              int    `yaml:"_ash_size"`
+	U_bloom_filter_enabled                  string `yaml:"_bloom_filter_enabled"`
+	U_bloom_pruning_enabled                 string `yaml:"_bloom_pruning_enabled"`
+	U_cleanup_rollback_entries              int    `yaml:"_cleanup_rollback_entries"`
+	U_cursor_obsolete_threshold             int    `yaml:"_cursor_obsolete_threshold"`
+	U_datafile_write_errors_crash_instance  string `yaml:"_datafile_write_errors_crash_instance"`
+	U_disable_last_successful_login_time    string `yaml:"_disable_last_successful_login_time"`
+	U_drop_stat_segment                     int    `yaml:"_drop_stat_segment"`
+	U_lm_tickets                            int    `yaml:"_lm_tickets"`
+	U_max_spacebg_slaves                    int    `yaml:"_max_spacebg_slaves"`
+	U_optimizer_adaptive_cursor_sharing     string `yaml:"_optimizer_adaptive_cursor_sharing"`
+	U_optimizer_extended_cursor_sharing     string `yaml:"_optimizer_extended_cursor_sharing"`
+	U_optimizer_extended_cursor_sharing_rel string `yaml:"_optimizer_extended_cursor_sharing_rel"`
+	U_optimizer_null_accepting_semijoin     string `yaml:"_optimizer_null_accepting_semijoin"`
+	U_optimizer_outer_to_anti_enabled       string `yaml:"_optimizer_outer_to_anti_enabled"`
+	U_optimizer_partial_join_eval           string `yaml:"_optimizer_partial_join_eval"`
+	U_optimizer_reduce_groupby_key          string `yaml:"_optimizer_reduce_groupby_key"`
+	U_optimizer_use_feedback                string `yaml:"_optimizer_use_feedback"`
+	U_optimizer_gather_feedback             string `yaml:"_optimizer_gather_feedback"`
+	U_rowsets_enabled                       string `yaml:"_rowsets_enabled"`
+	U_report_capture_cycle_time             int    `yaml:"_report_capture_cycle_time"`
+	U_securefiles_concurrency_estimate      int    `yaml:"_securefiles_concurrency_estimate"`
+	U_shared_pool_reserved_pct              int    `yaml:"_shared_pool_reserved_pct"`
+	U_sys_logon_delay                       int    `yaml:"_sys_logon_delay"`
+	U_use_adaptive_log_file_sync            string `yaml:"_use_adaptive_log_file_sync"`
+	U_undo_autotune                         string `yaml:"_undo_autotune"`
+	U_use_single_log_writer                 string `yaml:"_use_single_log_writer"`
+	Client_statistics_level                 string `yaml:"client_statistics_level"`
+	Control_file_record_keep_time           int    `yaml:"control_file_record_keep_time"`
+	Deferred_segment_creation               string `yaml:"deferred_segment_creation"`
+	Enable_ddl_logging                      string `yaml:"enable_ddl_logging"`
+	Fast_start_mttr_target                  int    `yaml:"fast_start_mttr_target"`
+	Max_dump_file_size                      int    `yaml:"max_dump_file_size"`
+	Parallel_execution_message_size         int    `yaml:"parallel_execution_message_size"`
+	Parallel_force_local                    string `yaml:"parallel_force_local"`
+	Parallel_max_servers                    int    `yaml:"parallel_max_servers"`
 }
 
 type Dboption struct {

@@ -221,20 +221,30 @@ func Ana_Tab_parallel(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntrie
 		Title:    rule.Dbrule.Tab_parallel.Title,
 		Desc:     rule.Dbrule.Tab_parallel.Desc,
 	}
-	rd := regexp.MustCompile(` \d+$`)
-Looop:
-	for _, value := range strings.Split(msgdata, "\n") {
-		value = strings.TrimSpace(value)
-		if value == rule.Dbrule.Tab_parallel.Result {
-			break Looop
-		}
-		if rd.MatchString(value) {
-			dbshtp.Tab_parallel.Alarm = "B"
-			msgs := strings.Fields(value)
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,表%s并行度当前值%s大于1,\n建议: 对于并行度大于1的表关闭并行属性", dbshtp.Dbname.Contents, msgs[1], msgs[len(msgs)-1]))
-			break Looop
-		}
+
+	// 检查是否为空或包含"无记录"、"no rows selected"
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		// 正常情况，无告警
+		dbshtp.Tab_parallel.Alarm = ""
+		return
 	}
+
+	// 解析数字
+	if count, err := strconv.Atoi(strings.TrimSpace(msgdata)); err == nil {
+		// 检查数字是否大于规则中设定的阈值
+		if count > rule.Dbrule.Tab_parallel.Result {
+			dbshtp.Tab_parallel.Alarm = "B"
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,存在%d个并行度大于1的表,\n建议: 对于并行度大于1的表关闭并行属性", dbshtp.Dbname.Contents, count))
+		} else {
+			// 正常情况，无告警
+			dbshtp.Tab_parallel.Alarm = ""
+		}
+	} else {
+		// 数据格式异常
+		dbshtp.Tab_parallel.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,表并行度检查数据格式异常,\n建议: 检查数据采集是否正常", dbshtp.Dbname.Contents))
+	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
@@ -249,20 +259,30 @@ func Ana_Inx_parallel(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntrie
 		Title:    rule.Dbrule.Inx_parallel.Title,
 		Desc:     rule.Dbrule.Inx_parallel.Desc,
 	}
-	rd := regexp.MustCompile(` \d+$`)
-Looop:
-	for _, value := range strings.Split(msgdata, "\n") {
-		value = strings.TrimSpace(value)
-		if value == rule.Dbrule.Inx_parallel.Result {
-			break Looop
-		}
-		if rd.MatchString(value) {
-			dbshtp.Inx_parallel.Alarm = "B"
-			msgs := strings.Fields(value)
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,索引%s并行度当前值%s大于1,\n建议: 对于并行度大于1的索引关闭并行属性", dbshtp.Dbname.Contents, msgs[2], msgs[len(msgs)-1]))
-			break Looop
-		}
+
+	// 检查是否为空或包含"无记录"、"no rows selected"
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		// 正常情况，无告警
+		dbshtp.Inx_parallel.Alarm = ""
+		return
 	}
+
+	// 解析数字
+	if count, err := strconv.Atoi(strings.TrimSpace(msgdata)); err == nil {
+		// 检查数字是否大于规则中设定的阈值
+		if count > rule.Dbrule.Inx_parallel.Result {
+			dbshtp.Inx_parallel.Alarm = "B"
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,存在%d个并行度大于1的索引,\n建议: 对于并行度大于1的索引关闭并行属性", dbshtp.Dbname.Contents, count))
+		} else {
+			// 正常情况，无告警
+			dbshtp.Inx_parallel.Alarm = ""
+		}
+	} else {
+		// 数据格式异常
+		dbshtp.Inx_parallel.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,索引并行度检查数据格式异常,\n建议: 检查数据采集是否正常", dbshtp.Dbname.Contents))
+	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
@@ -278,26 +298,27 @@ func Ana_Invalid_obj(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 		Desc:     rule.Dbrule.Invalid_obj.Desc,
 	}
 
-	// 从第3行开始检查第3列是否有大于10的值
-	lines := strings.Split(msgdata, "\n")
-	if len(lines) >= 3 {
-		for i := 2; i < len(lines); i++ { // 从第3行开始（索引2）
-			line := strings.TrimSpace(lines[i])
-			if line == "" {
-				continue
-			}
+	// 检查是否为空或包含"无记录"、"no rows selected"
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		// 正常情况，无告警
+		dbshtp.Invalid_obj.Alarm = ""
+		return
+	}
 
-			fields := strings.Fields(line)
-			if len(fields) >= 3 {
-				// 检查第3列（OBJ_COUNT）是否大于规则中设定的阈值
-				if objCount, err := strconv.Atoi(fields[2]); err == nil {
-					if threshold, err2 := strconv.Atoi(rule.Dbrule.Invalid_obj.Result); err2 == nil && objCount > threshold {
-						dbshtp.Invalid_obj.Alarm = "G"
-						entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,%s用户存在%d个无效对象,\n建议: 对无效对象进行重新编译或及时清理", dbshtp.Dbname.Contents, fields[0], objCount))
-					}
-				}
-			}
+	// 解析数字
+	if count, err := strconv.Atoi(strings.TrimSpace(msgdata)); err == nil {
+		// 检查数字是否大于规则中设定的阈值
+		if count > rule.Dbrule.Invalid_obj.Result {
+			dbshtp.Invalid_obj.Alarm = "G"
+			entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,存在%d个无效对象,\n建议: 对无效对象进行重新编译或及时清理", dbshtp.Dbname.Contents, count))
+		} else {
+			// 正常情况，无告警
+			dbshtp.Invalid_obj.Alarm = ""
 		}
+	} else {
+		// 数据格式异常
+		dbshtp.Invalid_obj.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,无效对象检查数据格式异常,\n建议: 检查数据采集是否正常", dbshtp.Dbname.Contents))
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -314,20 +335,30 @@ func Ana_Invalid_inx(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries
 		Title:    rule.Dbrule.Invalid_inx.Title,
 		Desc:     rule.Dbrule.Invalid_inx.Desc,
 	}
-	rd := regexp.MustCompile(` \d+$`)
-Looop:
-	for _, value := range strings.Split(msgdata, "\n") {
-		value = strings.TrimSpace(value)
-		if value == rule.Dbrule.Invalid_inx.Result {
-			break Looop
-		}
-		if rd.MatchString(value) {
-			dbshtp.Invalid_inx.Alarm = "B"
-			msgs := strings.Fields(value)
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,索引%s当前状态为无效,\n建议: 重建或删除失效索引", dbshtp.Dbname.Contents, msgs[2]))
-			break Looop
-		}
+
+	// 检查是否为空或包含"无记录"、"no rows selected"
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		// 正常情况，无告警
+		dbshtp.Invalid_inx.Alarm = ""
+		return
 	}
+
+	// 解析数字
+	if count, err := strconv.Atoi(strings.TrimSpace(msgdata)); err == nil {
+		// 检查数字是否大于规则中设定的阈值
+		if count > rule.Dbrule.Invalid_inx.Result {
+			dbshtp.Invalid_inx.Alarm = "B"
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,存在%d个无效索引,\n建议: 重建或删除失效索引", dbshtp.Dbname.Contents, count))
+		} else {
+			// 正常情况，无告警
+			dbshtp.Invalid_inx.Alarm = ""
+		}
+	} else {
+		// 数据格式异常
+		dbshtp.Invalid_inx.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s数据库,无效索引检查数据格式异常,\n建议: 检查数据采集是否正常", dbshtp.Dbname.Contents))
+	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
@@ -383,10 +414,273 @@ Looop:
 		if rd.MatchString(value) {
 			dbshtp.Dbsequence.Alarm = "B"
 			msgs := strings.Fields(value)
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,SEQUENCE %s 当前值达到最大值限制的80%%,\n建议: 尽快修改", dbshtp.Dbname.Contents, msgs[0]))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,SEQUENCE %s 当前值达到最大值限制的80%%,\n建议: 尽快修改SEQUENCE最大值", dbshtp.Dbname.Contents, msgs[0]))
 			break Looop
 		}
 	}
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
+}
+
+// parseParameters 解析参数数据为键值对
+func parseParameters(data string) map[string]string {
+	params := make(map[string]string)
+	lines := strings.Split(data, "\n")
+
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.HasPrefix(line, "<") || strings.HasPrefix(line, "</") {
+			continue
+		}
+
+		parts := strings.SplitN(line, "=", 2)
+		if len(parts) == 2 {
+			key := strings.TrimSpace(parts[0])
+			value := strings.TrimSpace(parts[1])
+			params[key] = value
+		}
+	}
+
+	return params
+}
+
+// Ana_DBparam_b 分析数据库参数组basic
+func Ana_DBparam_b(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Dbparam_b.Contents
+	entry := structs.SummaryEntry{
+		Category: "实例分析",
+		Nm:       rule.Dbrule.Dbparam_b.Nm,
+		Title:    rule.Dbrule.Dbparam_b.Title,
+		Desc:     rule.Dbrule.Dbparam_b.Desc,
+	}
+
+	// 解析参数数据
+	params := parseParameters(msgdata)
+
+	// 检查 memory_max_target = 0
+	if value, exists := params["memory_max_target"]; exists {
+		if value >= "0" {
+			dbshtp.Dbparam_b.Alarm = "B"
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,启用了AMM内存自动调整(memory_max_target参数设置为%s,\n建议: 关闭AMM内存自动调整(设置memory_max_target=%d)", dbshtp.Dbname.Contents, value, rule.Dbrule.Dbparam_b.Memory_max_target))
+		}
+	} else {
+		// 参数未设置 正常情况，无告警
+		dbshtp.Dbparam_b.Alarm = ""
+	}
+
+	// 检查 sga_max_size <= 8589934592 (8GB)
+	if value, exists := params["sga_max_size"]; exists {
+		if size, err := strconv.ParseInt(value, 10, 64); err == nil {
+			if size <= 8589934592 {
+				dbshtp.Dbparam_b.Alarm = "G"
+				entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,sga_max_size参数%.0f字节(%.2fGB)小于等于8GB,\n建议: sga_max_size设置大于8GB", dbshtp.Dbname.Contents, float64(size), float64(size)/1024/1024/1024))
+			}
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_b.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,sga_max_size参数未设置,\n建议: sga_max_size设置大于8GB", dbshtp.Dbname.Contents))
+	}
+
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
+}
+
+// Ana_DBparam_d 分析数据库参数组1
+func Ana_DBparam_d(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *structs.SummaryEntries) {
+	msgdata := dbshtp.Dbparam_d.Contents
+	entry := structs.SummaryEntry{
+		Category: "实例分析",
+		Nm:       rule.Dbrule.Dbparam_d.Nm,
+		Title:    rule.Dbrule.Dbparam_d.Title,
+		Desc:     rule.Dbrule.Dbparam_d.Desc,
+	}
+
+	// 解析参数数据
+	params := parseParameters(msgdata)
+
+	// 检查 _and_pruning_enabled != FALSE (大小写不敏感)
+	if value, exists := params["_and_pruning_enabled"]; exists {
+		if strings.ToUpper(value) != "FALSE" {
+			dbshtp.Dbparam_d.Alarm = "G"
+			entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_and_pruning_enabled参数设置为%s,\n建议: _and_pruning_enabled设置为FALSE", dbshtp.Dbname.Contents, value))
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_and_pruning_enabled参数未设置,\n建议: _and_pruning_enabled设置为FALSE", dbshtp.Dbname.Contents))
+	}
+
+	// _ash_size < 67108864 (64MB)
+	if value, exists := params["_ash_size"]; exists {
+		if size, err := strconv.Atoi(value); err == nil {
+			if size < 67108864 {
+				dbshtp.Dbparam_d.Alarm = "G"
+				entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_ash_size参数%d小于64MB,\n建议: _ash_size设置不少于64MB", dbshtp.Dbname.Contents, size))
+			}
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_ash_size参数未设置,\n建议: _ash_size设置不少于64MB", dbshtp.Dbname.Contents))
+	}
+
+	// _bloom_filter_enabled != FALSE (大小写不敏感)
+	if value, exists := params["_bloom_filter_enabled"]; exists {
+		if strings.ToUpper(value) != "FALSE" {
+			dbshtp.Dbparam_d.Alarm = "G"
+			entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_bloom_filter_enabled参数设置为%s,\n建议: _bloom_filter_enabled设置为FALSE", dbshtp.Dbname.Contents, value))
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_bloom_filter_enabled参数未设置,\n建议: _bloom_filter_enabled设置为FALSE", dbshtp.Dbname.Contents))
+	}
+
+	// _bloom_pruning_enabled != FALSE (大小写不敏感)
+	if value, exists := params["_bloom_pruning_enabled"]; exists {
+		if strings.ToUpper(value) != "FALSE" {
+			dbshtp.Dbparam_d.Alarm = "G"
+			entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_bloom_pruning_enabled参数设置为%s,\n建议: _bloom_pruning_enabled设置为FALSE", dbshtp.Dbname.Contents, value))
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_bloom_pruning_enabled参数未设置,\n建议: _bloom_pruning_enabled设置为FALSE", dbshtp.Dbname.Contents))
+	}
+
+	// _cleanup_rollback_entries < 2000
+	if value, exists := params["_cleanup_rollback_entries"]; exists {
+		if size, err := strconv.Atoi(value); err == nil {
+			if size < 2000 {
+				dbshtp.Dbparam_d.Alarm = "G"
+				entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_cleanup_rollback_entries参数%d小于2000,\n建议: _cleanup_rollback_entries设置不少于2000", dbshtp.Dbname.Contents, size))
+			}
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_cleanup_rollback_entries参数未设置,\n建议: _cleanup_rollback_entries设置不少于2000", dbshtp.Dbname.Contents))
+	}
+
+	// _cursor_obsolete_threshold > 1024
+	if value, exists := params["_cursor_obsolete_threshold"]; exists {
+		if size, err := strconv.Atoi(value); err == nil {
+			if size > 1024 {
+				dbshtp.Dbparam_d.Alarm = "G"
+				entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_cursor_obsolete_threshold参数%d大于1024,\n建议: _cursor_obsolete_threshold设置不超过1024", dbshtp.Dbname.Contents, size))
+			}
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_cursor_obsolete_threshold参数未设置,\n建议: _cursor_obsolete_threshold设置不超过1024", dbshtp.Dbname.Contents))
+	}
+
+	// _optimizer_gather_feedback
+	if value, exists := params["_optimizer_gather_feedback"]; exists {
+		if strings.ToUpper(value) != "FALSE" {
+			dbshtp.Dbparam_d.Alarm = "G"
+			entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_optimizer_gather_feedback参数设置为%s,\n建议: _optimizer_gather_feedback设置为FALSE", dbshtp.Dbname.Contents, value))
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_optimizer_gather_feedback参数未设置,\n建议: _optimizer_gather_feedback设置为FALSE", dbshtp.Dbname.Contents))
+	}
+
+	// _rowsets_enabled
+	if value, exists := params["_rowsets_enabled"]; exists {
+		if strings.ToUpper(value) != "FALSE" {
+			dbshtp.Dbparam_d.Alarm = "G"
+			entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_rowsets_enabled参数设置为%s,\n建议: _rowsets_enabled设置为FALSE", dbshtp.Dbname.Contents, value))
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_rowsets_enabled参数未设置,\n建议: _rowsets_enabled设置为FALSE", dbshtp.Dbname.Contents))
+	}
+
+	// 检查 _shared_pool_reserved_pct <= 5
+	if value, exists := params["_shared_pool_reserved_pct"]; exists {
+		if pct, err := strconv.Atoi(value); err == nil {
+			if pct <= 5 {
+				dbshtp.Dbparam_d.Alarm = "G"
+				entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_shared_pool_reserved_pct参数%d%%小于等于5%%,\n建议: 设置_shared_pool_reserved_pct为15%%", dbshtp.Dbname.Contents, pct))
+			}
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_shared_pool_reserved_pct参数未设置,\n建议: 设置_shared_pool_reserved_pct为15%%", dbshtp.Dbname.Contents))
+	}
+
+	// 检查 _max_spacebg_slaves > 100
+	if value, exists := params["_max_spacebg_slaves"]; exists {
+		if slaves, err := strconv.Atoi(value); err == nil {
+			if slaves > 100 {
+				dbshtp.Dbparam_d.Alarm = "G"
+				entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_max_spacebg_slaves参数%d大于100,\n建议: _max_spacebg_slaves设置不超过100", dbshtp.Dbname.Contents, slaves))
+			}
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_max_spacebg_slaves参数未设置,\n建议: _max_spacebg_slaves设置不超过100", dbshtp.Dbname.Contents))
+	}
+
+	// 检查 _undo_autotune != False (大小写不敏感)
+	if value, exists := params["_undo_autotune"]; exists {
+		if strings.ToUpper(value) != "FALSE" {
+			dbshtp.Dbparam_d.Alarm = "G"
+			entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_undo_autotune参数设置为%s,\n建议: _undo_autotune设置为FALSE", dbshtp.Dbname.Contents, value))
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_undo_autotune参数未设置,\n建议: _undo_autotune设置为FALSE", dbshtp.Dbname.Contents))
+	}
+
+	// 检查 _use_adaptive_log_file_sync != False (大小写不敏感)
+	if value, exists := params["_use_adaptive_log_file_sync"]; exists {
+		if strings.ToUpper(value) != "FALSE" {
+			dbshtp.Dbparam_d.Alarm = "G"
+			entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_use_adaptive_log_file_sync参数设置为%s,\n建议: _use_adaptive_log_file_sync设置为FALSE", dbshtp.Dbname.Contents, value))
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_use_adaptive_log_file_sync参数未设置,\n建议: _use_adaptive_log_file_sync设置为FALSE", dbshtp.Dbname.Contents))
+	}
+
+	// 检查 _use_single_log_writer != TRUE (大小写不敏感)
+	if value, exists := params["_use_single_log_writer"]; exists {
+		if strings.ToUpper(value) != "TRUE" {
+			dbshtp.Dbparam_d.Alarm = "G"
+			entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_use_single_log_writer参数设置为%s,\n建议: _use_single_log_writer设置为TRUE", dbshtp.Dbname.Contents, value))
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,_use_single_log_writer参数未设置,\n建议: _use_single_log_writer设置为TRUE", dbshtp.Dbname.Contents))
+	}
+
+	// 检查parallel_max_servers > 128
+	if value, exists := params["parallel_max_servers"]; exists {
+		if servers, err := strconv.Atoi(value); err == nil {
+			if servers > 128 {
+				dbshtp.Dbparam_d.Alarm = "G"
+				entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,parallel_max_servers参数%d大于128,\n建议: parallel_max_servers设置不超过128", dbshtp.Dbname.Contents, servers))
+			}
+		}
+	} else {
+		// 参数未设置，也算G级告警
+		dbshtp.Dbparam_d.Alarm = "G"
+		entry.Minor = append(entry.Minor, fmt.Sprintf("%s实例,parallel_max_servers参数未设置,\n建议: parallel_max_servers设置不超过128", dbshtp.Dbname.Contents))
+	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}

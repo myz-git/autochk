@@ -63,7 +63,10 @@ func processTag0Node(node *etree.Element, osshts *[]structs.OsShts) {
 	osSht.Cpumhz = structs.Tpstrc{}
 	osSht.Memtotal = structs.Tpstrc{}
 	osSht.Swaptotal = structs.Tpstrc{}
-	osSht.Osparameter = structs.Tpstrc{}
+	osSht.Osparam_fs = structs.Tpstrc{}
+	osSht.Osparam_ker = structs.Tpstrc{}
+	osSht.Osparam_net = structs.Tpstrc{}
+	osSht.Osparam_vm = structs.Tpstrc{}
 	osSht.Ulimit = structs.Tpstrc{}
 	osSht.Filesystem = structs.Tpstrc{}
 	osSht.Inodeusage = structs.Tpstrc{}
@@ -72,6 +75,7 @@ func processTag0Node(node *etree.Element, osshts *[]structs.OsShts) {
 	osSht.Iostat = structs.Tpstrc{}
 	osSht.Thpstat = structs.Tpstrc{}
 	osSht.Hugepage = structs.Tpstrc{}
+
 	osSht.Numa = structs.Tpstrc{}
 	osSht.Ntp = structs.Tpstrc{}
 	osSht.Tmzone = structs.Tpstrc{}
@@ -105,8 +109,14 @@ func processTag0Node(node *etree.Element, osshts *[]structs.OsShts) {
 			osSht.Memtotal.Contents = convertKBtoGB(strings.TrimSpace(tag.Text()))
 		case "SWAPTOTAL":
 			osSht.Swaptotal.Contents = convertKBtoGB(strings.TrimSpace(tag.Text()))
-		case "OSPARAMETER":
-			osSht.Osparameter.Contents = strings.TrimSpace(tag.Text())
+		case "OSPARAM_FS":
+			osSht.Osparam_fs.Contents = strings.TrimSpace(tag.Text())
+		case "OSPARAM_KER":
+			osSht.Osparam_ker.Contents = strings.TrimSpace(tag.Text())
+		case "OSPARAM_NET":
+			osSht.Osparam_net.Contents = strings.TrimSpace(tag.Text())
+		case "OSPARAM_VM":
+			osSht.Osparam_vm.Contents = strings.TrimSpace(tag.Text())
 		case "ULIMIT":
 			osSht.Ulimit.Contents = strings.TrimSpace(tag.Text())
 		case "FILESYSTEM":
@@ -198,6 +208,8 @@ func processTag1Node(node *etree.Element, dbshtp *structs.DbSht) {
 	dbshtp.Db_Nosys_In_System = structs.Tpstrc{}
 	dbshtp.Dbvirscheck = structs.Tpstrc{}
 	dbshtp.Dbscnhealthcheck = structs.Tpstrc{}
+	dbshtp.Dbparam_b = structs.Tpstrc{}
+	dbshtp.Dbparam_d = structs.Tpstrc{}
 	dbshtp.Crs_stat = structs.Tpstrc{}
 	dbshtp.Crs_stat2 = structs.Tpstrc{}
 	dbshtp.Ocr_info = structs.Tpstrc{}
@@ -451,6 +463,20 @@ func processTag1Node(node *etree.Element, dbshtp *structs.DbSht) {
 				dbshtp.Dbscnhealthcheck.Contents = "无记录"
 			} else {
 				dbshtp.Dbscnhealthcheck.Contents = content
+			}
+		case "DBPARAM_B":
+			content := strings.TrimSpace(tag.Text())
+			if content == "" {
+				dbshtp.Dbparam_b.Contents = "无记录"
+			} else {
+				dbshtp.Dbparam_b.Contents = content
+			}
+		case "DBPARAM_D":
+			content := strings.TrimSpace(tag.Text())
+			if content == "" {
+				dbshtp.Dbparam_d.Contents = "无记录"
+			} else {
+				dbshtp.Dbparam_d.Contents = content
 			}
 		case "CRS_STAT":
 			content := strings.TrimSpace(tag.Text())

@@ -363,6 +363,31 @@ func Ana_DBSCNHEALTHCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEn
 	lines := strings.Split(msgdata, "\n")
 	scnHealthStatus := ""
 
+	// 先解析 Version 行，如果版本号（去除点后）> 112030，则直接正常返回
+	// 例如 12.2.0.1.0 -> 122010
+	rdVer := regexp.MustCompile(`^Version:\s+([0-9.]+)`) // 捕获版本号数字串
+	for _, ln := range lines {
+		line := strings.TrimSpace(ln)
+		if line == "" {
+			continue
+		}
+		if rdVer.MatchString(line) {
+			matches := rdVer.FindStringSubmatch(line)
+			if len(matches) >= 2 {
+				rawVer := matches[1]
+				digits := strings.ReplaceAll(rawVer, ".", "")
+				if v, err := strconv.Atoi(digits); err == nil {
+					// 版本号大于 112030 则直接正常退出
+					if v > 112030 {
+						dbshtp.Dbscnhealthcheck.Alarm = ""
+						return
+					}
+				}
+			}
+			break
+		}
+	}
+
 	// 从第3行开始检查（跳过标题行和分隔线）
 	for i := 2; i < len(lines); i++ {
 		line := strings.TrimSpace(lines[i])
@@ -387,14 +412,14 @@ func Ana_DBSCNHEALTHCHECK(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEn
 		// 	continue
 		// }
 
-		if rdc.MatchString(line) { // 匹配到结果C
+		if rdc.MatchString(line) { // 匹配到结果C（保持原有逻辑）
 			scnHealthStatus = "C"
 			dbshtp.Dbscnhealthcheck.Alarm = "R"
 			entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,SCN健康检查结果为C，SCN增长异常,\n建议: 尽快核查数据库是否SCN增长异常", dbshtp.Dbname.Contents))
 			break
 		}
 
-		if rdb.MatchString(line) { // 匹配到结果B
+		if rdb.MatchString(line) { // 匹配到结果B（保持原有逻辑）
 			scnHealthStatus = "B"
 			dbshtp.Dbscnhealthcheck.Alarm = "B"
 			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,SCN健康检查结果为B，SCN增长较快,\n建议: 关注SCN增长速度是否过快", dbshtp.Dbname.Contents))

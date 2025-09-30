@@ -134,7 +134,7 @@ func PutSht_INFO(f *excelize.File, osshts *[]structs.OsShts, dbshtp *structs.DbS
 
 	// 报告日期填写到K2和H80，格式："报告日期: currentDate"
 	f.SetCellStr(shnm, "K2", fmt.Sprintf("报告日期: %s", currentDate))
-	f.SetCellStr(shnm, "H80", fmt.Sprintf("报告日期: %s", currentDate))
+	f.SetCellStr(shnm, "H102", fmt.Sprintf("报告日期: %s", currentDate))
 
 	// 填充 Server Info - 支持多节点信息
 	if len(*osshts) > 0 {
@@ -604,22 +604,46 @@ func PutSht_Issuelist(f *excelize.File, summaryEntries *structs.SummaryEntries) 
 		itemIndex++
 	}
 
-	// 删除最后一个问题所在行到75行之间的空白行
+	// 删除最后一个问题所在行到结尾行之间的空白行
 	lastProblemRow := rowIndex - 1 // 最后一个问题所在的行号
 	utils.LogDebugf("最后一个问题所在行: %d", lastProblemRow)
 
-	if lastProblemRow < 75 {
-		// 需要删除的行范围：lastProblemRow+1 到 75
+	if lastProblemRow < 95 {
+		// 需要删除的行范围：lastProblemRow+1 到 结尾行
 		deleteStartRow := lastProblemRow + 1
-		deleteEndRow := 75
+		deleteEndRow := 95
 
 		utils.LogDebugf("删除空白行范围: %d 到 %d", deleteStartRow, deleteEndRow)
 
-		// 删除空白行
+		// 尝试使用不同的删除策略
+		// 策略1：使用 RemoveRows 方法（如果存在）
+		// 策略2：逐个删除行
+
+		rowsToDelete := deleteEndRow - deleteStartRow + 1
+		utils.LogDebugf("需要删除 %d 行", rowsToDelete)
+
+		// 尝试使用 RemoveRows 方法（批量删除）
+		// 注意：这个方法可能不存在，如果不存在会编译错误
+		// 如果编译错误，请注释掉下面这行，使用逐个删除的方法
+
+		// 使用更可靠的删除方法
+		// 方法1：先清空行内容
+		for i := deleteStartRow; i <= deleteEndRow; i++ {
+			// 清空行的内容（A列到Z列，确保完全清空）
+			for col := 'A'; col <= 'Z'; col++ {
+				cellName := fmt.Sprintf("%c%d", col, i)
+				f.SetCellStr(shnm, cellName, "")
+			}
+		}
+
+		// 方法2：逐个删除行（从后往前，避免索引变化）
 		for i := deleteEndRow; i >= deleteStartRow; i-- {
+			// 删除行
 			err := f.RemoveRow(shnm, i)
 			if err != nil {
 				utils.LogWarnf("删除第 %d 行失败: %v", i, err)
+			} else {
+				utils.LogDebugf("成功删除第 %d 行", i)
 			}
 		}
 	}

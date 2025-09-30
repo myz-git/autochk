@@ -11,7 +11,255 @@ import (
 
 // os_analyzer.go 包含操作系统指标的分析函数，检查 OS 参数、资源使用率等
 
-// Ana_Osparameter 分析操作系统参数
+// Ana_Osparam_fs 分析文件系统类OS参数
+func Ana_Osparam_fs(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
+	oS := strings.ToUpper(osshtp.Os.Contents)
+	msgdata := osshtp.Osparam_fs.Contents
+	entry := structs.SummaryEntry{
+		Category: "主机系统",
+		Nm:       rule.Osrule.Osparam_fs.Nm,
+		Title:    rule.Osrule.Osparam_fs.Title,
+		Desc:     rule.Osrule.Osparam_fs.Desc,
+	}
+	rd := regexp.MustCompile(`\d+$`)
+	rm_file_max := regexp.MustCompile(`file-max`)
+	rm_aio_max_nr := regexp.MustCompile(`aio-max-nr`)
+
+	for index, value := range strings.Split(msgdata, "\n") {
+		if index == 0 {
+			continue
+		}
+		if strings.Contains(oS, "LINUX") {
+			if rm_file_max.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n < rule.Osrule.Osparam_fs.File_max {
+					entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s主机,file_max参数当前值%d小于阈值%d,\n建议: 设置file_max=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_fs.File_max, rule.Osrule.Osparam_fs.File_max))
+				}
+			}
+			if rm_aio_max_nr.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n < rule.Osrule.Osparam_fs.Aio_max_nr {
+					entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s主机,aio_max_nr参数当前值%d小于阈值%d,\n建议: 设置aio_max_nr=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_fs.Aio_max_nr, rule.Osrule.Osparam_fs.Aio_max_nr))
+				}
+			}
+		}
+	}
+
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
+}
+
+// Ana_Osparam_ker 分析内核类OS参数
+func Ana_Osparam_ker(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
+	oS := strings.ToUpper(osshtp.Os.Contents)
+	msgdata := osshtp.Osparam_ker.Contents
+	entry := structs.SummaryEntry{
+		Category: "主机系统",
+		Nm:       rule.Osrule.Osparam_ker.Nm,
+		Title:    rule.Osrule.Osparam_ker.Title,
+		Desc:     rule.Osrule.Osparam_ker.Desc,
+	}
+	rd := regexp.MustCompile(`\d+$`)
+	rm_sem := regexp.MustCompile(`sem`)
+	rm_panic_on_oops := regexp.MustCompile(`panic_on_oops`)
+	rm_randomize_va_space := regexp.MustCompile(`randomize_va_space`)
+
+	for index, value := range strings.Split(msgdata, "\n") {
+		if index == 0 {
+			continue
+		}
+		if strings.Contains(oS, "LINUX") {
+			if rm_sem.MatchString(value) {
+				msgs := strings.Fields(value)
+				if len(msgs) >= 4 {
+					sem2, _ := strconv.Atoi(msgs[len(msgs)-3])
+					if len(rule.Osrule.Osparam_ker.Sem) > 1 {
+						expectedSem2, _ := strconv.Atoi(rule.Osrule.Osparam_ker.Sem[1])
+						if sem2 < expectedSem2 {
+							entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s主机,sem参数总信号量当前%d小于阈值%s,\n建议: 调整sem参数", osshtp.Hostname.Contents, sem2, rule.Osrule.Osparam_ker.Sem))
+						}
+					}
+				}
+			}
+			if rm_panic_on_oops.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n != rule.Osrule.Osparam_ker.Panic_on_oops {
+					entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s主机,panic_on_oops参数当前值%d不等于期望值%d,\n建议: 设置panic_on_oops=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_ker.Panic_on_oops, rule.Osrule.Osparam_ker.Panic_on_oops))
+				}
+			}
+			if rm_randomize_va_space.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n != rule.Osrule.Osparam_ker.Randomize_va_space {
+					entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s主机,randomize_va_space参数当前值%d不等于期望值%d,\n建议: 设置randomize_va_space=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_ker.Randomize_va_space, rule.Osrule.Osparam_ker.Randomize_va_space))
+				}
+			}
+		}
+	}
+
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
+}
+
+// Ana_Osparam_net 分析网络类OS参数
+func Ana_Osparam_net(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
+	oS := strings.ToUpper(osshtp.Os.Contents)
+	msgdata := osshtp.Osparam_net.Contents
+	entry := structs.SummaryEntry{
+		Category: "主机系统",
+		Nm:       rule.Osrule.Osparam_net.Nm,
+		Title:    rule.Osrule.Osparam_net.Title,
+		Desc:     rule.Osrule.Osparam_net.Desc,
+	}
+	rd := regexp.MustCompile(`\d+$`)
+	rm_rp_filter_all := regexp.MustCompile(`rp_filter_all`)
+	rm_rp_filter_default := regexp.MustCompile(`rp_filter_default`)
+	rm_ip_local_port_range := regexp.MustCompile(`ip_local_port_range`)
+	rm_ipfrag_high_thresh := regexp.MustCompile(`ipfrag_high_thresh`)
+	rm_ipfrag_low_thresh := regexp.MustCompile(`ipfrag_low_thresh`)
+	rm_rmem_default := regexp.MustCompile(`rmem_default`)
+	rm_rmem_max := regexp.MustCompile(`rmem_max`)
+	rm_wmem_default := regexp.MustCompile(`wmem_default`)
+	rm_wmem_max := regexp.MustCompile(`wmem_max`)
+
+	for index, value := range strings.Split(msgdata, "\n") {
+		if index == 0 {
+			continue
+		}
+		if strings.Contains(oS, "LINUX") {
+			if rm_rp_filter_all.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n != rule.Osrule.Osparam_net.Rp_filter_all {
+					entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s主机,rp_filter_all参数当前值%d不等于期望值%d,\n建议: 设置rp_filter_all=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_net.Rp_filter_all, rule.Osrule.Osparam_net.Rp_filter_all))
+				}
+			}
+			if rm_rp_filter_default.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n != rule.Osrule.Osparam_net.Rp_filter_default {
+					entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s主机,rp_filter_default参数当前值%d不等于期望值%d,\n建议: 设置rp_filter_default=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_net.Rp_filter_default, rule.Osrule.Osparam_net.Rp_filter_default))
+				}
+			}
+			if rm_ip_local_port_range.MatchString(value) {
+				msgs := strings.Fields(value)
+				if len(msgs) >= 2 && len(rule.Osrule.Osparam_net.Ip_local_port_range) >= 2 {
+					start, _ := strconv.Atoi(msgs[len(msgs)-2])
+					end, _ := strconv.Atoi(msgs[len(msgs)-1])
+					expectedStart, _ := strconv.Atoi(rule.Osrule.Osparam_net.Ip_local_port_range[0])
+					expectedEnd, _ := strconv.Atoi(rule.Osrule.Osparam_net.Ip_local_port_range[1])
+					if start < expectedStart || end > expectedEnd {
+						entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s主机,ip_local_port_range参数当前值%d-%d不在期望范围%d-%d内,\n建议: 调整端口范围", osshtp.Hostname.Contents, start, end, expectedStart, expectedEnd))
+					}
+				}
+			}
+			if rm_ipfrag_high_thresh.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n < rule.Osrule.Osparam_net.Ipfrag_high_thresh {
+					entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s主机,ipfrag_high_thresh参数当前值%d小于阈值%d,\n建议: 设置ipfrag_high_thresh=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_net.Ipfrag_high_thresh, rule.Osrule.Osparam_net.Ipfrag_high_thresh))
+				}
+			}
+			if rm_ipfrag_low_thresh.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n < rule.Osrule.Osparam_net.Ipfrag_low_thresh {
+					entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s主机,ipfrag_low_thresh参数当前值%d小于阈值%d,\n建议: 设置ipfrag_low_thresh=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_net.Ipfrag_low_thresh, rule.Osrule.Osparam_net.Ipfrag_low_thresh))
+				}
+			}
+			if rm_rmem_default.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n < rule.Osrule.Osparam_net.Rmem_default {
+					entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s主机,rmem_default参数当前值%d小于阈值%d,\n建议: 设置rmem_default=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_net.Rmem_default, rule.Osrule.Osparam_net.Rmem_default))
+				}
+			}
+			if rm_rmem_max.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n < rule.Osrule.Osparam_net.Rmem_max {
+					entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s主机,rmem_max参数当前值%d小于阈值%d,\n建议: 设置rmem_max=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_net.Rmem_max, rule.Osrule.Osparam_net.Rmem_max))
+				}
+			}
+			if rm_wmem_default.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n < rule.Osrule.Osparam_net.Wmem_default {
+					entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s主机,wmem_default参数当前值%d小于阈值%d,\n建议: 设置wmem_default=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_net.Wmem_default, rule.Osrule.Osparam_net.Wmem_default))
+				}
+			}
+			if rm_wmem_max.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n < rule.Osrule.Osparam_net.Wmem_max {
+					entry.Minor = append(entry.Minor, fmt.Sprintf("问题: %s主机,wmem_max参数当前值%d小于阈值%d,\n建议: 设置wmem_max=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_net.Wmem_max, rule.Osrule.Osparam_net.Wmem_max))
+				}
+			}
+		}
+	}
+
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
+}
+
+// Ana_Osparam_vm 分析虚拟内存类OS参数
+func Ana_Osparam_vm(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
+	oS := strings.ToUpper(osshtp.Os.Contents)
+	msgdata := osshtp.Osparam_vm.Contents
+	entry := structs.SummaryEntry{
+		Category: "主机系统",
+		Nm:       rule.Osrule.Osparam_vm.Nm,
+		Title:    rule.Osrule.Osparam_vm.Title,
+		Desc:     rule.Osrule.Osparam_vm.Desc,
+	}
+	rd := regexp.MustCompile(`\d+$`)
+	rm_swappiness := regexp.MustCompile(`swappiness`)
+	rm_min_free_kbytes := regexp.MustCompile(`min_free_kbytes`)
+
+	for index, value := range strings.Split(msgdata, "\n") {
+		if index == 0 {
+			continue
+		}
+		if strings.Contains(oS, "LINUX") {
+			if rm_swappiness.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n > rule.Osrule.Osparam_vm.Swappiness {
+					entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s主机,swappiness参数当前值%d大于阈值%d,\n建议: 设置swappiness=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_vm.Swappiness, rule.Osrule.Osparam_vm.Swappiness))
+				}
+			}
+			if rm_min_free_kbytes.MatchString(value) {
+				matchs := rd.FindString(value)
+				n, _ := strconv.Atoi(matchs)
+				if n < rule.Osrule.Osparam_vm.Min_free_kbytes {
+					entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s主机,min_free_kbytes参数当前值%d小于阈值%d,\n建议: 设置min_free_kbytes=%d", osshtp.Hostname.Contents, n, rule.Osrule.Osparam_vm.Min_free_kbytes, rule.Osrule.Osparam_vm.Min_free_kbytes))
+				}
+			}
+		}
+		if strings.Contains(oS, "SOLARIS") {
+			if strings.Contains(value, "disable_ism_large_pages") {
+				msg := strings.Split(value, "=")
+				if !utils.Contain(msg[len(msg)-1], rule.Osrule.Osparam_vm.Disable_ism_large_pages) {
+					entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s主机,disable_ism_large_pages参数当前值%s不符合期望值%v,\n建议: 调整", osshtp.Hostname.Contents, msg[len(msg)-1], rule.Osrule.Osparam_vm.Disable_ism_large_pages))
+				}
+			}
+		}
+	}
+
+	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+	}
+}
+
+// Ana_Osparameter 已拆分为 Ana_Osparam_fs/Ana_Osparam_ker/Ana_Osparam_net/Ana_Osparam_vm
+// 保留占位注释，实际函数已删除
+/*
 func Ana_Osparameter(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	utils.LogDebugf("分析节点 %s 的OS参数", osshtp.NodeID)
 	utils.LogDebugf("OS参数内容长度: %d", len(osshtp.Osparameter.Contents))
@@ -213,6 +461,7 @@ func Ana_Osparameter(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntrie
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
 }
+*/
 
 // Ana_Ulimit 分析系统 ulimit 设置
 func Ana_Ulimit(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
@@ -470,7 +719,7 @@ func Ana_Memstat(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *s
 		entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s主机,内存使用率当前%.1f%%超过90%%,\n建议: 需尽快优化内存使用或增加内存", osshtp.Hostname.Contents, memoryUsagePercent))
 	} else if memoryUsagePercent > 80 {
 		osshtp.Memstat.Alarm = "B"
-		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s主机,内存使用率当前%.1f%%超过80%%,\n建议: 关注内存使用情况", osshtp.Hostname.Contents, memoryUsagePercent))
+		entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s主机,内存使用率当前%.1f%%超过80%%,\n建议: 增加内存或优化内存使用", osshtp.Hostname.Contents, memoryUsagePercent))
 	}
 
 	// 检查可用内存

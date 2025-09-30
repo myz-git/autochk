@@ -157,11 +157,11 @@ func Ana_RECOVERY_USAGE(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 		// 如果 >= rule.Dbrule.Recovery_usage.Result[1]，则为R级告警
 		if usedPercent >= float64(rule.Dbrule.Recovery_usage.Result[1]) {
 			instshtp.Recovery_usage.Alarm = "R"
-			entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s实例,闪回区使用率当前%.2f%%超过严重阈值%.0f%%,\n建议: 尽快清理或扩容闪回区", instshtp.Instname.Contents, usedPercent, rule.Dbrule.Recovery_usage.Result[1]))
+			entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s实例,闪回区使用率当前%.2f%%超过严重阈值%d%%,\n建议: 尽快清理或扩容闪回区", instshtp.Instname.Contents, usedPercent, rule.Dbrule.Recovery_usage.Result[1]))
 		} else if usedPercent >= float64(rule.Dbrule.Recovery_usage.Result[0]) {
 			// 如果 >= rule.Dbrule.Recovery_usage.Result[0]，则为B级告警
 			instshtp.Recovery_usage.Alarm = "B"
-			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s实例,闪回区使用率当前%.2f%%超过阈值%.0f%%,\n建议: 及时清理或扩容闪回区", instshtp.Instname.Contents, usedPercent, rule.Dbrule.Recovery_usage.Result[0]))
+			entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s实例,闪回区使用率当前%.2f%%超过阈值%d%%,\n建议: 及时清理或扩容闪回区", instshtp.Instname.Contents, usedPercent, rule.Dbrule.Recovery_usage.Result[0]))
 		} else {
 			// 使用率在正常范围内
 			instshtp.Recovery_usage.Alarm = ""
@@ -175,8 +175,4 @@ func Ana_RECOVERY_USAGE(rule *utils.RuleInfo, instshtp *structs.InstShts, summar
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
-}
-
-// Ana_DBparameter 分析数据库初始化参数
-func Ana_DBparameter(rule *utils.RuleInfo, instshtp *structs.InstShts, summaryEntries *structs.SummaryEntries) {
 }

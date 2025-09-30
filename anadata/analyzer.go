@@ -28,7 +28,9 @@ func Ana(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.In
 		utils.LogDebugf("分析节点 %s (索引: %d)", (*osshts)[i].NodeID, i)
 
 		// 为每个节点创建独立的分析上下文
-		Ana_Osparameter(rules, &(*osshts)[i], summaryEntries)
+		Ana_Osparam_fs(rules, &(*osshts)[i], summaryEntries)
+		Ana_Osparam_ker(rules, &(*osshts)[i], summaryEntries)
+		Ana_Osparam_vm(rules, &(*osshts)[i], summaryEntries)
 		Ana_Ulimit(rules, &(*osshts)[i], summaryEntries)
 		Ana_Filesystem(rules, &(*osshts)[i], summaryEntries)
 		Ana_Inodeusage(rules, &(*osshts)[i], summaryEntries)
@@ -42,6 +44,7 @@ func Ana(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.In
 
 		// 以下为 deep 级别检查项，basic 模式下跳过
 		if reportType == "deep" {
+			Ana_Osparam_net(rules, &(*osshts)[i], summaryEntries)
 			Ana_Hugepage(rules, &(*osshts)[i], summaryEntries)
 			Ana_Ntp(rules, &(*osshts)[i], summaryEntries)
 			Ana_Nsswitch(rules, &(*osshts)[i], summaryEntries)
@@ -67,10 +70,10 @@ func Ana(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.In
 	Ana_Invalid_obj(rules, dbshtp, summaryEntries)
 	Ana_DBSEQUENCE(rules, dbshtp, summaryEntries)
 	Ana_DB_SEQ_USAGE(rules, dbshtp, summaryEntries)
+	Ana_DBparam_b(rules, dbshtp, summaryEntries)
 
 	// 数据库安全检查
 	Ana_DBDBAPRIV(rules, dbshtp, summaryEntries)
-	Ana_DBSYSDBA(rules, dbshtp, summaryEntries)
 	Ana_DBAUDITSEGMENT(rules, dbshtp, summaryEntries)
 	Ana_DBVIRSCHECK(rules, dbshtp, summaryEntries)
 	Ana_DBRMANCHECK(rules, dbshtp, summaryEntries)
@@ -78,11 +81,13 @@ func Ana(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.In
 
 	// 以下为 deep 级别检查项，basic 模式下跳过
 	if reportType == "deep" {
+		Ana_DBSYSDBA(rules, dbshtp, summaryEntries)
 		Ana_DBExpirUser(rules, dbshtp, summaryEntries)
 		Ana_DB_PASSWORD_VERIF(rules, dbshtp, summaryEntries)
 		Ana_Userfailedlogin(rules, dbshtp, summaryEntries)
 		Ana_DBAUDITCONT(rules, dbshtp, summaryEntries)
 		Ana_DBNosysInSystem(rules, dbshtp, summaryEntries)
+		Ana_DBparam_d(rules, dbshtp, summaryEntries)
 	}
 
 	// 分析实例相关指标 - 遍历所有实例
@@ -102,11 +107,12 @@ func Ana(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.In
 		Ana_DBPSU(rules, &(*instshts)[i], summaryEntries)
 		Ana_DBPATCH(rules, &(*instshts)[i], summaryEntries)
 		Ana_DBLSNRINFO(rules, &(*instshts)[i], summaryEntries)
-		Ana_DBparameter(rules, &(*instshts)[i], summaryEntries)
+
 		Ana_DBERRLOG(rules, &(*instshts)[i], summaryEntries)
 
 		// 以下为 deep 级别检查项，basic 模式下跳过
 		if reportType == "deep" {
+
 			Ana_DB_Shp_pct(rules, &(*instshts)[i], summaryEntries)
 			Ana_CursorShareMem(rules, &(*instshts)[i], summaryEntries)
 			Ana_DB4031check(rules, &(*instshts)[i], summaryEntries)

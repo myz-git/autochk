@@ -231,14 +231,18 @@ flowchart TD
 ## 填加指标步骤:
 
 1. 确定标签, chk shell增加收集命令 (要确定标签所属位置是TAG0(os层),TAG1(DB层)还是TAG2(inst层)?
+
 2. rule.yaml 增加指标说明和阀值
+
 3. 在config.go中填加yaml的解析映射 (2处)
+
 4. 在stucts.go中填加type 
-5. 在xlsx模板中填入指标标签
-6. ##在xlsx.NewXlsx() 写入初始化值, 并相应修改sheet下的style单元格生效范围
-7. 在xlsx.PutSht_INFO|PutSht_OS|PutSht_DB , 及 检查字段是否属于* sheet(3处)
-8. 在readXml.go processTag0Node或processTag1Node相应位置添加解析 (2处)
-9. 在分析函数中增加指标分析,在analyzer中添加调用
+
+5. 在xlsx模板中填入指标标签(区分basic,deep)  公式,名称管理
+
+6. 在readXml.go processTag0Node或processTag1Node相应位置添加解析 (2处)
+
+7. 在分析函数中增加指标分析,在analyzer中添加调用
 
 说明:
 
