@@ -252,6 +252,8 @@ flowchart TD
 
 # 编译和发布
 
+## 更新git 版本
+
 完成代码改动-> 更新Readme.md-> commit -> tag->push
 
 ```
@@ -259,19 +261,22 @@ flowchart TD
 git add .
 
 # 2. 提交变更
+## 查看历史log及当前tag
+git log
+git tag -l
+##查看源端tag
+git ls-remote --tags origin
 git commit -m "提交说明"
 
 # 3. 创建新的 tag
-    ##先查看本地当前tag
-    git tag -l
-    ##查看源端tag
-    git ls-remote --tags origin
-    ## 打版本
-    git tag v2509.4
+## 打版本
+git tag v2509.3
 
 # 4. 推送代码及版本到远程仓库
-git push 
-git push origin v2509.4
+## 推送代码
+git push
+## 推送版本标签
+git push origin v2509.3
 ```
 
 ```
@@ -281,13 +286,16 @@ git tag -d v1.2.0
 git push origin :refs/tags/v1.2.0
 ```
 
-
+## 编译发布
 
 ```
+执行build.bat
+
+或者手动编译(没有版本号)
 ##windows
 go build -ldflags="-s -w" -o autochk.exe main.go
 
-##linux  ,在Windows上编译Linux版本时禁用CGO
+##linux (在Windows上编译Linux版本,禁用CGO)
 set GOOS=linux
 set GOARCH=amd64
 set CGO_ENABLED=0

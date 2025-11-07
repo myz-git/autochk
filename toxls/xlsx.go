@@ -240,6 +240,10 @@ func PutSht_OS(f *excelize.File, osshts *[]structs.OsShts, summaryEntries *struc
 	// 定义单元格样式
 	styleB, styleR, styleG := getCellStyles(f)
 
+	// 用于收集每个检查项（通过sheet+row标识）的最小分数
+	// key: sheetName_row, value: 最小分数
+	minScores := make(map[string]int)
+
 	// 遍历所有OS节点
 	for nodeIndex, ossht := range *osshts {
 		col := colByNode(nodeIndex)
@@ -290,8 +294,7 @@ func PutSht_OS(f *excelize.File, osshts *[]structs.OsShts, summaryEntries *struc
 					}
 				}
 
-				// 分数（B列，按锚点行）
-				bCell := fmt.Sprintf("B%d", row)
+				// 计算当前节点的分数
 				var score int
 				switch alarm {
 				case "R":
@@ -303,7 +306,19 @@ func PutSht_OS(f *excelize.File, osshts *[]structs.OsShts, summaryEntries *struc
 				default:
 					score = 10
 				}
-				f.SetCellInt(shnm, bCell, int64(score))
+
+				// 收集最小分数（key: sheetName::nm::row，使用::作为分隔符，包含nm以区分不同的检查项）
+				// 这样即使多个字段映射到同一行，也能正确区分（如OSPARAM_FS、OSPARAM_KER等）
+				key := fmt.Sprintf("%s::%s::%d", shnm, nm, row)
+				if currentMin, exists := minScores[key]; exists {
+					// 如果当前分数更小（更差），则更新最小值
+					if score < currentMin {
+						minScores[key] = score
+					}
+				} else {
+					// 第一次遇到这个检查项，直接设置
+					minScores[key] = score
+				}
 
 				// 样式
 				if alarm == "R" {
@@ -313,6 +328,21 @@ func PutSht_OS(f *excelize.File, osshts *[]structs.OsShts, summaryEntries *struc
 				} else if alarm == "G" {
 					f.SetCellStyle(shnm, cell, cell, styleG)
 				}
+			}
+		}
+	}
+
+	// 遍历结束后，一次性写入所有B列的最小分数
+	for key, minScore := range minScores {
+		// 使用::作为分隔符分割sheet名称、nm和row（格式：sheetName::nm::row）
+		parts := strings.SplitN(key, "::", 3)
+		if len(parts) == 3 {
+			shnm := parts[0]
+			// parts[1] 是 nm，这里不需要使用
+			var row int
+			if _, err := fmt.Sscanf(parts[2], "%d", &row); err == nil {
+				bCell := fmt.Sprintf("B%d", row)
+				f.SetCellInt(shnm, bCell, int64(minScore))
 			}
 		}
 	}
@@ -653,6 +683,10 @@ func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts, summaryEntries 
 	// 定义单元格样式
 	styleB, styleR, styleG := getCellStyles(f)
 
+	// 用于收集每个检查项（通过sheet+row标识）的最小分数
+	// key: sheetName_row, value: 最小分数
+	minScores := make(map[string]int)
+
 	// 遍历所有实例节点
 	for nodeIndex, instsht := range *instshts {
 		col := colByNode(nodeIndex)
@@ -702,8 +736,7 @@ func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts, summaryEntries 
 					}
 				}
 
-				// 分数（B列）
-				bCell := fmt.Sprintf("B%d", row)
+				// 计算当前节点的分数
 				var score int
 				switch alarm {
 				case "R":
@@ -715,7 +748,19 @@ func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts, summaryEntries 
 				default:
 					score = 10
 				}
-				f.SetCellInt(shnm, bCell, int64(score))
+
+				// 收集最小分数（key: sheetName::nm::row，使用::作为分隔符，包含nm以区分不同的检查项）
+				// 这样即使多个字段映射到同一行，也能正确区分（如OSPARAM_FS、OSPARAM_KER等）
+				key := fmt.Sprintf("%s::%s::%d", shnm, nm, row)
+				if currentMin, exists := minScores[key]; exists {
+					// 如果当前分数更小（更差），则更新最小值
+					if score < currentMin {
+						minScores[key] = score
+					}
+				} else {
+					// 第一次遇到这个检查项，直接设置
+					minScores[key] = score
+				}
 
 				// 样式
 				if alarm == "R" {
@@ -728,26 +773,28 @@ func PutSht_Inst(f *excelize.File, instshts *[]structs.InstShts, summaryEntries 
 			}
 		}
 	}
+
+	// 遍历结束后，一次性写入所有B列的最小分数
+	for key, minScore := range minScores {
+		// 使用::作为分隔符分割sheet名称、nm和row（格式：sheetName::nm::row）
+		parts := strings.SplitN(key, "::", 3)
+		if len(parts) == 3 {
+			shnm := parts[0]
+			// parts[1] 是 nm，这里不需要使用
+			var row int
+			if _, err := fmt.Sscanf(parts[2], "%d", &row); err == nil {
+				bCell := fmt.Sprintf("B%d", row)
+				f.SetCellInt(shnm, bCell, int64(minScore))
+			}
+		}
+	}
 }
 
 // getHyperlinkForProblem 根据检查项Nm生成超链接到对应的工作表位置
-// 使用anchorRow函数获取准确的行号，避免硬编码
+// 使用anchorRow函数获取准确的sheet名称和行号，避免硬编码
 func getHyperlinkForProblem(nm string, category string, problem string, f *excelize.File) string {
-	// 根据Category确定Sheet名称（简化逻辑）
-	var sheetName string
-	switch category {
-	case "主机系统":
-		sheetName = "OS"
-	case "数据库分析", "数据库性能", "数据库集群", "数据库备份", "数据库安全":
-		sheetName = "DB"
-	case "实例分析", "DataGuard":
-		sheetName = "Inst"
-	default:
-		sheetName = "OS" // 默认为OS
-	}
-
-	// 使用anchorRow函数获取准确的行号
-	_, row, ok := anchorRow(f, nm)
+	// 使用anchorRow函数获取准确的sheet名称和行号
+	sheetName, row, ok := anchorRow(f, nm)
 	if !ok {
 		// 如果找不到命名区域，不生成超链接
 		return ""

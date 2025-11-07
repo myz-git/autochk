@@ -135,23 +135,35 @@ func Ana_DBF_STAT(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *s
 		Desc:     rule.Dbrule.Dbf_stat.Desc,
 	}
 
+	// 空/无记录判断
+	if strings.TrimSpace(msgdata) == "" || strings.Contains(msgdata, "无记录") || strings.Contains(strings.ToLower(msgdata), "no rows selected") {
+		dbshtp.Dbf_stat.Alarm = ""
+		return
+	}
+
+	// 从第3行开始检查是否存在有效记录（非仅由空白和-组成的分隔线）
 	lines := strings.Split(msgdata, "\n")
-	for i := 2; i < len(lines); i++ { // 从第3行开始（索引2）
-		line := strings.TrimSpace(lines[i])
-		if line == "" {
+	sepRe := regexp.MustCompile(`^[\s-]+$`)
+	for i, line := range lines {
+		if i < 2 {
 			continue
 		}
-
-		// 检查是否包含AVAILABLE状态
-		if !strings.Contains(line, "AVAILABLE") {
-			dbshtp.Dbf_stat.Alarm = "R"
-			entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,数据文件状态异常,\n建议: 需立即检查并修复", dbshtp.Dbname.Contents))
-			break
+		val := strings.TrimSpace(line)
+		if val == "" {
+			continue
 		}
-	}
-	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
+		if sepRe.MatchString(val) {
+			continue
+		}
+		// 发现首条有效记录，直接判定为严重告警并返回（仅生成一条告警）
+		dbshtp.Dbf_stat.Alarm = "R"
+		entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,存在数据文件状态异常记录,\n建议: 需立即检查并修复", dbshtp.Dbname.Contents))
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
+		return
 	}
+
+	// 若第3行起未发现有效记录，则视为正常
+	dbshtp.Dbf_stat.Alarm = ""
 }
 
 // Ana_DBTbs 分析表空间使用情况
@@ -460,7 +472,7 @@ func Ana_DBparam_b(rule *utils.RuleInfo, dbshtp *structs.DbSht, summaryEntries *
 
 	// 检查 memory_max_target = 0
 	if value, exists := params["memory_max_target"]; exists {
-		if value >= "0" {
+		if value > "0" {
 			dbshtp.Dbparam_b.Alarm = "B"
 			entry.Moderate = append(entry.Moderate, fmt.Sprintf("%s实例,启用了AMM内存自动调整(memory_max_target参数设置为%s,\n建议: 关闭AMM内存自动调整(设置memory_max_target=%d)", dbshtp.Dbname.Contents, value, rule.Dbrule.Dbparam_b.Memory_max_target))
 		}

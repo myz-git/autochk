@@ -16,4 +16,20 @@ Ana_DBNosysInSystem
 where  last_number/max_value >0.8 and  cycle_flag='N'会报错ORA-01476: divisor is equal to zero，看看要不要加上max_value<>0
 
 -- 2025.8.5
-检查归档切换次时, 如果归档次数为3位数 ,显示###
+检查归档切换次时, 如果归档次数为3位数 ,显示### (已修复,但4位数仍然#)
+
+-- 2025.10
+RECOVERY_USAGE 检查除0错误; (已修复)
+文件系统检查 包含/mnt,/media等固定挂载(已排除)
+
+-- 2025.11
+DBF_STAT检查输出内容太多(只列出有问题的DBF)
+CRS资源状态检查不准确(暂屏蔽告警)
+规则swappiness>1(修改规则为>10)
+检查项memory_max_target不准确(已修复)
+数据库名带_时不能生成报告(改为"#"分隔符)
+多节点RESULT显示不准确(已修复)
+Detail连接不准确(已修复)
+
+
+

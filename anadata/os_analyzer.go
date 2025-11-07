@@ -47,6 +47,15 @@ func Ana_Osparam_fs(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries
 		}
 	}
 
+	// 根据找到的问题设置最高级别的告警
+	if len(entry.Severe) > 0 {
+		osshtp.Osparam_fs.Alarm = "R"
+	} else if len(entry.Moderate) > 0 {
+		osshtp.Osparam_fs.Alarm = "B"
+	} else if len(entry.Minor) > 0 {
+		osshtp.Osparam_fs.Alarm = "G"
+	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
@@ -99,6 +108,15 @@ func Ana_Osparam_ker(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntrie
 				}
 			}
 		}
+	}
+
+	// 根据找到的问题设置最高级别的告警
+	if len(entry.Severe) > 0 {
+		osshtp.Osparam_ker.Alarm = "R"
+	} else if len(entry.Moderate) > 0 {
+		osshtp.Osparam_ker.Alarm = "B"
+	} else if len(entry.Minor) > 0 {
+		osshtp.Osparam_ker.Alarm = "G"
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -203,6 +221,15 @@ func Ana_Osparam_net(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntrie
 		}
 	}
 
+	// 根据找到的问题设置最高级别的告警
+	if len(entry.Severe) > 0 {
+		osshtp.Osparam_net.Alarm = "R"
+	} else if len(entry.Moderate) > 0 {
+		osshtp.Osparam_net.Alarm = "B"
+	} else if len(entry.Minor) > 0 {
+		osshtp.Osparam_net.Alarm = "G"
+	}
+
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
 		summaryEntries.Entries = append(summaryEntries.Entries, entry)
 	}
@@ -250,6 +277,15 @@ func Ana_Osparam_vm(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries
 				}
 			}
 		}
+	}
+
+	// 根据找到的问题设置最高级别的告警
+	if len(entry.Severe) > 0 {
+		osshtp.Osparam_vm.Alarm = "R"
+	} else if len(entry.Moderate) > 0 {
+		osshtp.Osparam_vm.Alarm = "B"
+	} else if len(entry.Minor) > 0 {
+		osshtp.Osparam_vm.Alarm = "G"
 	}
 
 	if len(entry.Severe) > 0 || len(entry.Moderate) > 0 || len(entry.Minor) > 0 {
@@ -555,6 +591,21 @@ func Ana_Ulimit(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *st
 	}
 }
 
+// isExcludedMountPoint 检查挂载点是否应该被排除
+func isExcludedMountPoint(mountPoint string) bool {
+	excludedPaths := []string{
+		"/media", "/mnt", "/run", "/tmp", "/dev", "/proc", "/sys",
+		"/boot/efi", "/sys/fs/cgroup", "/dev/shm", "/run/user",
+	}
+
+	for _, excluded := range excludedPaths {
+		if strings.HasPrefix(mountPoint, excluded) {
+			return true
+		}
+	}
+	return false
+}
+
 // Ana_Filesystem 分析文件系统使用率
 func Ana_Filesystem(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *structs.SummaryEntries) {
 	utils.LogDebugf("分析节点 %s 的文件系统使用率", osshtp.NodeID)
@@ -573,8 +624,39 @@ func Ana_Filesystem(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries
 	disk_ge2, _ := strconv.Atoi(strings.TrimSuffix(rule.Osrule.Filesystem.Disk_ge2, "%"))
 	utils.LogDebugf("文件系统阈值: disk_ge1=%d%%, disk_ge2=%d%%", disk_ge1, disk_ge2)
 
+	// 解析文件系统数据，过滤掉不需要检查的挂载点
+	lines := strings.Split(msgdata, "\n")
+	var filteredData strings.Builder
+
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.Contains(line, "文件系统") || strings.Contains(line, "Filesystem") {
+			// 保留标题行
+			filteredData.WriteString(line + "\n")
+			continue
+		}
+
+		// 提取挂载点（最后一列）
+		fields := strings.Fields(line)
+		if len(fields) >= 6 {
+			mountPoint := fields[len(fields)-1]
+			if !isExcludedMountPoint(mountPoint) {
+				filteredData.WriteString(line + "\n")
+				utils.LogDebugf("保留文件系统行: %s (挂载点: %s)", line, mountPoint)
+			} else {
+				utils.LogDebugf("排除文件系统行: %s (挂载点: %s)", line, mountPoint)
+			}
+		} else {
+			// 如果格式异常，保留该行
+			filteredData.WriteString(line + "\n")
+		}
+	}
+
+	filteredMsgData := filteredData.String()
+	utils.LogDebugf("过滤后的文件系统内容: %s", filteredMsgData)
+
 	r := regexp.MustCompile(`\d+%`)
-	matchs := r.FindAllString(msgdata, -1)
+	matchs := r.FindAllString(filteredMsgData, -1)
 	utils.LogDebugf("找到的百分比匹配: %v", matchs)
 Looop:
 	for _, p := range matchs {
@@ -606,8 +688,40 @@ func Ana_Inodeusage(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries
 		Title:    rule.Osrule.Inodeusage.Title,
 		Desc:     rule.Osrule.Inodeusage.Desc,
 	}
+
+	// 解析索引节点数据，过滤掉不需要检查的挂载点
+	lines := strings.Split(msgdata, "\n")
+	var filteredData strings.Builder
+
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.Contains(line, "文件系统") || strings.Contains(line, "Filesystem") || strings.Contains(line, "Inode") {
+			// 保留标题行
+			filteredData.WriteString(line + "\n")
+			continue
+		}
+
+		// 提取挂载点（最后一列）
+		fields := strings.Fields(line)
+		if len(fields) >= 6 {
+			mountPoint := fields[len(fields)-1]
+			if !isExcludedMountPoint(mountPoint) {
+				filteredData.WriteString(line + "\n")
+				utils.LogDebugf("保留索引节点行: %s (挂载点: %s)", line, mountPoint)
+			} else {
+				utils.LogDebugf("排除索引节点行: %s (挂载点: %s)", line, mountPoint)
+			}
+		} else {
+			// 如果格式异常，保留该行
+			filteredData.WriteString(line + "\n")
+		}
+	}
+
+	filteredMsgData := filteredData.String()
+	utils.LogDebugf("过滤后的索引节点内容: %s", filteredMsgData)
+
 	r := regexp.MustCompile(`\d+%`)
-	matchs := r.FindAllString(msgdata, -1)
+	matchs := r.FindAllString(filteredMsgData, -1)
 	// 转换阈值字符串为整数
 	inode_ge1, _ := strconv.Atoi(strings.TrimSuffix(rule.Osrule.Inodeusage.Inode_ge1, "%"))
 	inode_ge2, _ := strconv.Atoi(strings.TrimSuffix(rule.Osrule.Inodeusage.Inode_ge2, "%"))

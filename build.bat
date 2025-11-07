@@ -11,7 +11,7 @@ if errorlevel 1 (
   set "VERSION=0.0.0-dev"
   set "COMMIT=unknown"
 ) else (
-  for /f "usebackq delims=" %%i in (`git describe --tags --dirty --always 2^>nul`) do set "VERSION=%%i"
+  for /f "usebackq delims=" %%i in (`git describe --tags --always 2^>nul`) do set "VERSION=%%i"
   if "!VERSION!"=="" set "VERSION=0.0.0-dev"
   for /f "usebackq delims=" %%i in (`git rev-parse --short HEAD 2^>nul`) do set "COMMIT=%%i"
   if "!COMMIT!"=="" set "COMMIT=unknown"

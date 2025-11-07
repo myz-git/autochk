@@ -466,6 +466,7 @@ type Dbf_stat struct {
 	Title  string `yaml:"title"`
 	Desc   string `yaml:"desc"`
 	Status string `yaml:"status"`
+	Result int    `yaml:"result"`
 	Level  string `yaml:"level"`
 }
 

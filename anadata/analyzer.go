@@ -127,7 +127,7 @@ func Ana(osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.In
 
 	//集群相关检查
 	if dbshtp.Dbmaa.Contents == "RAC" {
-		Ana_Crs_stat(rules, dbshtp, summaryEntries)
+		// Ana_Crs_stat(rules, dbshtp, summaryEntries)
 		Ana_Ocr_info(rules, dbshtp, summaryEntries)
 		Ana_ASM_usage(rules, dbshtp, summaryEntries)
 
