@@ -192,11 +192,11 @@ Looop:
 			switch {
 			case percent >= rule.Dbrule.Dbtbsusage.Tbsutil_ge2 && (maxsize-usedsize) < rule.Dbrule.Dbtbsusage.Freesize_le2:
 				dbshtp.Dbtbsusage.Alarm = "R"
-				entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,表空间%s使用率%.2f%%超过%.0f%%且剩余空间%.2fGB小于%.0fGB,\n建议: 需要及时扩容或清理数据", dbshtp.Dbname.Contents, msgs[0], percent, rule.Dbrule.Dbtbsusage.Tbsutil_ge2, maxsize-usedsize, rule.Dbrule.Dbtbsusage.Freesize_le2))
+				entry.Severe = append(entry.Severe, fmt.Sprintf("问题: %s数据库,表空间%s使用率%.2f%%超过%.0f%%且剩余空间小于%.0fGB,\n建议: 需要及时扩容或清理数据", dbshtp.Dbname.Contents, msgs[0], percent, rule.Dbrule.Dbtbsusage.Tbsutil_ge2, rule.Dbrule.Dbtbsusage.Freesize_le2))
 				break Looop
 			case percent >= rule.Dbrule.Dbtbsusage.Tbsutil_ge1 && (maxsize-usedsize) < rule.Dbrule.Dbtbsusage.Freesize_le1:
 				dbshtp.Dbtbsusage.Alarm = "B"
-				entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,表空间%s使用率%.2f%%超过%.0f%%且剩余空间%.2fGB小于%.0fGB,\n建议: 持续关注并计划扩容", dbshtp.Dbname.Contents, msgs[0], percent, rule.Dbrule.Dbtbsusage.Tbsutil_ge1, maxsize-usedsize, rule.Dbrule.Dbtbsusage.Freesize_le1))
+				entry.Moderate = append(entry.Moderate, fmt.Sprintf("问题: %s数据库,表空间%s使用率%.2f%%超过%.0f%%且剩余空间小于%.0fGB,\n建议: 持续关注并计划扩容", dbshtp.Dbname.Contents, msgs[0], percent, rule.Dbrule.Dbtbsusage.Tbsutil_ge1, rule.Dbrule.Dbtbsusage.Freesize_le1))
 			}
 		}
 	}

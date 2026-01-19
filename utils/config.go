@@ -207,17 +207,17 @@ type Osparam_fs struct {
 }
 
 type Osparam_ker struct {
-	Nm                 string   `yaml:"nm"`
-	Title              string   `yaml:"title"`
-	Desc               string   `yaml:"desc"`
-	Shmmni             int      `yaml:"shmmni"`
-	Shmmax             int      `yaml:"shmmax"`
-	Shmall             int      `yaml:"shmall"`
-	Sem                []string `yaml:"sem,flow"`
-	Panic_on_oops      int      `yaml:"panic_on_oops"`
-	Randomize_va_space int      `yaml:"randomize_va_space"`
-	Numa_balancing     int      `yaml:"numa_balancing"`
-	Level              string   `yaml:"level"`
+	Nm            string   `yaml:"nm"`
+	Title         string   `yaml:"title"`
+	Desc          string   `yaml:"desc"`
+	Shmmni        int      `yaml:"shmmni"`
+	Shmmax        int      `yaml:"shmmax"`
+	Shmall        int      `yaml:"shmall"`
+	Sem           []string `yaml:"sem,flow"`
+	Panic_on_oops int      `yaml:"panic_on_oops"`
+	// Randomize_va_space int      `yaml:"randomize_va_space"`
+	Numa_balancing int    `yaml:"numa_balancing"`
+	Level          string `yaml:"level"`
 }
 
 type Osparam_net struct {
