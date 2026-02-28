@@ -636,21 +636,19 @@ func PutSht_Issuelist(f *excelize.File, summaryEntries *structs.SummaryEntries) 
 
 	// 删除最后一个问题所在行到结尾行之间的空白行
 	lastProblemRow := rowIndex - 1 // 最后一个问题所在的行号
-	utils.LogDebugf("最后一个问题所在行: %d", lastProblemRow)
+	// utils.LogDebugf("最后一个问题所在行: %d", lastProblemRow)
 
 	if lastProblemRow < 95 {
 		// 需要删除的行范围：lastProblemRow+1 到 结尾行
 		deleteStartRow := lastProblemRow + 1
 		deleteEndRow := 95
 
-		utils.LogDebugf("删除空白行范围: %d 到 %d", deleteStartRow, deleteEndRow)
-
 		// 尝试使用不同的删除策略
 		// 策略1：使用 RemoveRows 方法（如果存在）
 		// 策略2：逐个删除行
 
-		rowsToDelete := deleteEndRow - deleteStartRow + 1
-		utils.LogDebugf("需要删除 %d 行", rowsToDelete)
+		// rowsToDelete := deleteEndRow - deleteStartRow + 1
+		// utils.LogDebugf("需要删除 %d 行", rowsToDelete)
 
 		// 尝试使用 RemoveRows 方法（批量删除）
 		// 注意：这个方法可能不存在，如果不存在会编译错误
@@ -672,8 +670,6 @@ func PutSht_Issuelist(f *excelize.File, summaryEntries *structs.SummaryEntries) 
 			err := f.RemoveRow(shnm, i)
 			if err != nil {
 				utils.LogWarnf("删除第 %d 行失败: %v", i, err)
-			} else {
-				utils.LogDebugf("成功删除第 %d 行", i)
 			}
 		}
 	}

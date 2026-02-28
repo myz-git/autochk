@@ -594,30 +594,65 @@ func Ana_Memstat(rule *utils.RuleInfo, osshtp *structs.OsShts, summaryEntries *s
 
 	// 解析内存数据
 	var totalMem, usedMem, availableMem int
+	var hasAvailableColumn bool
 
 	// 按行解析数据
 	lines := strings.Split(msgdata, "\n")
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		if strings.HasPrefix(line, "Mem:") {
-			// 解析 Mem 行: "Mem: 7479 5932 260 7 1287 1171"
+			// 解析 Mem 行
+			// Linux 7: "Mem: 7823 751 3898 1114 3173 5373" (7个字段，最后一个为available)
+			// Linux 6: "Mem: 1877 644 1232 1 148 274" (7个字段，最后一个为cached，不是available)
 			fields := strings.Fields(line)
-			if len(fields) >= 7 {
+			if len(fields) >= 2 {
 				totalMem, _ = strconv.Atoi(fields[1])
+			}
+			if len(fields) >= 3 {
 				usedMem, _ = strconv.Atoi(fields[2])
 			}
 		} else if strings.HasPrefix(line, "available=") {
-			// 解析 available 行: "available=1171 MB"
+			// 优先检查脚本输出的 available= 行: "available=1171 MB"
+			// 这个格式在脚本中通过 awk 计算得出，兼容 Linux 6 和 Linux 7
 			re := regexp.MustCompile(`available=(\d+)\s+MB`)
 			if match := re.FindStringSubmatch(line); len(match) > 1 {
 				availableMem, _ = strconv.Atoi(match[1])
+				hasAvailableColumn = true
+			}
+		} else if strings.HasPrefix(line, "-/+ buffers/cache:") {
+			// Linux 6 格式: "-/+ buffers/cache: 222 1655"
+			// fields[2]=222 为实际已用, fields[3]=1655 为实际可用（availableMem）
+			if availableMem == 0 {
+				fields := strings.Fields(line)
+				if len(fields) >= 4 {
+					availableMem, _ = strconv.Atoi(fields[3])
+				}
 			}
 		}
 	}
 
-	// 计算内存使用率
+	// 如果还没有找到 available，尝试从 Linux 7+ 的 Mem 行获取
+	if availableMem == 0 {
+		for _, line := range lines {
+			line = strings.TrimSpace(line)
+			if strings.HasPrefix(line, "Mem:") {
+				fields := strings.Fields(line)
+				// Linux 7+ 的 Mem 行如果有 7 个字段，最后一个应该是 available
+				if len(fields) >= 7 {
+					availableMem, _ = strconv.Atoi(fields[6])
+					hasAvailableColumn = true
+					break
+				}
+			}
+		}
+	}
+
+	// 计算内存使用率: (totalMem-availableMem)/totalMem
 	var memoryUsagePercent float64
-	if totalMem > 0 {
+	if totalMem > 0 && availableMem > 0 {
+		memoryUsagePercent = float64(totalMem-availableMem) / float64(totalMem) * 100
+	} else if totalMem > 0 && !hasAvailableColumn {
+		// 如果没有 available 数据，回退到使用 usedMem 计算（兼容性处理）
 		memoryUsagePercent = float64(usedMem) / float64(totalMem) * 100
 	}
 

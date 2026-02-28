@@ -271,7 +271,7 @@ git commit -m "提交说明"
 # 3. 创建新的 tag
 ## 打版本
 git tag v2511.1
-
+去除关于
 # 4. 推送代码及版本到远程仓库
 ## 推送代码
 git push
@@ -433,3 +433,74 @@ build.bat
 https://godoc.org/github.com/beevik/etree
 https://pkg.go.dev/github.com/beevik/etree?tab=doc
 https://github.com/beevik/etree
+
+
+
+## GIT无法连接问题:
+
+现象:
+github.com网站可以正常打开: 
+
+但无法git push, 
+D:\Workspace\git\autochk>git push ssh: connect to host github.com port 22: 
+
+Connection timed out fatal: Could not read from remote repository.
+
+ Please make sure you have the correct access rights and the repository exists.
+
+解决:
+
+改用 HTTPS + 配同一套代理
+先把 remote 从 SSH 改成 HTTPS
+
+```
+cd D:\Workspace\git\autochk
+git remote set-url origin https://github.com/myz-git/autochk.git
+git remote -v
+
+```
+
+把 Git 也配置成走同一个代理（按你实际端口改）
+
+```
+如果是 HTTP 代理（常见 7890）
+git config --global http.proxy  http://127.0.0.1:7890
+git config --global https.proxy http://127.0.0.1:7890
+如果是 SOCKS5 代理（常见 1080）
+git config --global http.proxy  socks5h://127.0.0.1:1080
+git config --global https.proxy socks5h://127.0.0.1:1080
+
+
+(base) PS D:\Workspace\git\autochk> git remote -v
+origin  https://github.com/myz-git/autochk.git (fetch)
+origin  https://github.com/myz-git/autochk.git (push)
+```
+
+再推送
+
+```
+git push
+这时会弹窗登录
+
+```
+
+查看当前 Git 代理
+
+```
+git config --global --get http.proxy
+git config --global --get https.proxy
+
+(base) PS D:\Workspace\git\autochk> git config --global --get http.proxy
+http://127.0.0.1:7890
+(base) PS D:\Workspace\git\autochk> git config --global --get https.proxy
+http://127.0.0.1:7890
+```
+
+如果你哪天换网络（不需要代理了）导致访问变慢/失败，可以一键取消：
+
+```
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+
+```
+

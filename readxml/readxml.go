@@ -2,6 +2,7 @@ package readxml
 
 import (
 	"autochk/structs"
+	"autochk/utils"
 	"fmt"
 	"strconv"
 	"strings"
@@ -12,10 +13,15 @@ import (
 func ReadXml(path string, osshts *[]structs.OsShts, dbshtp *structs.DbSht, instshts *[]structs.InstShts) {
 	doc := etree.NewDocument()
 	if err := doc.ReadFromFile(path); err != nil {
-		panic(err)
+		utils.LogErrorf("解析 XML 文件失败 (%s): %v", path, err)
+		return
 	}
 
 	root := doc.SelectElement("EACHK")
+	if root == nil {
+		utils.LogErrorf("XML 根节点缺失或不是 <EACHK>: %s", path)
+		return
+	}
 
 	// 处理 TAG0（主机相关信息）- 支持多节点
 	for _, tag0 := range root.SelectElements("TAG0") {

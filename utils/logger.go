@@ -23,6 +23,10 @@ func init() {
 
 func setLevelFromEnv() {
     lvl := strings.ToLower(strings.TrimSpace(os.Getenv("AUTOCHK_LOG_LEVEL")))
+    if lvl == "" {
+        currentLevel = LevelError
+        return
+    }
     switch lvl {
     case "debug":
         currentLevel = LevelDebug
